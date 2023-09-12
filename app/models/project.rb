@@ -53,7 +53,9 @@ class Project < ApplicationRecord
      'neural-networks', 'time-series-forecasting', 'timeseries', 'torch','models','datasets','high-performance-computing', 'peer-reviewed', 'reproducible-research','websocket','fleet-management','citation', 
      'credit', 'metadata', 'standard', 'nasa-data', 'satellite-data', 'space','geographic-information-systems', 'satellite-imagery', 'satellite-images', 'energy', 'statistics','openfoodfacts','tensorflow',
      'nutrition','azure','modeling', 'tuning','iobroker','benchmark','kubernetes','k8s', 'helm', 'github-action', 'github-actions', 'svg','cnc','spark', 'scala', 'pyspark','microsoft', 'http','apache-spark',
-    'hacktoberfest2020','neural-network','farm','python-library','uk','openstreetmap','robotics','mechanical-engineering','lidar','sdk','cli','gpu','ml','landsat','food','automation','gtfs','ggplot2']
+    'hacktoberfest2020','neural-network','farm','python-library','uk','openstreetmap','robotics','mechanical-engineering','lidar','sdk','cli','gpu','ml','landsat','food','automation','gtfs','ggplot2', 'github',
+    'kotlin', 'sentinel','visualization','maps','mapping','dask','pipeline','api-client','transit','home-assistant','education','api-wrapper','course','mapbox','engineering','atmosphere','scenario','optimization',
+    'data-analysis','data-visualization','backend','model','modelling','nextjs','pyam']
   end
 
   def self.potential_stop_words
