@@ -1,0 +1,72 @@
+<div class="card mb-3 project d-flex" id="project_<%= project.id %>">
+  <div class="card-body pb-1">
+    <div class="d-flex">
+      
+      <div class="flex-grow-1 ms-3 text-break">
+        <h5 class='card-title'>
+          <%= link_to project.url, project_path(project) %>
+        </h5>
+      
+        <p class="card-subtitle mb-2 text-muted">
+          <%= project.description %>        
+
+          <% if project.keywords.any? %>
+            <br/>
+            <% project.keywords.each do |keyword| %>
+              <span class="badge bg-light text-dark">
+                <%= keyword %>
+              </span>
+            <% end %>
+          <% end %>
+        </p>  
+
+        <div class='row small'>
+          <div class='col-6'>
+            <ul>
+              <li>
+                Good topics? <span title='<%= project.matching_topics.join(', ') %>'><%= project.good_topics? %></span>
+              </li>
+              <li>
+                External users? <%= project.external_users? %>
+              </li>
+              <li>
+                open source license? <%= project.open_source_license? %>
+              </li>
+              <li>
+                active? <%= project.active? %>
+              </li>
+              <li>
+                fork? <%= project.fork? %>
+              </li>
+            </ul>
+          </div>
+          <div class='col-6'>
+            <ul>
+              <li>
+                Stars: <%= project.repository['stargazers_count'] %>
+              </li>
+              <li>
+                Forks: <%= project.repository['forks_count'] %>
+              </li>
+              <li>
+                Commits: <%= project.commits && project.commits['total_commits'] %>
+              </li>
+              <li>
+                Issues: <%= project.issues && project.issues['issues_count'] %>
+              </li>
+              <li>
+                Pull Requests: <%= project.issues && project.issues['pull_requests_count'] %>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <%= button_to "👍 #{project.votes.select{|v| v.score > 0}.length}", project_votes_path(project_id: project, vote: {score: 1}), class: "btn btn-light", form_class: 'd-inline' %>
+        <%= button_to "👎 #{project.votes.select{|v| v.score < 0}.length}", project_votes_path(project_id: project, vote: {score: -1}), class: "btn btn-light", form_class: 'd-inline' %>
+      </div>
+      <div class="flex-shrink-0">
+        <img src="<%= project.avatar_url %>" class="rounded" height='40' width='40' onerror="this.style.display='none'">
+      </div>  
+    </div>
+  </div>
+</div>
