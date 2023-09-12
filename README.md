@@ -1,6 +1,6 @@
 # [Ecosyste.ms: OST](https://ost.ecosyste.ms)
 
-An open API service for producing an overview of a list of open source projects.
+A curated list of open technology projects to sustain a stable climate, energy supply, biodiversity and natural resources, based on data from https://opensustain.tech/
 
 This project is part of [Ecosyste.ms](https://ecosyste.ms): Tools and open datasets to support, sustain, and secure critical digital infrastructure.
 
