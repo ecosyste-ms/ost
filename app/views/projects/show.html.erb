@@ -2,7 +2,7 @@
 
 <div class="container-md">
   <h1>
-    <%= @project %><br/>
+    <%= @project.to_s %><br/>
   </h1>
 
   <p>
@@ -29,6 +29,30 @@
         <%= link_to 'JSON representation', api_v1_project_path(@project) %>
     </small></i></p>
 
+    <% unless @project.reviewed %>
+      <h3>Acceptance Criteria</h3>
+      <ul>
+        <li>
+          Revelant topics? <span title='<%= @project.matching_topics.join(', ') %>'><%= @project.good_topics? %></span>
+        </li>
+        <li>
+          External users? <%= @project.external_users? %>
+        </li>
+        <li>
+          Open source license? <%= @project.open_source_license? %>
+        </li>
+        <li>
+          Active? <%= @project.active? %>
+        </li>
+        <li>
+          Fork? <%= @project.fork? %>
+        </li>
+      </ul>
+
+      <%= button_to "👍 #{@project.votes.select{|v| v.score > 0}.length}", project_votes_path(project_id: @project, vote: {score: 1}), class: "btn btn-light", form_class: 'd-inline' %>
+      <%= button_to "👎 #{@project.votes.select{|v| v.score < 0}.length}", project_votes_path(project_id: @project, vote: {score: -1}), class: "btn btn-light", form_class: 'd-inline' %>
+    <% end %>
+
     <%= render 'repository' %>
     <%= render 'owner' %>
     <%= render 'events' %>
@@ -43,6 +67,7 @@
   <% else %>
     <p>
       This project has not been synced yet. Check back in a few minutes.
+      <meta http-equiv="refresh" content="10">
     </p>
   <% end %>
 
