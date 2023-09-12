@@ -42,10 +42,24 @@ class ProjectsController < ApplicationController
 
   def create
     @project = Project.new(project_params)
+    if @project.valid?
+      @project = Project.find_by(url: params[:project][:url])
+      if @project.nil?
 
-    @project.save
-    @project.sync_async
-    redirect_to @project
+        @project = Project.new(project_params)
+
+        if @project.save
+          @project.sync_async
+          redirect_to @project
+        else
+          render 'new'
+        end
+      else
+        redirect_to @project
+      end
+    else
+      render 'new'
+    end
   end
 
   def project_params
