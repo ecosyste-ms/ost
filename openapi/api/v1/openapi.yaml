@@ -84,88 +84,7 @@ paths:
             application/json:
               schema:
                   $ref: '#/components/schemas/Project'
-  /collections:
-    get:
-      ost: get collections
-      operationId: getCollections
-      tags:
-        - collections
-      parameters:
-        - name: page
-          in: query
-          description: pagination page number 
-          required: false
-          schema:
-            type: integer
-        - name: per_page
-          in: query
-          description: Number of records to return 
-          required: false
-          schema:
-            type: integer
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Collection'
-  /collections/{id}:
-    get:
-      ost: get a collection by id
-      operationId: getCollection
-      tags:
-        - collections
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: id of the collection
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Collection'
-  /collections/{id}/projects:
-    get:
-      ost: get projects in a collection
-      operationId: getCollectionProjects
-      tags:
-        - collections
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: id of the collection
-        - name: page
-          in: query
-          description: pagination page number 
-          required: false
-          schema:
-            type: integer
-        - name: per_page
-          in: query
-          description: Number of records to return 
-          required: false
-          schema:
-            type: integer
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Project'
+
 components:
   schemas:
     Project:
@@ -206,24 +125,4 @@ components:
         updated_at:
           type: string
           format: date-time
-    Collection:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        url:
-          type: string
-        description:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-        projects_url:
-          type: string
-        html_url:
-          type: string
+    
