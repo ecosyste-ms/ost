@@ -12,7 +12,6 @@ class ProjectsController < ApplicationController
       @scope = @scope.order('last_synced_at DESC nulls last')
     end
 
-
     @pagy, @projects = pagy(@scope)
   end
 
@@ -26,7 +25,7 @@ class ProjectsController < ApplicationController
   end
 
   def review
-    @scope = Project.unreviewed.matching_criteria
+    @scope = Project.unreviewed.matching_criteria.includes(:votes)
 
     if params[:sort]
       @scope = @scope.order("#{params[:sort]} #{params[:order]}")
@@ -35,5 +34,21 @@ class ProjectsController < ApplicationController
     end
 
     @pagy, @projects = pagy(@scope)
+  end
+
+  def new
+    @project = Project.new
+  end
+
+  def create
+    @project = Project.new(project_params)
+
+    @project.save
+    @project.sync_async
+    redirect_to @project
+  end
+
+  def project_params
+    params.require(:project).permit(:url, :name, :description)
   end
 end

@@ -270,6 +270,9 @@ GEM
       concurrent-ruby (~> 1.0, >= 1.0.5)
       sidekiq (>= 7.0.0, < 8.0.0)
       thor (>= 1.0, < 3.0)
+    simple_form (5.2.0)
+      actionpack (>= 5.2)
+      activemodel (>= 5.2)
     sitemap_generator (6.3.0)
       builder (~> 3.0)
     sprockets (4.2.1)
@@ -341,6 +344,7 @@ DEPENDENCIES
   sidekiq
   sidekiq-status
   sidekiq-unique-jobs
+  simple_form
   sitemap_generator
   sprockets-rails
   tzinfo-data
