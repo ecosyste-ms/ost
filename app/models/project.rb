@@ -83,7 +83,7 @@ class Project < ApplicationRecord
   end
 
   def to_s
-    name || url
+    name.presence || url
   end
 
   def sync
