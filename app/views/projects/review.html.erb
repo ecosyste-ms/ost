@@ -1,10 +1,11 @@
 
 <div class="container-md">
-  
-
     <ul class="nav nav-tabs my-3">
       <li class="nav-item">
-        <h2>Projects to review</h2>
+        <h2>
+          Projects to review
+          <span class="badge bg-light text-muted"><%= @pagy.count %></span>
+        </h2>
       </li>
       <li class="nav-item ms-auto">
         <div class="dropdown">
@@ -16,6 +17,7 @@
             <li><a class="dropdown-item <%= 'active' if params[:sort] == 'vote_count' && params[:order] == 'asc' %>" href="<%= url_for(sort: 'vote_count', order: 'asc') %>">Least votes</a></li>
             <li><a class="dropdown-item <%= 'active' if params[:sort] == 'vote_score' %>" href="<%= url_for(sort: 'vote_score', order: 'desc') %>">Vote score</a></li>
             <li><a class="dropdown-item <%= 'active' if params[:sort] == 'score' %>" href="<%= url_for(sort: 'score', order: 'desc') %>">Ranking</a></li>
+            <li><a class="dropdown-item <%= 'active' if params[:sort] == 'last_synced_at' %>" href="<%= url_for(sort: 'last_synced_at', order: 'desc') %>">Recently synced</a></li>
           </ul>
         </div>
       </li>
