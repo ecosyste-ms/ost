@@ -25,7 +25,7 @@ class ProjectsController < ApplicationController
   end
 
   def review
-    @scope = Project.unreviewed.matching_criteria.includes(:votes)
+    @scope = Project.unreviewed.matching_criteria.where('vote_score > ?', -3).includes(:votes)
 
     if params[:sort]
       @scope = @scope.order("#{params[:sort]} #{params[:order]}")
