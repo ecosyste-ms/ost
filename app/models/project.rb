@@ -525,7 +525,7 @@ class Project < ApplicationRecord
   end
 
   def self.import_topic(topic)
-    resp = Faraday.get("https://repos.ecosyste.ms/api/v1/topics/#{topic}?per_page=100&sort=created_at&order=desc")
+    resp = Faraday.get("https://repos.ecosyste.ms/api/v1/topics/#{ERB::Util.url_encode(topic)}?per_page=100&sort=created_at&order=desc")
     if resp.status == 200
       data = JSON.parse(resp.body)
       urls = data['repositories'].map{|p| p['html_url'] }.uniq.reject(&:blank?)
