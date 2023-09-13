@@ -75,7 +75,8 @@ class Project < ApplicationRecord
      'nutrition','azure','modeling', 'tuning','iobroker','benchmark','kubernetes','k8s', 'helm', 'github-action', 'github-actions', 'svg','cnc','spark', 'scala', 'pyspark','microsoft', 'http','apache-spark',
     'hacktoberfest2020','neural-network','farm','python-library','uk','openstreetmap','robotics','mechanical-engineering','lidar','sdk','cli','gpu','ml','landsat','food','automation','gtfs','ggplot2', 'github',
     'kotlin', 'sentinel','visualization','maps','mapping','dask','pipeline','api-client','transit','home-assistant','education','api-wrapper','course','mapbox','engineering','atmosphere','scenario','optimization',
-    'data-analysis','data-visualization','backend','model','modelling','nextjs','pyam','australia','object-detection','monte-carlo-simulation','time-series-analysis','cnn','forecasting','forecast','openai-gym']
+    'data-analysis','data-visualization','backend','model','modelling','nextjs','pyam','australia','object-detection','monte-carlo-simulation','time-series-analysis','cnn','forecasting','forecast','openai-gym',
+    'rails','ruby-on-rails']
   end
 
   def self.potential_good_topics
