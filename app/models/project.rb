@@ -105,6 +105,11 @@ class Project < ApplicationRecord
     name.presence || url
   end
 
+  def first_created
+    return unless repository.present?
+    Time.parse(repository['created_at'])
+  end
+
   def sync
     check_url
     fetch_repository

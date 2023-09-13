@@ -18,6 +18,13 @@
               </span>
             <% end %>
           <% end %>
+          <br/>
+          <small>
+            Added: <%= time_ago_in_words(project.created_at) %> ago - Last Synced: <%= time_ago_in_words(project.last_synced_at) %> ago
+            <% if project.first_created %>
+             - Created: <%= project.first_created.to_date.to_s(:long) %>
+            <% end %>
+          </small>
         </p>  
 
         <div class='row small'>
