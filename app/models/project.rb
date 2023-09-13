@@ -39,6 +39,25 @@ class Project < ApplicationRecord
     end
   end
 
+  def self.import_from_readme
+    url = 'https://raw.githubusercontent.com/protontypes/open-sustainable-technology/main/README.md'
+    conn = Faraday.new(url: url) do |faraday|
+      faraday.response :follow_redirects
+      faraday.adapter Faraday.default_adapter
+    end
+
+    response = conn.get
+    return unless response.success?
+    markdown = response.body
+    urls = markdown.scan(/\[([^\]]+)\]\(([^)]+)\)/).map{|m| m[1] }.select{|u| u.include?('github.com') || u.include?('gitlab.com') || u.include?('bitbucket.org') }
+    urls.each do |url|
+      project = Project.find_or_create_by(url: url)
+      project.reviewed = true
+      project.save
+      project.sync_async unless project.last_synced_at.present?
+    end
+  end
+
   def self.keywords
     @keywords ||= Project.reviewed.pluck(:keywords).flatten.group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse
   end
