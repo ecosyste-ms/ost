@@ -18,6 +18,7 @@
             <li><a class="dropdown-item <%= 'active' if params[:sort] == 'vote_score' %>" href="<%= url_for(sort: 'vote_score', order: 'desc') %>">Vote score</a></li>
             <li><a class="dropdown-item <%= 'active' if params[:sort] == 'score' %>" href="<%= url_for(sort: 'score', order: 'desc') %>">Ranking</a></li>
             <li><a class="dropdown-item <%= 'active' if params[:sort] == 'last_synced_at' %>" href="<%= url_for(sort: 'last_synced_at', order: 'desc') %>">Recently synced</a></li>
+            <li><a class="dropdown-item <%= 'active' if params[:sort] == 'created_at' %>" href="<%= url_for(sort: 'created_at', order: 'desc') %>">Recently added</a></li>
           </ul>
         </div>
       </li>
