@@ -15,7 +15,7 @@
           <p>
             <% project.keywords.each do |keyword| %>
               <span class="badge bg-light text-dark">
-                <%= keyword %>
+                <%= link_to keyword, url_for(keyword: keyword) %>
               </span>
             <% end %>
           </p>

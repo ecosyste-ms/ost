@@ -6,6 +6,18 @@ class ProjectsController < ApplicationController
   def index
     @scope = Project.reviewed
 
+    if params[:keyword].present?
+      @scope = @scope.keyword(params[:keyword])
+    end
+
+    if params[:owner].present?
+      @scope = @scope.owner(params[:owner])
+    end
+
+    if params[:language].present?
+      @scope = @scope.language(params[:language])
+    end
+
     if params[:sort]
       @scope = @scope.order("#{params[:sort]} #{params[:order]}")
     else
@@ -26,6 +38,18 @@ class ProjectsController < ApplicationController
 
   def review
     @scope = Project.unreviewed.matching_criteria.where('vote_score > ?', -3).includes(:votes)
+
+    if params[:keyword].present?
+      @scope = @scope.keyword(params[:keyword])
+    end
+
+    if params[:owner].present?
+      @scope = @scope.owner(params[:owner])
+    end
+
+    if params[:language].present?
+      @scope = @scope.language(params[:language])
+    end
 
     if params[:sort]
       @scope = @scope.order("#{params[:sort]} #{params[:order]}")

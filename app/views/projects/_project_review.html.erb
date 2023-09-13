@@ -14,7 +14,7 @@
             <br/>
             <% project.keywords.each do |keyword| %>
               <span class="badge bg-light text-dark">
-                <%= keyword %>
+                <%= link_to keyword, url_for(keyword: keyword) %>
               </span>
             <% end %>
           <% end %>
@@ -28,7 +28,7 @@
         </p>  
 
         <div class='row small'>
-          <div class='col-6'>
+          <div class='col-4'>
             <ul>
               <li>
                 Relevant topics? <span title='<%= project.matching_topics.join(', ') %>'><%= project.good_topics? %></span>
@@ -42,21 +42,16 @@
               <li>
                 Active? <%= project.active? %>
               </li>
-              <li>
-                Fork? <%= project.fork? %>
-              </li>
             </ul>
           </div>
-          <div class='col-6'>
+          <div class='col-4'>
             <ul>
-              <li>
-                Stars: <%= project.repository['stargazers_count'] %>
-              </li>
-              <li>
-                Forks: <%= project.repository['forks_count'] %>
-              </li>
+              
               <li>
                 Commits: <%= project.commits && project.commits['total_commits'] %>
+              </li>
+              <li>
+                Committers: <%= project.commits && project.commits['total_committers'] %>
               </li>
               <li>
                 Issues: <%= project.issues && project.issues['issues_count'] %>
@@ -66,6 +61,26 @@
               </li>
             </ul>
           </div>
+          <div class='col-4'>
+            <ul>
+              <li>
+                Main Language: <%= link_to project.language, url_for(language: project.language) %>
+              </li>
+              <li>
+                Owner: <%= link_to project.owner_name, url_for(owner: project.owner_name) %>
+              </li>
+              <li>
+                Stars: <%= project.repository['stargazers_count'] %>
+              </li>
+              <li>
+                Forks: <%= project.repository['forks_count'] %>
+              </li>
+              <li>
+                Fork? <%= project.fork? %>
+              </li>
+            </ul>
+          </div>
+          
         </div>
 
         <%= button_to "👍 #{project.votes.select{|v| v.score > 0}.length}", project_votes_path(project_id: project, vote: {score: 1}), class: "btn btn-light", form_class: 'd-inline' %>

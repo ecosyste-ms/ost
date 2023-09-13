@@ -7,6 +7,7 @@ class Project < ApplicationRecord
   has_many :votes, dependent: :destroy
 
   scope :language, ->(language) { where("(repository ->> 'language') = ?", language) }
+  scope :owner, ->(owner) { where("(repository ->> 'owner') = ?", owner) }
   scope :keyword, ->(keyword) { where("keywords @> ARRAY[?]::varchar[]", keyword) }
   scope :reviewed, -> { where(reviewed: true) }
   scope :unreviewed, -> { where(reviewed: nil) }
