@@ -286,7 +286,7 @@ GEM
       sprockets (>= 3.0.0)
     stringio (3.0.8)
     thor (1.2.2)
-    tilt (2.2.0)
+    tilt (2.3.0)
     timeout (0.4.0)
     typhoeus (1.4.0)
       ethon (>= 0.9.0)
