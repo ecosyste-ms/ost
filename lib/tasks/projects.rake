@@ -14,10 +14,6 @@ namespace :projects do
   desc 'discover projects'
   task :discover => :environment do
     Project.discover_via_topics
-  end
-
-  desc 'discover projects via package managers'
-  task :discover => :environment do
     Project.discover_via_keywords
   end
 end

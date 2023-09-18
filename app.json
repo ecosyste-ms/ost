@@ -10,7 +10,7 @@
     },
     {
       "command": "bundle exec rake projects:discover",
-      "schedule": "0 * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
