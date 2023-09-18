@@ -7,6 +7,10 @@
     {
       "command": "bundle exec rake projects:import",
       "schedule": "0 0 * * *"
+    },
+    {
+      "command": "bundle exec rake projects:discover",
+      "schedule": "0 * * * *"
     }
   ]
 }

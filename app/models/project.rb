@@ -59,6 +59,12 @@ class Project < ApplicationRecord
     end
   end
 
+  def self.discover_via_topics
+    relevant_keywords.first(50).each do |topic|
+      import_topic(topic)
+    end
+  end
+
   def self.keywords
     @keywords ||= Project.reviewed.pluck(:keywords).flatten.group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse
   end
@@ -534,7 +540,7 @@ class Project < ApplicationRecord
       urls.each do |url|
         existing_project = Project.find_by(url: url)
         if existing_project.present?
-          puts 'already exists'
+          #puts 'already exists'
         else
           project = Project.create(url: url)
           project.sync_async
@@ -551,7 +557,7 @@ class Project < ApplicationRecord
       urls.each do |url|
         existing_project = Project.find_by(url: url)
         if existing_project.present?
-          puts 'already exists'
+          # puts 'already exists'
         else
           project = Project.create(url: url)
           project.sync_async

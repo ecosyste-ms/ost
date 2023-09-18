@@ -10,4 +10,9 @@ namespace :projects do
   task :import => :environment do
     Project.import_from_readme
   end
+
+  desc 'discover projects'
+  task :discover => :environment do
+    Project.discover_via_topics
+  end
 end
