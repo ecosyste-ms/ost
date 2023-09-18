@@ -80,9 +80,11 @@
               <li>
                 Packages: <%= project.packages_count %>
               </li>
+              <% if project.downloads && project.downloads > 0 %>
               <li>
                 Downloads: <%= number_with_delimiter project.downloads %>
               </li>
+              <% end %>
             </ul>
           </div>
           
