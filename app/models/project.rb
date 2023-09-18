@@ -549,6 +549,23 @@ class Project < ApplicationRecord
     end
   end
 
+  def self.import_keyword(keyword)
+    resp = Faraday.get("https://packages.ecosyste.ms/api/v1/keywords/#{keyword}?per_page=100&sort=created_at&order=desc")
+    if resp.status == 200
+      data = JSON.parse(resp.body)
+      urls = data['packages'].reject{|p| p['status'].present? }.map{|p| p['repository_url'] }.uniq.reject(&:blank?)
+      urls.each do |url|
+        existing_project = Project.find_by(url: url)
+        if existing_project.present?
+          # puts 'already exists'
+        else
+          project = Project.create(url: url)
+          project.sync_async
+        end
+      end
+    end
+  end
+
   def self.import_org(host, org)
     resp = Faraday.get("https://repos.ecosyste.ms/api/v1/hosts/#{host}/owners/#{org}/repositories?per_page=100")
     if resp.status == 200
