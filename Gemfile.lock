@@ -103,7 +103,7 @@ GEM
     erubi (1.12.0)
     ethon (0.16.0)
       ffi (>= 1.15.0)
-    execjs (2.9.0)
+    execjs (2.9.1)
     faraday (2.7.11)
       base64
       faraday-net_http (>= 2.0, < 3.1)
