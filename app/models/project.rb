@@ -478,6 +478,16 @@ class Project < ApplicationRecord
     matching_topics.length > 2
   end
 
+  def packages_count
+    return 0 unless packages.present?
+    packages.length
+  end
+
+  def downloads
+    return 0 unless packages.present?
+    packages.map{|p| p["downloads"] || 0 }.sum
+  end
+
   def issue_associations
     return [] unless issues.present?
     (issues.issue_author_associations_count.to_h.keys + issues.pull_request_author_associations_count.to_h.keys).uniq

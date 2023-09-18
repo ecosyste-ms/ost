@@ -42,11 +42,16 @@
               <li>
                 Active? <%= project.active? %>
               </li>
+              <li>
+                Fork? <%= project.fork? %>
+              </li>
             </ul>
           </div>
           <div class='col-4'>
             <ul>
-              
+              <li>
+                Main Language: <%= link_to project.language, url_for(language: project.language) %>
+              </li>
               <li>
                 Commits: <%= project.commits && project.commits['total_commits'] %>
               </li>
@@ -64,9 +69,6 @@
           <div class='col-4'>
             <ul>
               <li>
-                Main Language: <%= link_to project.language, url_for(language: project.language) %>
-              </li>
-              <li>
                 Owner: <%= link_to project.owner_name, url_for(owner: project.owner_name) %>
               </li>
               <li>
@@ -76,7 +78,10 @@
                 Forks: <%= project.repository['forks_count'] %>
               </li>
               <li>
-                Fork? <%= project.fork? %>
+                Packages: <%= project.packages_count %>
+              </li>
+              <li>
+                Downloads: <%= number_with_delimiter project.downloads %>
               </li>
             </ul>
           </div>
