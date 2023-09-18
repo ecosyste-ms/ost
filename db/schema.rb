@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_12_100452) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_18_140642) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -47,6 +47,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_12_100452) do
     t.integer "vote_count", default: 0
     t.integer "vote_score", default: 0
     t.index ["collection_id"], name: "index_projects_on_collection_id"
+    t.index ["url"], name: "index_projects_on_url", unique: true
   end
 
   create_table "votes", force: :cascade do |t|
