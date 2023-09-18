@@ -554,11 +554,11 @@ class Project < ApplicationRecord
       data = JSON.parse(resp.body)
       urls = data['repositories'].map{|p| p['html_url'] }.uniq.reject(&:blank?)
       urls.each do |url|
-        existing_project = Project.find_by(url: url)
+        existing_project = Project.find_by(url: url.downcase)
         if existing_project.present?
           #puts 'already exists'
         else
-          project = Project.create(url: url)
+          project = Project.create(url: url.downcase)
           project.sync_async
         end
       end
@@ -571,11 +571,11 @@ class Project < ApplicationRecord
       data = JSON.parse(resp.body)
       urls = data['packages'].reject{|p| p['status'].present? }.map{|p| p['repository_url'] }.uniq.reject(&:blank?)
       urls.each do |url|
-        existing_project = Project.find_by(url: url)
+        existing_project = Project.find_by(url: url.downcase)
         if existing_project.present?
           # puts 'already exists'
         else
-          project = Project.create(url: url)
+          project = Project.create(url: url.downcase)
           project.sync_async
         end
       end
