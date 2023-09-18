@@ -37,7 +37,7 @@ class ProjectsController < ApplicationController
   end
 
   def review
-    @scope = Project.unreviewed.matching_criteria.where('vote_score > ?', -3).includes(:votes)
+    @scope = Project.unreviewed.matching_criteria.where('vote_score > ?', -2).includes(:votes)
 
     if params[:keyword].present?
       @scope = @scope.keyword(params[:keyword])
