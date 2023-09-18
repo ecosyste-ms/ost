@@ -59,15 +59,15 @@ class Project < ApplicationRecord
     end
   end
 
-  def self.discover_via_topics
-    relevant_keywords.first(50).each do |topic|
+  def self.discover_via_topics(limit=50)
+    relevant_keywords.first(limit).each do |topic|
       import_topic(topic)
     end
   end
 
-  def self.discover_via_keywords
-    relevant_keywords.first(50).each do |topic|
-      import_topic(topic)
+  def self.discover_via_keywords(limit=50)
+    relevant_keywords.first(limit).each do |topic|
+      import_keyword(topic)
     end
   end
 
