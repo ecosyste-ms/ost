@@ -93,6 +93,10 @@ class Project < ApplicationRecord
     'pwa','web','web-framework','react-native','analytics','electron']
   end
 
+  def self.update_matching_criteria
+    unreviewed.find_each{|p| p.matching_criteria = p.matching_criteria?;p.save if p.changed?}
+  end
+
   def self.potential_good_topics
     Project.unreviewed.where('vote_score > 0').pluck(:keywords).flatten.group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse.select{|k,v| v > 1}.map(&:first) - stop_words
   end
