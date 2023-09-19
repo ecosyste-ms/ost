@@ -90,11 +90,11 @@ class Project < ApplicationRecord
     'data-analysis','data-visualization','backend','model','modelling','nextjs','pyam','australia','object-detection','monte-carlo-simulation','time-series-analysis','cnn','forecasting','forecast','openai-gym',
     'rails','ruby-on-rails','science',"computer-vision","image-processing","image-classification","segmentation","spatial","classification","electricity","image-segmentation","simulation",'php','leaflet',
     'regression','vector','mobile','leaflet-plugins','sentinel-1','cpu','fastapi','zigbee','metrics','big-data','cross-platform','self-driving-car','json','computing','framework','frontend',
-    'pwa','web','web-framework','react-native','analytics','electron']
+    'pwa','web','web-framework','react-native','analytics','electron','homeassistant','home-assistant','smarthome','home-automation','pi0']
   end
 
   def self.stop_words
-    ['homeassistant','home-assistant','smarthome','home-automation','pi0']
+    []
   end
 
   def self.update_matching_criteria
