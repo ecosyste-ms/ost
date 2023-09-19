@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_18_140642) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_19_102002) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "citext"
   enable_extension "plpgsql"
 
   create_table "collections", force: :cascade do |t|
@@ -24,7 +25,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_18_140642) do
   end
 
   create_table "projects", force: :cascade do |t|
-    t.string "url"
+    t.citext "url"
     t.json "repository"
     t.json "packages"
     t.json "commits"
