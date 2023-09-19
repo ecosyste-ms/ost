@@ -165,10 +165,14 @@ class Project < ApplicationRecord
 
     response = conn.get
     return unless response.success?
-    update(url: response.env.url.to_s) 
+    update!(url: response.env.url.to_s) 
     # TODO avoid duplicates
+  rescue ActiveRecord::RecordInvalid => e
+    puts "Duplicate url #{url}"
+    puts e.class
+    destroy
   rescue
-    # failed to load
+    puts "Error checking url for #{url}"
   end
 
   def combine_keywords
