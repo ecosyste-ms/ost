@@ -75,9 +75,9 @@ class Project < ApplicationRecord
     @keywords ||= Project.reviewed.pluck(:keywords).flatten.group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse
   end
 
-  def self.stop_words
-    ['hacktoberfest', 'python', 'java', "open-data", "open-source", 'network', 'r', 'database', 'ruby', 'iot', 'julia', 'numpy', 'pandas', 'mqtt', 'rstats', 'react','python3','env', 'map', 'api', 'cran',
-     'awesome','data','dataset','awesome-list', 'javascript','r-package','raspberry-pi','matlab', 'typescript', 'svelte', 'nodejs', 'c', 'fortran', 'modbus','home-automation','matplotlib','smarthome',
+  def self.ignore_words
+    ['hacktoberfest', 'python', 'java', "open-data", "open-source", 'network', 'r', 'database', 'ruby', 'iot', 'julia', 'numpy', 'pandas', 'rstats', 'react','python3','env', 'map', 'api', 'cran',
+     'awesome','data','dataset','awesome-list', 'javascript','r-package','raspberry-pi','matlab', 'typescript', 'svelte', 'nodejs', 'c', 'fortran', 'modbus','matplotlib',
      'sqlite','arduino','golang','influxdb','esp8266','laravel','gui','smart-meter','docker','dashboard','platform','building','geospatial','pytorch','deep-learning','documentation', 'gis','remote-sensing',
      'machine-learning', 'satellite','xarray','google-earth-engine','earth-engine','linear-programming','management','netcdf','sql','3d','rstudio','firebase','webgl','flask','blockchain','addon','osm','go',
      'rust','vue','vuejs','rest-api','ios','linux','python-3','postgresql','postgis','jupyter-notebook','game','ethereum','d3','d3js','code','android','ai','library','client','django','package','energy-monitor',
@@ -86,11 +86,15 @@ class Project < ApplicationRecord
      'credit', 'metadata', 'standard', 'nasa-data', 'satellite-data', 'space','geographic-information-systems', 'satellite-imagery', 'satellite-images', 'energy', 'statistics','openfoodfacts','tensorflow',
      'nutrition','azure','modeling', 'tuning','iobroker','benchmark','kubernetes','k8s', 'helm', 'github-action', 'github-actions', 'svg','cnc','spark', 'scala', 'pyspark','microsoft', 'http','apache-spark',
     'hacktoberfest2020','neural-network','farm','python-library','uk','openstreetmap','robotics','mechanical-engineering','lidar','sdk','cli','gpu','ml','landsat','food','automation','gtfs','ggplot2', 'github',
-    'kotlin', 'sentinel','visualization','maps','mapping','dask','pipeline','api-client','transit','home-assistant','education','api-wrapper','course','mapbox','engineering','atmosphere','scenario','optimization',
+    'kotlin', 'sentinel','visualization','maps','mapping','dask','pipeline','api-client','transit','education','api-wrapper','course','mapbox','engineering','atmosphere','scenario','optimization',
     'data-analysis','data-visualization','backend','model','modelling','nextjs','pyam','australia','object-detection','monte-carlo-simulation','time-series-analysis','cnn','forecasting','forecast','openai-gym',
     'rails','ruby-on-rails','science',"computer-vision","image-processing","image-classification","segmentation","spatial","classification","electricity","image-segmentation","simulation",'php','leaflet',
-    'homeassistant','regression','vector','mobile','leaflet-plugins','sentinel-1','cpu','fastapi','zigbee','metrics','big-data','cross-platform','self-driving-car','json','computing','framework','frontend',
+    'regression','vector','mobile','leaflet-plugins','sentinel-1','cpu','fastapi','zigbee','metrics','big-data','cross-platform','self-driving-car','json','computing','framework','frontend',
     'pwa','web','web-framework','react-native','analytics','electron']
+  end
+
+  def self.stop_words
+    ['homeassistant','home-assistant','smarthome','home-automation','pi0']
   end
 
   def self.update_matching_criteria
@@ -98,15 +102,15 @@ class Project < ApplicationRecord
   end
 
   def self.potential_good_topics
-    Project.unreviewed.where('vote_score > 0').pluck(:keywords).flatten.group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse.select{|k,v| v > 1}.map(&:first) - stop_words
+    Project.unreviewed.where('vote_score > 0').pluck(:keywords).flatten.group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse.select{|k,v| v > 1}.map(&:first) - ignore_words
   end
 
-  def self.potential_stop_words
-    Project.unreviewed.where('vote_score < 0').pluck(:keywords).flatten.group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse.select{|k,v| v > 1}.map(&:first) - stop_words
+  def self.potential_ignore_words
+    Project.unreviewed.where('vote_score < 0').pluck(:keywords).flatten.group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse.select{|k,v| v > 1}.map(&:first) - ignore_words
   end
 
   def self.relevant_keywords
-    keywords.select{|k,v| v > 1}.map(&:first) - stop_words
+    keywords.select{|k,v| v > 1}.map(&:first) - ignore_words
   end
 
   def self.rubric_keywords(rubric)
@@ -473,11 +477,15 @@ class Project < ApplicationRecord
   end
 
   def matching_criteria?
-    good_topics? && external_users? && open_source_license? && active?
+    no_bad_topics? && good_topics? && external_users? && open_source_license? && active?
   end
 
   def matching_topics
     (keywords & Project.relevant_keywords)
+  end
+
+  def no_bad_topics?
+    (keywords & Project.stop_words).blank?
   end
 
   def good_topics?
