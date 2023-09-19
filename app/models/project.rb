@@ -2,7 +2,7 @@ require 'csv'
 
 class Project < ApplicationRecord
 
-  validates :url, presence: true, uniqueness: true
+  validates :url, presence: true, uniqueness: { case_sensitive: false }
 
   has_many :votes, dependent: :destroy
 
