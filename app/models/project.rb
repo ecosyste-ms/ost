@@ -88,7 +88,9 @@ class Project < ApplicationRecord
     'hacktoberfest2020','neural-network','farm','python-library','uk','openstreetmap','robotics','mechanical-engineering','lidar','sdk','cli','gpu','ml','landsat','food','automation','gtfs','ggplot2', 'github',
     'kotlin', 'sentinel','visualization','maps','mapping','dask','pipeline','api-client','transit','home-assistant','education','api-wrapper','course','mapbox','engineering','atmosphere','scenario','optimization',
     'data-analysis','data-visualization','backend','model','modelling','nextjs','pyam','australia','object-detection','monte-carlo-simulation','time-series-analysis','cnn','forecasting','forecast','openai-gym',
-    'rails','ruby-on-rails']
+    'rails','ruby-on-rails','science',"computer-vision","image-processing","image-classification","segmentation","spatial","classification","electricity","image-segmentation","simulation",'php','leaflet',
+    'homeassistant','regression','vector','mobile','leaflet-plugins','sentinel-1','cpu','fastapi','zigbee','metrics','big-data','cross-platform','self-driving-car','json','computing','framework','frontend',
+    'pwa','web','web-framework','react-native','analytics','electron']
   end
 
   def self.potential_good_topics
