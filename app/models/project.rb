@@ -545,19 +545,20 @@ class Project < ApplicationRecord
   def commits_this_year?
     return false unless repository.present?
     return false unless repository['pushed_at'].present?
+    # TODO use data from commits api to ignore bot commits
     repository['pushed_at'] > 1.year.ago 
   end
 
   def issues_this_year?
     return false unless issues.present?
     return false unless issues['past_year_issues_count'].present?
-    issues['past_year_issues_count'] > 0
+    (issues['past_year_issues_count'] - issues['past_year_bot_issues_count']) > 0
   end
 
   def pull_requests_this_year?
     return false unless issues.present?
     return false unless issues['past_year_pull_requests_count'].present?
-    issues['past_year_pull_requests_count'] > 0
+    (issues['past_year_pull_requests_count'] - issues['past_year_bot_pull_requests_count']) > 0
   end
 
   def archived?
@@ -567,7 +568,7 @@ class Project < ApplicationRecord
 
   def active?
     return false if archived?
-    commits_this_year? || issues_this_year?
+    commits_this_year? || issues_this_year? || pull_requests_this_year?
   end
 
   def fork?
