@@ -4,7 +4,7 @@ class Project < ApplicationRecord
 
   validates :url, presence: true, uniqueness: { case_sensitive: false }
 
-  has_many :votes, dependent: :destroy
+  has_many :votes, dependent: :delete_all
 
   scope :language, ->(language) { where("(repository ->> 'language') = ?", language) }
   scope :owner, ->(owner) { where("(repository ->> 'owner') = ?", owner) }
