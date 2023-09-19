@@ -30,7 +30,7 @@ class Project < ApplicationRecord
 
     csv_data.each do |row|
       next if row['git_url'].blank?
-      project = Project.find_or_create_by(url: row['git_url'])
+      project = Project.find_or_create_by(url: row['git_url'].downcase)
       project.name = row['project_name']
       project.description = row['oneliner']
       project.rubric = row['rubric']
@@ -50,9 +50,9 @@ class Project < ApplicationRecord
     response = conn.get
     return unless response.success?
     markdown = response.body
-    urls = markdown.scan(/\[([^\]]+)\]\(([^)]+)\)/).map{|m| m[1] }.select{|u| u.include?('github.com') || u.include?('gitlab.com') || u.include?('bitbucket.org') }
+    urls = markdown.scan(/\[([^\]]+)\]\(([^)]+)\)/).map{|m| m[1].downcase }.select{|u| u.include?('github.com') || u.include?('gitlab.com') || u.include?('bitbucket.org') }
     urls.each do |url|
-      project = Project.find_or_create_by(url: url)
+      project = Project.find_or_create_by(url: url.downcase)
       project.reviewed = true
       project.save
       project.sync_async unless project.last_synced_at.present?
