@@ -1,7 +1,7 @@
 <% if @project.commits && @project.commits['last_synced_at'] %>
     <hr>
     <h2>
-      Committers metadata
+      <%= link_to 'Committers metadata', @project.commits_url, target: :_blank %>
     </h2>
 
     <% if @project.commits['last_synced_at'] %>

@@ -2,7 +2,8 @@
 
     <hr>
     <h2>
-      Issue and Pull Request metadata
+      
+      <%= link_to 'Issue and Pull Request metadata', @project.issues_url, target: :_blank %>
     </h2>
 
   <% if @project.issues['last_synced_at'] %>

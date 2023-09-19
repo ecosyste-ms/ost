@@ -1,7 +1,7 @@
 <% if @project.owner %>
   <hr>
   <h2>
-    Owner metadata: 
+    <%= link_to 'Owner metadata', @project.owner_url, target: :_blank %>
   </h2>
 
   <ul>

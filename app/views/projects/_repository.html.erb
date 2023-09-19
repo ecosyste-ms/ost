@@ -1,6 +1,7 @@
 <% if @project.repository %>
     <h2>
-      Repository metadata: 
+      
+      <%= link_to 'Repository metadata', @project.repos_url, target: :_blank %>
     </h2>
 
     <p>

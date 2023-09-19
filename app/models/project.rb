@@ -216,12 +216,17 @@ class Project < ApplicationRecord
     repository["description"]
   end
 
-  def repos_url
+  def repos_api_url
     "https://repos.ecosyste.ms/api/v1/repositories/lookup?url=#{url}"
   end
 
+  def repos_url
+    return unless repository.present?
+    "https://repos.ecosyste.ms/hosts/#{repository['host']['name']}/repositories/#{repository['full_name']}"
+  end
+
   def fetch_repository
-    conn = Faraday.new(url: repos_url) do |faraday|
+    conn = Faraday.new(url: repos_api_url) do |faraday|
       faraday.response :follow_redirects
       faraday.adapter Faraday.default_adapter
     end
@@ -234,7 +239,7 @@ class Project < ApplicationRecord
     puts "Error fetching repository for #{url}"
   end
 
-  def owner_url
+  def owner_api_url
     return unless repository.present?
     return unless repository["owner"].present?
     return unless repository["host"].present?
@@ -242,9 +247,17 @@ class Project < ApplicationRecord
     "https://repos.ecosyste.ms/api/v1/hosts/#{repository['host']['name']}/owners/#{repository['owner']}"
   end
 
+  def owner_url
+    return unless repository.present?
+    return unless repository["owner"].present?
+    return unless repository["host"].present?
+    return unless repository["host"]["name"].present?
+    "https://repos.ecosyste.ms/hosts/#{repository['host']['name']}/owners/#{repository['owner']}"
+  end
+
   def fetch_owner
-    return unless owner_url.present?
-    conn = Faraday.new(url: owner_url) do |faraday|
+    return unless owner_api_url.present?
+    conn = Faraday.new(url: owner_api_url) do |faraday|
       faraday.response :follow_redirects
       faraday.adapter Faraday.default_adapter
     end
