@@ -549,7 +549,7 @@ class Project < ApplicationRecord
 
   def past_year_total_commits_exclude_bots
     return 0 unless commits.present?
-    commits['past_year_total_commits'] - past_year_total_bot_commits
+    past_year_total_commits - past_year_total_bot_commits
   end
 
   def past_year_total_bot_commits
