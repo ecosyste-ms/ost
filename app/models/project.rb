@@ -542,11 +542,24 @@ class Project < ApplicationRecord
     (packages_licenses + [repository_license]).compact.uniq.any?
   end
 
+  def past_year_total_commits
+    return 0 unless commits.present?
+    commits['past_year_total_commits'] - past_year_total_bot_commits
+  end
+
+  def past_year_total_bot_commits
+    return 0 unless commits.present?
+    commits['past_year_total_bot_commits'] || 0
+  end
+
   def commits_this_year?
     return false unless repository.present?
-    return false unless repository['pushed_at'].present?
-    # TODO use data from commits api to ignore bot commits
-    repository['pushed_at'] > 1.year.ago 
+    if commits.present?
+      past_year_total_commits > 0
+    else
+      return false unless repository['pushed_at'].present?
+      repository['pushed_at'] > 1.year.ago 
+    end
   end
 
   def issues_this_year?
