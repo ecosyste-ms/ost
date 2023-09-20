@@ -544,18 +544,23 @@ class Project < ApplicationRecord
 
   def past_year_total_commits
     return 0 unless commits.present?
+    commits['past_year_total_commits'] || 0
+  end
+
+  def past_year_total_commits_exclude_bots
+    return 0 unless commits.present?
     commits['past_year_total_commits'] - past_year_total_bot_commits
   end
 
   def past_year_total_bot_commits
     return 0 unless commits.present?
-    commits['past_year_total_bot_commits'] || 0
+    commits['past_year_total_bot_commits'].presence || 0
   end
 
   def commits_this_year?
     return false unless repository.present?
     if commits.present?
-      past_year_total_commits > 0
+      past_year_total_commits_exclude_bots > 0
     else
       return false unless repository['pushed_at'].present?
       repository['pushed_at'] > 1.year.ago 
