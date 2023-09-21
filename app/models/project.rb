@@ -148,6 +148,7 @@ class Project < ApplicationRecord
     fetch_commits
     fetch_events
     fetch_issues
+    fetch_citation_file
     update(last_synced_at: Time.now, matching_criteria: matching_criteria?)
     update_score
     ping
@@ -648,4 +649,49 @@ class Project < ApplicationRecord
       end
     end
   end
+
+  def citation_file_name
+    return unless repository.present?
+    return unless repository['metadata'].present?
+    repository['metadata']['files']['citation']
+  end
+
+  def download_url
+    return unless repository.present?
+    repository['download_url']
+  end
+
+  def archive_url(path)
+    return unless download_url.present?
+    "https://archives.ecosyste.ms/api/v1/archives/contents?url=#{download_url}&path=#{path}"
+  end
+
+  def fetch_citation_file
+    return unless citation_file_name.present?
+    return unless download_url.present?
+    conn = Faraday.new(url: archive_url(citation_file_name)) do |faraday|
+      faraday.response :follow_redirects
+      faraday.adapter Faraday.default_adapter
+    end
+    response = conn.get
+    return unless response.success?
+    json = JSON.parse(response.body)
+
+    self.citation_file = json['contents']
+    self.save
+  rescue
+    puts "Error fetching citation file for #{url}"
+  end
+
+  def parse_citation_file
+    return unless citation_file.present?
+    CFF::Index.read(citation_file).as_json
+  rescue
+    puts "Error parsing citation file for #{url}"
+  end
+
+  def blob_url(path)
+    return unless repository.present?
+    "#{repository['html_url']}/blob/#{repository['default_branch']}/#{path}"
+  end 
 end

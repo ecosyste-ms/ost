@@ -33,6 +33,7 @@ gem 'sidekiq-status'
 gem 'google-protobuf', '3.24.3'
 gem 'groupdate'
 gem 'simple_form'
+gem 'cff'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]

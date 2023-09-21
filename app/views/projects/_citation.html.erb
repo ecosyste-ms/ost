@@ -1,0 +1,4 @@
+<% if @project.citation_file %>
+  <h2>Citation (<%= link_to @project.citation_file_name, @project.blob_url(@project.citation_file_name),target: :_blank %>)</h2>
+  <pre><%= @project.citation_file %></pre>
+<% end %>
