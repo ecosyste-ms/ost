@@ -653,6 +653,7 @@ class Project < ApplicationRecord
   def citation_file_name
     return unless repository.present?
     return unless repository['metadata'].present?
+    return unless repository['metadata']['files'].present?
     repository['metadata']['files']['citation']
   end
 
