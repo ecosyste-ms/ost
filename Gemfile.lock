@@ -119,7 +119,7 @@ GEM
     faraday-typhoeus (1.0.0)
       faraday (~> 2.0)
       typhoeus (~> 1.4)
-    ffi (1.15.5)
+    ffi (1.16.2)
     globalid (1.2.1)
       activesupport (>= 6.1)
     google-protobuf (3.24.3)
