@@ -54,7 +54,7 @@ class ProjectsController < ApplicationController
     if params[:sort]
       @scope = @scope.order("#{params[:sort]} #{params[:order]}")
     else
-      @scope = @scope.order('vote_count asc, vote_score desc, score DESC nulls last')
+      @scope = @scope.order('vote_count asc, vote_score desc, created_at DESC')
     end
 
     @pagy, @projects = pagy(@scope)
