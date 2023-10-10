@@ -58,6 +58,13 @@
         <%end %>
       </tbody>
     </table>
+
+    <h4>Committer domains:</h4>
+    <ul>
+      <% @project.commiter_domains.each do |k,v| %>
+        <li><%= link_to k, "http://#{k}", target: :_blank %>: <%= v %></li>
+      <% end %>
+    </ul>  
     <% end %>
 
   <% end %>

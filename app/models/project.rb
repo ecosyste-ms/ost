@@ -695,4 +695,14 @@ class Project < ApplicationRecord
     return unless repository.present?
     "#{repository['html_url']}/blob/#{repository['default_branch']}/#{path}"
   end 
+
+  def commiter_domains
+    return unless commits.present?
+    return unless commits['committers'].present?
+    commits['committers'].map{|c| c['email'].split('@')[1] }.reject{|e| e.nil? || ignored_domains.include?(e) || e.ends_with?('.local') }.group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse
+  end
+
+  def ignored_domains
+    ['users.noreply.github.com', "googlemail.com", "gmail.com", "hotmail.com", "outlook.com","yahoo.com","protonmail.com","web.de","example.com","live.com","icloud.com","hotmail.fr","yahoo.se","yahoo.fr"]
+  end
 end
