@@ -699,7 +699,7 @@ class Project < ApplicationRecord
   def commiter_domains
     return unless commits.present?
     return unless commits['committers'].present?
-    commits['committers'].map{|c| c['email'].split('@')[1] }.reject{|e| e.nil? || ignored_domains.include?(e) || e.ends_with?('.local') }.group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse
+    commits['committers'].map{|c| c['email'].split('@')[1].try(:downcase) }.reject{|e| e.split('.').length ==1 || e.nil? || ignored_domains.include?(e) || e.ends_with?('.local') }.group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse
   end
 
   def ignored_domains
