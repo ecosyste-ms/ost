@@ -145,7 +145,7 @@ GEM
       thor (>= 0.14, < 2.0)
     json_schema (0.20.9)
     language_list (1.2.1)
-    loofah (2.21.3)
+    loofah (2.21.4)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     mail (2.8.1)
