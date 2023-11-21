@@ -149,6 +149,7 @@ class Project < ApplicationRecord
     fetch_commits
     fetch_events
     fetch_issue_stats
+    sync_issues
     fetch_citation_file
     update(last_synced_at: Time.now, matching_criteria: matching_criteria?)
     update_score
@@ -715,7 +716,7 @@ class Project < ApplicationRecord
     response = conn.get
     return unless response.success?
     issues_list_url = JSON.parse(response.body)['issues_url'] + '?per_page=1000&pull_request=false&state=open'
-    # issues_list_url = issues_list_url + '&updated_after=' + last_synced_at.to_fs(:iso8601) if last_synced_at.present?
+    issues_list_url = issues_list_url + '&updated_after=' + last_synced_at.to_fs(:iso8601) if last_synced_at.present?
 
     conn = Faraday.new(url: issues_list_url) do |faraday|
       faraday.response :follow_redirects
