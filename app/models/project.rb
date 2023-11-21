@@ -5,6 +5,7 @@ class Project < ApplicationRecord
   validates :url, presence: true, uniqueness: { case_sensitive: false }
 
   has_many :votes, dependent: :delete_all
+  has_many :issues, dependent: :delete_all
 
   scope :language, ->(language) { where("(repository ->> 'language') = ?", language) }
   scope :owner, ->(owner) { where("(repository ->> 'owner') = ?", owner) }
@@ -147,7 +148,7 @@ class Project < ApplicationRecord
     combine_keywords
     fetch_commits
     fetch_events
-    fetch_issues
+    fetch_issue_stats
     fetch_citation_file
     update(last_synced_at: Time.now, matching_criteria: matching_criteria?)
     update_score
@@ -406,25 +407,25 @@ class Project < ApplicationRecord
     "https://issues.ecosyste.ms/api/v1/repositories/lookup?url=#{url}"
   end
 
-  def issues_url
+  def issue_stats_url
     "https://issues.ecosyste.ms/repositories/lookup?url=#{url}"
   end
 
-  def fetch_issues
+  def fetch_issue_stats
     conn = Faraday.new(url: issues_api_url) do |faraday|
       faraday.response :follow_redirects
       faraday.adapter Faraday.default_adapter
     end
     response = conn.get
     return unless response.success?
-    self.issues = JSON.parse(response.body)
+    self.issues_stats = JSON.parse(response.body)
     self.save
   rescue
     puts "Error fetching issues for #{url}"
   end
 
-  def issues
-    i = read_attribute(:issues) || {}
+  def issue_stats
+    i = read_attribute(:issues_stats) || {}
     JSON.parse(i.to_json, object_class: OpenStruct)
   end
 
@@ -521,8 +522,8 @@ class Project < ApplicationRecord
   end
 
   def issue_associations
-    return [] unless issues.present?
-    (issues.issue_author_associations_count.to_h.keys + issues.pull_request_author_associations_count.to_h.keys).uniq
+    return [] unless issues_stats.present?
+    (issues_stats.issue_author_associations_count.to_h.keys + issues_stats.pull_request_author_associations_count.to_h.keys).uniq
   end
 
   def external_users?
@@ -569,15 +570,15 @@ class Project < ApplicationRecord
   end
 
   def issues_this_year?
-    return false unless issues.present?
-    return false unless issues['past_year_issues_count'].present?
-    (issues['past_year_issues_count'] - issues['past_year_bot_issues_count']) > 0
+    return false unless issues_stats.present?
+    return false unless issues_stats['past_year_issues_count'].present?
+    (issues_stats['past_year_issues_count'] - issues_stats['past_year_bot_issues_count']) > 0
   end
 
   def pull_requests_this_year?
-    return false unless issues.present?
-    return false unless issues['past_year_pull_requests_count'].present?
-    (issues['past_year_pull_requests_count'] - issues['past_year_bot_pull_requests_count']) > 0
+    return false unless issues_stats.present?
+    return false unless issues_stats['past_year_pull_requests_count'].present?
+    (issues_stats['past_year_pull_requests_count'] - issues_stats['past_year_bot_pull_requests_count']) > 0
   end
 
   def archived?
@@ -704,5 +705,35 @@ class Project < ApplicationRecord
 
   def ignored_domains
     ['users.noreply.github.com', "googlemail.com", "gmail.com", "hotmail.com", "outlook.com","yahoo.com","protonmail.com","web.de","example.com","live.com","icloud.com","hotmail.fr","yahoo.se","yahoo.fr"]
+  end
+
+  def sync_issues
+    conn = Faraday.new(url: issues_api_url) do |faraday|
+      faraday.response :follow_redirects
+      faraday.adapter Faraday.default_adapter
+    end
+    response = conn.get
+    return unless response.success?
+    issues_list_url = JSON.parse(response.body)['issues_url'] + '?per_page=1000&pull_request=false&state=open'
+    # issues_list_url = issues_list_url + '&updated_after=' + last_synced_at.to_fs(:iso8601) if last_synced_at.present?
+
+    conn = Faraday.new(url: issues_list_url) do |faraday|
+      faraday.response :follow_redirects
+      faraday.adapter Faraday.default_adapter
+    end
+    response = conn.get
+    return unless response.success?
+    
+    issues_json = JSON.parse(response.body)
+
+    # TODO pagination
+    # TODO upsert (plus unique index)
+
+    issues_json.each do |issue|
+      issues.find_or_create_by(number: issue['number']) do |i|
+        i.assign_attributes(issue)
+        i.save
+      end
+    end
   end
 end

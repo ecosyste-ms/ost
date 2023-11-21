@@ -1,0 +1,45 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  repository_id: 1
+  uuid: MyString
+  node_id: MyString
+  number: 1
+  state: MyString
+  title: MyString
+  body: MyString
+  user: MyString
+  labels: MyString
+  assignees: MyString
+  locked: false
+  comments_count: 1
+  pull_request: false
+  closed_at: 2023-11-21 10:08:13
+  closed_by: MyString
+  author_association: MyString
+  state_reason: MyString
+  time_to_close: 1
+  merged_at: 2023-11-21 10:08:13
+  dependency_meta: 
+
+two:
+  repository_id: 1
+  uuid: MyString
+  node_id: MyString
+  number: 1
+  state: MyString
+  title: MyString
+  body: MyString
+  user: MyString
+  labels: MyString
+  assignees: MyString
+  locked: false
+  comments_count: 1
+  pull_request: false
+  closed_at: 2023-11-21 10:08:13
+  closed_by: MyString
+  author_association: MyString
+  state_reason: MyString
+  time_to_close: 1
+  merged_at: 2023-11-21 10:08:13
+  dependency_meta: 

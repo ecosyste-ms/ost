@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_21_155934) do
+ActiveRecord::Schema[7.1].define(version: 2023_11_21_103117) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "plpgsql"
@@ -20,6 +20,33 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_21_155934) do
     t.string "description"
     t.string "url"
     t.integer "projects_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "issues", force: :cascade do |t|
+    t.integer "project_id"
+    t.string "uuid"
+    t.string "node_id"
+    t.integer "number"
+    t.string "state"
+    t.string "title"
+    t.string "body"
+    t.string "user"
+    t.string "labels"
+    t.string "assignees"
+    t.boolean "locked"
+    t.integer "comments_count"
+    t.boolean "pull_request"
+    t.datetime "closed_at"
+    t.string "closed_by"
+    t.string "author_association"
+    t.string "state_reason"
+    t.integer "time_to_close"
+    t.datetime "merged_at"
+    t.json "dependency_metadata"
+    t.string "html_url"
+    t.string "url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -37,7 +64,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_21_155934) do
     t.string "keywords", default: [], array: true
     t.json "dependencies"
     t.datetime "last_synced_at"
-    t.json "issues"
+    t.json "issues_stats"
     t.float "score", default: 0.0
     t.json "owner"
     t.string "name"

@@ -34,6 +34,8 @@ Rails.application.routes.draw do
     end
     resources :votes, only: [:create]
   end
+
+  resources :issues, only: [:index]
   
   resources :exports, only: [:index], path: 'open-data'
 

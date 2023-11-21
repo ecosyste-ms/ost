@@ -1,0 +1,10 @@
+<% @meta_title = "Open issues" %>
+
+<div class="container-sm">
+  <h1 class='mb-3'>
+    Open Issues
+  </h1>
+  
+  <%= render @issues %>
+  <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>  
+</div>
