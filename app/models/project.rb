@@ -530,7 +530,7 @@ class Project < ApplicationRecord
 
   def issue_associations
     return [] unless issues_stats.present?
-    (issues_stats.issue_author_associations_count.to_h.keys + issues_stats.pull_request_author_associations_count.to_h.keys).uniq
+    (issues_stats['issue_author_associations_count'].keys + issues_stats['pull_request_author_associations_count'].keys).uniq
   end
 
   def external_users?
