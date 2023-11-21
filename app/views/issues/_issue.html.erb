@@ -10,7 +10,7 @@
         </h5>
       
         <p class="card-subtitle mb-2 text-muted"><small>
-          Project: <%= link_to issue.project.name, project_url(issue.project) %><br/>
+          Project: <%= link_to issue.project.to_s, project_url(issue.project) %><br/>
           Opened by <%= issue.user %> <%= time_ago_in_words(issue.created_at) %> ago
             - <%= pluralize issue.comments_count, 'comment' %>   
           <br />
