@@ -15,6 +15,7 @@ Rails.application.routes.draw do
 
   namespace :api, :defaults => {:format => :json} do
     namespace :v1 do
+      resources :issues
       resources :jobs
       resources :projects, constraints: { id: /.*/ }, only: [:index, :show] do
         collection do

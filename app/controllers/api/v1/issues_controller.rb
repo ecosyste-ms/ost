@@ -1,7 +1,8 @@
-class IssuesController < ApplicationController
+class Api::V1::IssuesController < Api::V1::ApplicationController
   def index
-    scope = Issue.where(pull_request: false, state: 'open').joins(:project).where(projects: { reviewed: true }).sustainfest
-    scope = scope.where('issues.created_at > ?', 1.year.ago).includes(:project)
+    scope = Issue.where(pull_request: false, state: 'open').includes(:project)
+    scope = scope.joins(:project).where(projects: { reviewed: true }).sustainfest
+    scope = scope.where('issues.created_at > ?', 1.year.ago) 
 
     if params[:sort].present? || params[:order].present?
       sort = params[:sort].presence || 'issues.created_at'
