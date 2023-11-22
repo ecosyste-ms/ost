@@ -125,4 +125,7 @@ components:
         updated_at:
           type: string
           format: date-time
-    
+        avatar_url:
+          type: string
+        language:
+          type: string
