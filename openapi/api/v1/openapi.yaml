@@ -84,7 +84,34 @@ paths:
             application/json:
               schema:
                   $ref: '#/components/schemas/Project'
-
+  /issues:
+    get:
+      ost: get issues
+      operationId: getIssues
+      tags:
+        - issues
+      parameters:
+        - name: page
+          in: query
+          description: pagination page number 
+          required: false
+          schema:
+            type: integer
+        - name: per_page
+          in: query
+          description: Number of records to return 
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Issue'
 components:
   schemas:
     Project:
