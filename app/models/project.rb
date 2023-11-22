@@ -431,6 +431,11 @@ class Project < ApplicationRecord
     puts "Error fetching issues for #{url}"
   end
 
+  def language
+    return unless repository.present?
+    repository['language']
+  end
+
   def issue_stats
     i = read_attribute(:issues_stats) || {}
     JSON.parse(i.to_json, object_class: OpenStruct)
