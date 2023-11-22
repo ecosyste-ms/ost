@@ -1,6 +1,6 @@
 class IssuesController < ApplicationController
   def index
-    scope = Issue.where(pull_request: false, state: 'open').joins(:project).where(projects: { reviewed: true })
+    scope = Issue.where(pull_request: false, state: 'open').joins(:project).where(projects: { reviewed: true }).sustainfest
 
     if params[:sort].present? || params[:order].present?
       sort = params[:sort].presence || 'created_at'
