@@ -2,7 +2,7 @@ class Issue < ApplicationRecord
   belongs_to :project
 
   scope :label, ->(labels) { where("labels && ARRAY[?]::varchar[]", labels) }
-  scope :sustainfest, -> { label(["sustainfest", 'help wanted', 'good first issue']) }
+  scope :sustainfest, -> { label(["sustainfest", 'help wanted', 'good first issue','hacktoberfest']) }
 
   def old_labels
     JSON.parse(labels_raw)
