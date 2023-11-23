@@ -18,7 +18,7 @@ servers:
 paths:
   /projects:
     get:
-      ost: get projects
+      description: get projects
       operationId: getProjects
       tags:
         - projects
@@ -46,7 +46,7 @@ paths:
                   $ref: '#/components/schemas/Project'
   /projects/{id}:
     get:
-      ost: get a project by id
+      description: get a project by id
       operationId: getProject
       tags:
         - projects
@@ -66,7 +66,7 @@ paths:
                 $ref: '#/components/schemas/Project'
   /projects/lookup:
     get:
-      ost: lookup project by url
+      description: lookup project by url
       operationId: lookupProject
       tags:
         - projects
@@ -86,7 +86,7 @@ paths:
                   $ref: '#/components/schemas/Project'
   /issues:
     get:
-      ost: get issues
+      description: get issues
       operationId: getIssues
       tags:
         - issues
