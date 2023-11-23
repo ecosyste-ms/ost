@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_22_101211) do
+ActiveRecord::Schema[7.1].define(version: 2023_11_23_171908) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "plpgsql"
@@ -76,6 +76,8 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_22_101211) do
     t.integer "vote_count", default: 0
     t.integer "vote_score", default: 0
     t.text "citation_file"
+    t.string "category"
+    t.string "sub_category"
     t.index ["collection_id"], name: "index_projects_on_collection_id"
     t.index ["url"], name: "index_projects_on_url", unique: true
   end

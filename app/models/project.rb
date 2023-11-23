@@ -43,21 +43,22 @@ class Project < ApplicationRecord
 
   def self.import_from_readme
     url = 'https://raw.githubusercontent.com/protontypes/open-sustainable-technology/main/README.md'
-    conn = Faraday.new(url: url) do |faraday|
-      faraday.response :follow_redirects
-      faraday.adapter Faraday.default_adapter
-    end
+    readme = ReadmeParser.load(url)
 
-    response = conn.get
-    return unless response.success?
-    markdown = response.body
-    urls = markdown.scan(/\[([^\]]+)\]\(([^)]+)\)/).map{|m| m[1].downcase }.select{|u| u.include?('github.com') || u.include?('gitlab.com') || u.include?('bitbucket.org') }
-    urls.each do |url|
-      project = Project.find_or_create_by(url: url.downcase)
-      project.reviewed = true
-      project.save
-      project.sync_async unless project.last_synced_at.present?
-    end
+    readme.parse_links.each do |category, sub_categories|
+      sub_categories.each do |sub_category, links|
+        links.each do |link|
+          project = Project.find_or_create_by(url: link[:url].downcase)
+          project.name = link[:name]
+          project.description = link[:description]
+          project.reviewed = true
+          project.category = category
+          project.sub_category = sub_category
+          project.save
+          project.sync_async unless project.last_synced_at.present?
+        end
+      end
+    end 
   end
 
   def self.discover_via_topics(limit=100)
