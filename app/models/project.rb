@@ -155,8 +155,8 @@ class Project < ApplicationRecord
     fetch_commits
     fetch_events
     fetch_issue_stats
-    sync_issues
-    fetch_citation_file
+    sync_issues if reviewed?
+    fetch_citation_file if reviewed?
     update(last_synced_at: Time.now, matching_criteria: matching_criteria?)
     update_score
     ping
