@@ -156,6 +156,10 @@ components:
           type: string
         language:
           type: string
+        category:
+          type: string
+        sub_category:
+          type: string
     Issue:
       type: object
       properties:
