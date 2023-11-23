@@ -17,4 +17,12 @@ class Api::V1::IssuesController < Api::V1::ApplicationController
 
     @pagy, @issues = pagy(scope)
   end
+
+  def sustainfest
+    scope = Issue.where(pull_request: false, state: 'open').includes(:project)
+    scope = scope.joins(:project).where(projects: { reviewed: true }).sustainfest
+    scope = scope.where('issues.created_at > ?', 1.year.ago) 
+
+    @projects = scope.group_by(&:project)
+  end
 end
