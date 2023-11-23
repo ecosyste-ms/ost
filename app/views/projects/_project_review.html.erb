@@ -59,10 +59,10 @@
                 Committers: <%= project.commits && project.commits['total_committers'] %>
               </li>
               <li>
-                Issues: <%= project.issues && project.issues['issues_count'] %>
+                Issues: <%= project.issues_stats && project.issues_stats['issues_count'] %>
               </li>
               <li>
-                Pull Requests: <%= project.issues && project.issues['pull_requests_count'] %>
+                Pull Requests: <%= project.issues_stats && project.issues_stats['pull_requests_count'] %>
               </li>
             </ul>
           </div>

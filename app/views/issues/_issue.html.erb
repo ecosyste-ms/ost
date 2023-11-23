@@ -11,8 +11,11 @@
       
         <p class="card-subtitle mb-2 text-muted"><small>
           Project: <%= link_to issue.project.to_s, project_url(issue.project) %>
+          <% if issue.project.category %>
+            - <%= issue.project.category %> - <%= issue.project.sub_category %>
+          <% end %>
           <% if issue.project.language%>
-            <span class='text-muted'><i>(<%= issue.project.language %>)</i></span>
+            - <%= issue.project.language %>
           <% end %>
           <br/>
           Opened by <%= issue.user %> <%= time_ago_in_words(issue.created_at) %> ago
