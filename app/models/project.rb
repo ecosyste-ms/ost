@@ -141,6 +141,22 @@ class Project < ApplicationRecord
     name.presence || url
   end
 
+  def repository_url
+    repo_url = github_pages_to_repo_url(url)
+    return repo_url if repo_url.present?
+    url
+  end
+
+  def github_pages_to_repo_url(github_pages_url)
+    match = github_pages_url.chomp('/').match(/https?:\/\/(.+)\.github\.io\/(.+)/)
+    return nil unless match
+  
+    username = match[1]
+    repo_name = match[2]
+  
+    "https://github.com/#{username}/#{repo_name}"
+  end
+
   def first_created
     return unless repository.present?
     Time.parse(repository['created_at'])
@@ -227,7 +243,7 @@ class Project < ApplicationRecord
   end
 
   def repos_api_url
-    "https://repos.ecosyste.ms/api/v1/repositories/lookup?url=#{url}"
+    "https://repos.ecosyste.ms/api/v1/repositories/lookup?url=#{repository_url}"
   end
 
   def repos_url
@@ -246,7 +262,7 @@ class Project < ApplicationRecord
     self.repository = JSON.parse(response.body)
     self.save
   rescue
-    puts "Error fetching repository for #{url}"
+    puts "Error fetching repository for #{repository_url}"
   end
 
   def owner_api_url
@@ -277,7 +293,7 @@ class Project < ApplicationRecord
     self.owner = JSON.parse(response.body)
     self.save
   rescue
-    puts "Error fetching owner for #{url}"
+    puts "Error fetching owner for #{repository_url}"
   end
 
   def timeline_url
@@ -313,14 +329,14 @@ class Project < ApplicationRecord
     }
     self.save
   rescue
-    puts "Error fetching events for #{url}"
+    puts "Error fetching events for #{repository_url}"
   end
 
   # TODO fetch repo dependencies
   # TODO fetch repo tags
 
   def packages_url
-    "https://packages.ecosyste.ms/api/v1/packages/lookup?repository_url=#{url}"
+    "https://packages.ecosyste.ms/api/v1/packages/lookup?repository_url=#{repository_url}"
   end
 
   def fetch_packages
@@ -334,15 +350,15 @@ class Project < ApplicationRecord
     self.packages = JSON.parse(response.body)
     self.save
   rescue
-    puts "Error fetching packages for #{url}"
+    puts "Error fetching packages for #{repository_url}"
   end
 
   def commits_api_url
-    "https://commits.ecosyste.ms/api/v1/repositories/lookup?url=#{url}"
+    "https://commits.ecosyste.ms/api/v1/repositories/lookup?url=#{repository_url}"
   end
 
   def commits_url
-    "https://commits.ecosyste.ms/repositories/lookup?url=#{url}"
+    "https://commits.ecosyste.ms/repositories/lookup?url=#{repository_url}"
   end
 
   def fetch_commits
@@ -355,7 +371,7 @@ class Project < ApplicationRecord
     self.commits = JSON.parse(response.body)
     self.save
   rescue
-    puts "Error fetching commits for #{url}"
+    puts "Error fetching commits for #{repository_url}"
   end
 
   def committers_names
@@ -387,7 +403,7 @@ class Project < ApplicationRecord
     self.dependencies = JSON.parse(response.body)
     self.save
   rescue
-    puts "Error fetching dependencies for #{url}"
+    puts "Error fetching dependencies for #{repository_url}"
   end
 
   def dependency_packages
@@ -412,11 +428,11 @@ class Project < ApplicationRecord
   end
 
   def issues_api_url
-    "https://issues.ecosyste.ms/api/v1/repositories/lookup?url=#{url}"
+    "https://issues.ecosyste.ms/api/v1/repositories/lookup?url=#{repository_url}"
   end
 
   def issue_stats_url
-    "https://issues.ecosyste.ms/repositories/lookup?url=#{url}"
+    "https://issues.ecosyste.ms/repositories/lookup?url=#{repository_url}"
   end
 
   def fetch_issue_stats
@@ -429,7 +445,7 @@ class Project < ApplicationRecord
     self.issues_stats = JSON.parse(response.body)
     self.save
   rescue
-    puts "Error fetching issues for #{url}"
+    puts "Error fetching issues for #{repository_url}"
   end
 
   def language
@@ -695,14 +711,14 @@ class Project < ApplicationRecord
     self.citation_file = json['contents']
     self.save
   rescue
-    puts "Error fetching citation file for #{url}"
+    puts "Error fetching citation file for #{repository_url}"
   end
 
   def parse_citation_file
     return unless citation_file.present?
     CFF::Index.read(citation_file).as_json
   rescue
-    puts "Error parsing citation file for #{url}"
+    puts "Error parsing citation file for #{repository_url}"
   end
 
   def blob_url(path)
