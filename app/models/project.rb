@@ -50,7 +50,19 @@ class Project < ApplicationRecord
     readme.parse_links.each do |category, sub_categories|
       sub_categories.each do |sub_category, links|
         links.each do |link|
-          project = Project.find_or_create_by(url: link[:url].downcase)
+          conn = Faraday.new(url: link[:url].downcase) do |faraday|
+            faraday.response :follow_redirects
+            faraday.adapter Faraday.default_adapter
+          end
+      
+          response = conn.get
+          if response.success?
+            url = link[:url].downcase
+          else
+            url = response.env.url.to_s
+          end
+
+          project = Project.find_or_create_by(url: )
           project.name = link[:name]
           project.description = link[:description]
           project.reviewed = true
