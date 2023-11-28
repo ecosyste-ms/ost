@@ -1,7 +1,7 @@
 class Api::V1::IssuesController < Api::V1::ApplicationController
   def index
     scope = Issue.where(pull_request: false, state: 'open').includes(:project)
-    scope = scope.joins(:project).where(projects: { reviewed: true }).sustainfest
+    scope = scope.joins(:project).where(projects: { reviewed: true }).openclimateaction
     scope = scope.where('issues.created_at > ?', 1.year.ago) 
 
     if params[:sort].present? || params[:order].present?
@@ -18,10 +18,10 @@ class Api::V1::IssuesController < Api::V1::ApplicationController
     @pagy, @issues = pagy(scope)
   end
 
-  def sustainfest
+  def openclimateaction
     project_ids = Issue.good_first_issue.pluck(:project_id).uniq
 
-    scope = Project.where(id: project_ids).reviewed.includes(:sustainfest_issues)
+    scope = Project.where(id: project_ids).reviewed.includes(:openclimateaction_issues)
 
     if params[:sort].present? || params[:order].present?
       sort = params[:sort].presence || 'projects.updated_at'

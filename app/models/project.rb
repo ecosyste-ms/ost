@@ -7,7 +7,7 @@ class Project < ApplicationRecord
   has_many :votes, dependent: :delete_all
   has_many :issues, dependent: :delete_all
 
-  has_many :sustainfest_issues, -> { good_first_issue }, class_name: 'Issue'
+  has_many :openclimateaction_issues, -> { good_first_issue }, class_name: 'Issue'
 
   scope :language, ->(language) { where("(repository ->> 'language') = ?", language) }
   scope :owner, ->(owner) { where("(repository ->> 'owner') = ?", owner) }
