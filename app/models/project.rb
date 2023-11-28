@@ -54,12 +54,16 @@ class Project < ApplicationRecord
             faraday.response :follow_redirects
             faraday.adapter Faraday.default_adapter
           end
-      
-          response = conn.get
-          if response.success?
+          
+          begin
+            response = conn.get
+            if response.success?
+              url = link[:url].downcase
+            else
+              url = response.env.url.to_s
+            end
+          rescue
             url = link[:url].downcase
-          else
-            url = response.env.url.to_s
           end
 
           project = Project.find_or_create_by(url: )
