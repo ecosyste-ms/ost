@@ -1,8 +1,7 @@
 class Api::V1::IssuesController < Api::V1::ApplicationController
   def index
     scope = Issue.where(pull_request: false, state: 'open').includes(:project)
-    scope = scope.joins(:project).where(projects: { reviewed: true }).openclimateaction
-    scope = scope.where('issues.created_at > ?', 1.year.ago) 
+    scope = scope.joins(:project).where(projects: { reviewed: true }).openclimateaction.good_first_issue
 
     if params[:sort].present? || params[:order].present?
       sort = params[:sort].presence || 'issues.created_at'
