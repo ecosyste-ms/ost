@@ -755,7 +755,7 @@ class Project < ApplicationRecord
   end
 
   def sync_issues
-    conn = Faraday.new(url: pp.issues_api_url) do |faraday|
+    conn = Faraday.new(url: issues_api_url) do |faraday|
       faraday.response :follow_redirects
       faraday.adapter Faraday.default_adapter
     end
