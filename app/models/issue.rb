@@ -3,7 +3,7 @@ class Issue < ApplicationRecord
 
   scope :label, ->(labels) { where("labels && ARRAY[?]::varchar[]", labels) }
   scope :openclimateaction, -> { label(["open climate action", 'help wanted', 'good first issue', 'Good First Issue','hacktoberfest', 'Hacktoberfest']) }
-  scope :good_first_issue, -> { openclimateaction.where(pull_request: false, state: 'open').where('issues.created_at > ?', 2.years.ago)  }
+  scope :good_first_issue, -> { openclimateaction.where(pull_request: false, state: 'open').where('issues.updated_at > ?', 2.years.ago)  }
 
   def old_labels
     JSON.parse(labels_raw)
