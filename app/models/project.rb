@@ -755,14 +755,14 @@ class Project < ApplicationRecord
   end
 
   def sync_issues
-    conn = Faraday.new(url: issues_api_url) do |faraday|
+    conn = Faraday.new(url: pp.issues_api_url) do |faraday|
       faraday.response :follow_redirects
       faraday.adapter Faraday.default_adapter
     end
     response = conn.get
     return unless response.success?
     issues_list_url = JSON.parse(response.body)['issues_url'] + '?per_page=1000&pull_request=false&state=open'
-    issues_list_url = issues_list_url + '&updated_after=' + last_synced_at.to_fs(:iso8601) if last_synced_at.present?
+    # issues_list_url = issues_list_url + '&updated_after=' + last_synced_at.to_fs(:iso8601) if last_synced_at.present?
 
     conn = Faraday.new(url: issues_list_url) do |faraday|
       faraday.response :follow_redirects
