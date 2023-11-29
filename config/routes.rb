@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :issues do
         collection do
-          get :sustainfest
+          get :openclimateaction
         end
       end
       resources :jobs
