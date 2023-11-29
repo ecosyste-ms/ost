@@ -19,6 +19,7 @@
           <% end %>
           <br/>
           Opened by <%= issue.user %> <%= time_ago_in_words(issue.created_at) %> ago
+          - Last Updated <%= time_ago_in_words(issue.updated_at) %> ago
             - <%= pluralize issue.comments_count, 'comment' %>   
           <br />
           <% if issue.labels.any? %>
