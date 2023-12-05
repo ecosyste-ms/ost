@@ -472,7 +472,7 @@ class Project < ApplicationRecord
   end
 
   def language_with_default
-    language.presence || 'unknown'
+    language.presence || 'Unknown'
   end
 
   def issue_stats
