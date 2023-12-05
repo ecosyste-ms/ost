@@ -58,9 +58,9 @@ class Project < ApplicationRecord
           begin
             response = conn.get
             if response.success?
-              url = link[:url].downcase
+              url = response.env.url.to_s.downcase
             else
-              url = response.env.url.to_s
+              url = link[:url].downcase
             end
           rescue
             url = link[:url].downcase
@@ -779,7 +779,7 @@ class Project < ApplicationRecord
     issues_json.each do |issue|
       issues.find_or_create_by(number: issue['number']) do |i|
         i.assign_attributes(issue)
-        i.save
+        i.save(touch: false)
       end
     end
   end
