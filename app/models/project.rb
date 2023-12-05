@@ -471,6 +471,10 @@ class Project < ApplicationRecord
     repository['language']
   end
 
+  def language_with_default
+    language.presence || 'unknown'
+  end
+
   def issue_stats
     i = read_attribute(:issues_stats) || {}
     JSON.parse(i.to_json, object_class: OpenStruct)
