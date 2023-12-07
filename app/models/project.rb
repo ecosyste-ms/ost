@@ -429,6 +429,11 @@ class Project < ApplicationRecord
     dependencies.map{|d| d["dependencies"]}.flatten.select{|d| d['direct'] }.map{|d| [d['ecosystem'],d["package_name"].downcase]}.uniq
   end
 
+  def dependency_ecosystems
+    return [] unless dependencies.present?
+    dependencies.map{|d| d["dependencies"]}.flatten.select{|d| d['direct'] }.map{|d| d['ecosystem']}.uniq
+  end
+
   def fetch_dependent_repos
     return unless packages.present?
     dependent_repos = []

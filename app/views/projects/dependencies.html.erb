@@ -9,44 +9,83 @@
     The most used dependencies in Open Sustain projects.
   </p>
 
-  <div class="card mb-3 d-flex">
-    <div class="card-header">
-      Most used dependencies across all categories
-    </div>
-    <ul class="list-group list-group-flush">
-      <% @dependencies.each do |dependency, count| %>
-        <li class="list-group-item">
-          <%= dependency[0] %> : <%= dependency[1] %>
-          <small class='ps-3 text-muted'>
-            <i><%= pluralize count, 'dependent project' %></i>
-          </small>
-        </li>  
-      <% end %>
-    </ul>
-  </div>
-
-  <% top_dependencies = @dependencies.map(&:first) %>
-
-  <% @projects.group_by(&:category).each do |category, projects|%>
-    <div class="card mb-3 d-flex">
-      <div class="card-header">
-        Most used dependencies in <%= category %>
+  <div class='row'>
+    <div class='col-md-8'>
+      
+      <div class="card mb-3 d-flex">
+        <div class="card-header">
+          Most used dependencies across all categories
+        </div>
+        <ul class="list-group list-group-flush">
+          <% @dependencies.each do |dependency, count| %>
+            <li class="list-group-item">
+              <%= dependency[0] %> : <%= dependency[1] %>
+              <small class='ps-3 text-muted'>
+                <i><%= pluralize count, 'dependent project' %></i>
+              </small>
+            </li>  
+          <% end %>
+        </ul>
       </div>
-      <ul class="list-group list-group-flush">
-        <% dependencies = projects.map(&:dependency_packages).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse %>
-        <% filtered_dependencies = dependencies.reject{|p| top_dependencies.include? p[0]}.first(50) %>
-        <% filtered_dependencies.each do |dependency, count| %>
-          <% next if count < 2 %>
-          <li class="list-group-item">
-            <%= dependency[0] %> : <%= dependency[1] %> 
 
-            <small class='ps-3 text-muted'>
-              <i><%= pluralize count, 'dependent project' %></i>
-            </small>
-          </li>  
-        <% end %>
-      </ul>
+      <% top_dependencies = @dependencies.map(&:first) %>
+
+      <% @projects.group_by(&:category).each do |category, projects|%>
+        <div class="card mb-3 d-flex">
+          <div class="card-header">
+            Most used dependencies in <%= category %>
+          </div>
+          <ul class="list-group list-group-flush">
+            <% dependencies = projects.map(&:dependency_packages).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse %>
+            <% filtered_dependencies = dependencies.reject{|p| top_dependencies.include? p[0]}.first(50) %>
+            <% filtered_dependencies.each do |dependency, count| %>
+              <% next if count < 2 %>
+              <li class="list-group-item">
+                <%= dependency[0] %> : <%= dependency[1] %> 
+
+                <small class='ps-3 text-muted'>
+                  <i><%= pluralize count, 'dependent project' %></i>
+                </small>
+              </li>  
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
     </div>
-  <% end %>
+    <div class='col-md-4'>
+      <div class="card mb-3 d-flex">
+        <div class="card-header">
+          Most used package managers across all categories
+        </div>
+        <ul class="list-group list-group-flush">
+          <% @projects.map(&:dependency_ecosystems).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse.each do |ecosystem, count| %>
+            <li class="list-group-item">
+              <%= ecosystem %>
+              <small class='ps-3 text-muted'>
+                <i><%= pluralize count, 'project' %></i>
+              </small>
+            </li>  
+          <% end %>
+        </ul>
+      </div>
 
+      <% @projects.group_by(&:category).each do |category, projects|%>
+        <div class="card mb-3 d-flex">
+          <div class="card-header">
+            Most used package managers in <%= category %>
+          </div>
+          <ul class="list-group list-group-flush">
+            <% projects.map(&:dependency_ecosystems).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse.each do |ecosystem, count| %>
+            <li class="list-group-item">
+              <%= ecosystem %>
+              <small class='ps-3 text-muted'>
+                <i><%= pluralize count, 'project' %></i>
+              </small>
+            </li>  
+          <% end %>
+          </ul>
+        </div>
+      <% end %>
+    </div>
 </div>
