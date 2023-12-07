@@ -36,6 +36,7 @@ Rails.application.routes.draw do
     collection do
       post :lookup
       get :review
+      get :dependencies
     end
     resources :votes, only: [:create]
   end

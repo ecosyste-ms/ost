@@ -89,4 +89,9 @@ class ProjectsController < ApplicationController
   def project_params
     params.require(:project).permit(:url, :name, :description)
   end
+
+  def dependencies
+    @projects = Project.reviewed
+    @dependencies = @projects.map(&:dependency_packages).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse.first(50)
+  end
 end
