@@ -424,14 +424,18 @@ class Project < ApplicationRecord
     puts "Error fetching dependencies for #{repository_url}"
   end
 
+  def ignored_ecosystems
+    ['actions', 'docker', 'homebrew']
+  end
+
   def dependency_packages
     return [] unless dependencies.present?
-    dependencies.map{|d| d["dependencies"]}.flatten.select{|d| d['direct'] }.map{|d| [d['ecosystem'],d["package_name"].downcase]}.uniq
+    dependencies.map{|d| d["dependencies"]}.flatten.select{|d| d['direct'] }.reject{|d| ignored_ecosystems.include?(d['ecosystem']) }.map{|d| [d['ecosystem'],d["package_name"].downcase]}.uniq
   end
 
   def dependency_ecosystems
     return [] unless dependencies.present?
-    dependencies.map{|d| d["dependencies"]}.flatten.select{|d| d['direct'] }.map{|d| d['ecosystem']}.uniq
+    dependencies.map{|d| d["dependencies"]}.flatten.select{|d| d['direct'] }.reject{|d| ignored_ecosystems.include?(d['ecosystem']) }.map{|d| d['ecosystem']}.uniq
   end
 
   def fetch_dependent_repos
