@@ -19,7 +19,7 @@
         <ul class="list-group list-group-flush">
           <% @dependencies.each do |dependency, count| %>
             <li class="list-group-item">
-              <%= dependency[0] %> : <%= dependency[1] %>
+              <%= dependency[0] %> : <%= link_to dependency[1], "https://packages.ecosyste.ms/packages/lookup?ecosystem=#{dependency[0]}&name=#{dependency[1]}", target: :_blank %>
               <small class='ps-3 text-muted'>
                 <i><%= pluralize count, 'dependent project' %></i>
               </small>
@@ -41,7 +41,7 @@
             <% filtered_dependencies.each do |dependency, count| %>
               <% next if count < 2 %>
               <li class="list-group-item">
-                <%= dependency[0] %> : <%= dependency[1] %> 
+                <%= dependency[0] %> : <%= link_to dependency[1], "https://packages.ecosyste.ms/packages/lookup?ecosystem=#{dependency[0]}&name=#{dependency[1]}", target: :_blank %>
 
                 <small class='ps-3 text-muted'>
                   <i><%= pluralize count, 'dependent project' %></i>
