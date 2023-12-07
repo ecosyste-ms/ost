@@ -426,7 +426,7 @@ class Project < ApplicationRecord
 
   def dependency_packages
     return [] unless dependencies.present?
-    dependencies.map{|d| d["dependencies"]}.flatten.select{|d| d['direct'] }.map{|d| [d['ecosystem'],d["package_name"]]}.uniq
+    dependencies.map{|d| d["dependencies"]}.flatten.select{|d| d['direct'] }.map{|d| [d['ecosystem'],d["package_name"].downcase]}.uniq
   end
 
   def fetch_dependent_repos
