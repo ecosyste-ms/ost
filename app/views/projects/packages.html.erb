@@ -1,0 +1,94 @@
+<% @meta_title = "Open Sustain Packages" %>
+
+<div class="container-sm">
+  <h1 class='mb-3'>
+    Open Sustain Packages
+  </h1>
+  
+  <p class='lead'>
+    The most popular packages published from Open Sustain projects.
+  </p>
+
+  <% @projects.each do |project|%>
+    <% next if project.packages.blank?%>
+    <div class="card mb-3 project d-flex" id="project_<%= project.id %>">
+      <div class="card-body pb-1">
+        <div class="d-flex">
+          
+          <div class="flex-grow-1 ms-3 text-break">
+            <h5 class='card-title'>
+              <%= link_to project, project_path(project) %>
+            </h5>
+          
+            <p class="card-subtitle mb-2 text-muted">
+              <%= project.description %>
+            </p>
+
+            <% if project.keywords.any? %>
+              <p>
+                <% project.keywords.each do |keyword| %>
+                  <span class="badge bg-light text-dark">
+                    <%= link_to keyword, url_for(keyword: keyword) %>
+                  </span>
+                <% end %>
+              </p>
+            <% end %>
+
+            <% if project.last_synced_at %>
+            <p class="card-subtitle mb-2 text-muted"><i><small>
+              <% if project.category %>
+                <%= project.category %> - <%= project.sub_category %>
+              <% end %>
+            </small></i></p>
+            <% end %>
+
+                      <ul>
+      <li>
+        Total packages: <%= number_with_delimiter project.packages.length %>
+      <li>
+        Total downloads: <%= number_with_delimiter project.packages.sum{|p| p['downloads'] || 0 } %> downloads <%= project.packages.first['downloads_period'].try(:humanize).try(:gsub,'-', ' ').try(:downcase) %>
+      </li>
+      <% if project.packages.map{|p| p['docker_downloads_count'] || 0 }.sum > 0 %>
+      <li>
+        Total docker downloads: <%= number_with_delimiter project.packages.map{|p| p['docker_downloads_count'] || 0 }.sum %>
+      </li>
+      <% end %>
+      <li>
+        Total dependent packages: <%= number_with_delimiter project.packages.sum{|p| p['dependent_packages_count'] || 0 } %>
+        <% if project.packages.length > 1 %>
+          <small class='text-muted'>(may contain duplicates)</small>
+        <% end %>
+      </li>
+      <li>
+        Total dependent repositories: <%= number_with_delimiter project.packages.sum{|p| p['dependent_repos_count'] || 0 } %>
+        <% if project.packages.length > 1 %>
+          <small class='text-muted'>(may contain duplicates)</small>
+        <% end %>
+      </li>
+    </ul>
+    <h4>Packages</h4>
+    <ul>
+      <% project.packages.sort_by{|p| p['downloads'] || 0 }.reverse.each do |package| %>
+        <li>
+          <%= package['registry']['name'] %>: <%= link_to package['name'], package['registry_url'] %>
+          <% if package['downloads']%>
+          <small class='text-muted'>
+            <%= number_with_delimiter(package['downloads']) %> downloads <%= package['downloads_period'].try(:humanize).try(:gsub,'-', ' ').try(:downcase) %>
+          </small>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+          </div>
+          <div class="flex-shrink-0">
+            <img src="<%= project.avatar_url %>" class="rounded" height='40' width='40' onerror="this.style.display='none'">
+          </div>  
+        </div>
+      </div>
+    </div>
+      
+
+
+  <% end %>
+
+</div>

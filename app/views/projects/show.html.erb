@@ -59,7 +59,7 @@
     <%= render 'events' %>
     <%= render 'committers' %>
     <%= render 'issues' %>
-    <%= render 'packages' %>
+    <%= render partial: 'packages', locals: {project: @project } %>
     <%= render 'dependencies' %>
 
     <p>

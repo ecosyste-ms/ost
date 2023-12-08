@@ -94,4 +94,8 @@ class ProjectsController < ApplicationController
     @projects = Project.reviewed
     @dependencies = @projects.map(&:dependency_packages).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse.first(50)
   end
+
+  def packages
+    @projects = Project.reviewed.select{|p| p.packages.present? }.sort_by{|p| p.packages.sum{|p| p['downloads'] || 0 } }.reverse
+  end
 end
