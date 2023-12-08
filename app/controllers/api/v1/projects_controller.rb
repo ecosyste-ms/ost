@@ -22,4 +22,8 @@ class Api::V1::ProjectsController < Api::V1::ApplicationController
     @project.sync_async
     render json: { message: 'pong' }
   end
+
+  def packages
+    @projects = Project.reviewed.select{|p| p.packages.present? }.sort_by{|p| p.packages.sum{|p| p['downloads'] || 0 } }.reverse
+  end
 end

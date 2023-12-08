@@ -24,6 +24,7 @@ Rails.application.routes.draw do
       resources :projects, constraints: { id: /.*/ }, only: [:index, :show] do
         collection do
           get :lookup
+          get :packages
         end
         member do
           get :ping

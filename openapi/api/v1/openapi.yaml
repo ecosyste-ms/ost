@@ -84,6 +84,21 @@ paths:
             application/json:
               schema:
                   $ref: '#/components/schemas/Project'
+  /projects/packages:
+    get:
+      description: get projects with packages
+      operationId: getProjectPackages
+      tags:
+        - projects
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
   /issues:
     get:
       description: get issues
