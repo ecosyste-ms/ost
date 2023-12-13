@@ -20,7 +20,7 @@ class Api::V1::IssuesController < Api::V1::ApplicationController
   def openclimateaction
     project_ids = Issue.good_first_issue.pluck(:project_id).uniq
 
-    scope = Project.where(id: project_ids).reviewed.includes(:openclimateaction_issues)
+    scope = Project.where(id: project_ids).active.reviewed.includes(:openclimateaction_issues)
 
     if params[:sort].present? || params[:order].present?
       sort = params[:sort].presence || 'projects.updated_at'

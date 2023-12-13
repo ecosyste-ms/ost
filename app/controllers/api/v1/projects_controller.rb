@@ -24,6 +24,6 @@ class Api::V1::ProjectsController < Api::V1::ApplicationController
   end
 
   def packages
-    @projects = Project.reviewed.select{|p| p.packages.present? }.sort_by{|p| p.packages.sum{|p| p['downloads'] || 0 } }.reverse
+    @projects = Project.reviewed.active.select{|p| p.packages.present? }.sort_by{|p| p.packages.sum{|p| p['downloads'] || 0 } }.reverse
   end
 end

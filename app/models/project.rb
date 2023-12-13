@@ -9,6 +9,9 @@ class Project < ApplicationRecord
 
   has_many :openclimateaction_issues, -> { good_first_issue }, class_name: 'Issue'
 
+  scope :active, -> { where("(repository ->> 'archived') = ?", 'false') }
+  scope :archived, -> { where("(repository ->> 'archived') = ?", 'true') }
+
   scope :language, ->(language) { where("(repository ->> 'language') = ?", language) }
   scope :owner, ->(owner) { where("(repository ->> 'owner') = ?", owner) }
   scope :keyword, ->(keyword) { where("keywords @> ARRAY[?]::varchar[]", keyword) }
