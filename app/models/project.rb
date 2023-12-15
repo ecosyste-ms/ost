@@ -579,6 +579,11 @@ class Project < ApplicationRecord
     packages.length
   end
 
+  def monthly_downloads
+    return 0 unless packages.present?
+    packages.select{|p| p['downloads_period'] == 'last-month' }.map{|p| p["downloads"] || 0 }.sum
+  end
+
   def downloads
     return 0 unless packages.present?
     packages.map{|p| p["downloads"] || 0 }.sum

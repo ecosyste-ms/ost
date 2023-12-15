@@ -175,6 +175,8 @@ components:
           type: string
         sub_category:
           type: string
+        monthly_downloads:
+          type: integer
     Issue:
       type: object
       properties:
