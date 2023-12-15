@@ -195,6 +195,7 @@ class Project < ApplicationRecord
     fetch_issue_stats
     sync_issues if reviewed?
     fetch_citation_file if reviewed?
+    fetch_readme if reviewed?
     update(last_synced_at: Time.now, matching_criteria: matching_criteria?)
     update_score
     ping
@@ -751,6 +752,30 @@ class Project < ApplicationRecord
     self.save
   rescue
     puts "Error fetching citation file for #{repository_url}"
+  end
+
+  def readme_file_name
+    return unless repository.present?
+    return unless repository['metadata'].present?
+    return unless repository['metadata']['files'].present?
+    repository['metadata']['files']['readme']
+  end
+
+  def fetch_readme
+    return unless readme_file_name.present?
+    return unless download_url.present?
+    conn = Faraday.new(url: archive_url(readme_file_name)) do |faraday|
+      faraday.response :follow_redirects
+      faraday.adapter Faraday.default_adapter
+    end
+    response = conn.get
+    return unless response.success?
+    json = JSON.parse(response.body)
+
+    self.readme = json['contents']
+    self.save
+  rescue
+    puts "Error fetching readme for #{repository_url}"
   end
 
   def parse_citation_file
