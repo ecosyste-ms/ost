@@ -177,6 +177,8 @@ components:
           type: string
         monthly_downloads:
           type: integer
+        readme:
+          type: string
     Issue:
       type: object
       properties:
