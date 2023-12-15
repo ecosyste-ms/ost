@@ -18,6 +18,7 @@ class Project < ApplicationRecord
   scope :reviewed, -> { where(reviewed: true) }
   scope :unreviewed, -> { where(reviewed: nil) }
   scope :matching_criteria, -> { where(matching_criteria: true) }
+  scope :with_readme, -> { where.not(readme: nil) }
 
   def self.import_from_csv
   
