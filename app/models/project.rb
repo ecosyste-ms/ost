@@ -784,6 +784,39 @@ class Project < ApplicationRecord
     "#{repository['html_url']}/blob/#{repository['default_branch']}/#{readme_file_name}"
   end
 
+  def prepocessed_readme
+    return unless readme.present?
+    text = readme
+    # lowercase
+    text = text.downcase
+    # remove code blocks
+    text = text.gsub(/```.*?```/m, '')
+    # remove links
+    text = text.gsub(/\[.*?\]\(.*?\)/m, '')
+    # remove images
+    text = text.gsub(/!\[.*?\]\(.*?\)/m, '')
+    # remove headings
+    text = text.gsub(/#+.*?\n/m, '')
+    # remove lists
+    text = text.gsub(/-.*?\n/m, '')
+    # remove tables
+    text = text.gsub(/\|.*?\n/m, '')
+    # remove special characters
+    text = text.gsub(/[^a-z0-9\s]/i, '')
+    # newlines to spaces
+    text = text.gsub(/\n/, ' ')
+    # remove multiple spaces
+    text = text.gsub(/\s+/, ' ')
+    # remove leading and trailing spaces
+    text = text.strip
+  end
+
+  def tokenized_readme
+    return unless prepocessed_readme.present?
+    tokenizer = Tokenizers.from_pretrained("bert-base-cased")
+    tokenizer.tokenize(prepocessed_readme)
+  end
+
   def parse_citation_file
     return unless citation_file.present?
     CFF::Index.read(citation_file).as_json

@@ -34,6 +34,7 @@ gem 'google-protobuf', '3.25.1'
 gem 'groupdate'
 gem 'simple_form'
 gem 'cff'
+gem 'tokenizers'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
