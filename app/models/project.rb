@@ -813,8 +813,9 @@ class Project < ApplicationRecord
 
   def tokenized_readme
     return unless prepocessed_readme.present?
-    tokenizer = Tokenizers.from_pretrained("bert-base-cased")
-    tokenizer.tokenize(prepocessed_readme)
+    
+    enc = Tiktoken.encoding_for_model("gpt-4")
+    enc.encode(prepocessed_readme) 
   end
 
   def parse_citation_file
