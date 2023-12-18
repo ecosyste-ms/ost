@@ -115,4 +115,14 @@
         <% end %>
       <% end %>
     </ul>
+
+    <% if @project.readme %>
+      <h2>
+        <%= link_to 'README', @project.readme_url, target: :_blank %>
+      </h2>
+
+      <pre class='card p-2'>
+        <%= simple_format @project.readme %>
+      </pre>
+    <% end %>
   <% end %>

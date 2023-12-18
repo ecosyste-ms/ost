@@ -779,6 +779,11 @@ class Project < ApplicationRecord
     puts "Error fetching readme for #{repository_url}"
   end
 
+  def readme_url
+    return unless repository.present?
+    "#{repository['html_url']}/blob/#{repository['default_branch']}/#{readme_file_name}"
+  end
+
   def parse_citation_file
     return unless citation_file.present?
     CFF::Index.read(citation_file).as_json
