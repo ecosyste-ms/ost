@@ -927,10 +927,15 @@ class Project < ApplicationRecord
   end
 
   def funding_domains
-    ['opencollective.com', 'ko-fi.com', 'liberapay.com', 'patreon.com', 'otechie.com', 'issuehunt.io', 'communitybridge.org', 'tidelift.com', 'buymeacoffee.com']
+    ['opencollective.com', 'ko-fi.com', 'liberapay.com', 'patreon.com', 'otechie.com', 'issuehunt.io', 
+    'communitybridge.org', 'tidelift.com', 'buymeacoffee.com', 'paypal.com', 'paypal.me']
   end
 
   def readme_funding_links
-    readme_urls.select{|u| funding_domains.any?{|d| u.include?(d) } || u.include?('github.com/sponsors') }.reject{|u| ['.svg', '.png'].include? File.extname(URI.parse(u).path) }
+    urls = readme_urls.select{|u| funding_domains.any?{|d| u.include?(d) } || u.include?('github.com/sponsors') }.reject{|u| ['.svg', '.png'].include? File.extname(URI.parse(u).path) }
+    # remove anchors
+    urls = urls.map{|u| u.gsub(/#.*$/, '') }.uniq
+    # remove sponsor/9/website from open collective urls
+    urls = urls.map{|u| u.gsub(/\/sponsor\/\d+\/website$/, '') }.uniq
   end
 end
