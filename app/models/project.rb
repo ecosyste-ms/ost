@@ -974,4 +974,12 @@ class Project < ApplicationRecord
   def citation_counts
     works.select{|k,v| v.present? }.map{|k,v| [k, v['counts_by_year'].map{|h| h["cited_by_count"]}.sum] }.to_h
   end
+
+  def total_citations
+    citation_counts.values.sum
+  end
+
+  def first_work_citations
+    citation_counts.values.first
+  end
 end
