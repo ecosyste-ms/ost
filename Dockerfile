@@ -1,32 +1,29 @@
-FROM ruby:3.2.2-slim-buster
+FROM ruby:3.2.2-alpine
 
 ENV APP_ROOT /usr/src/app
 ENV DATABASE_PORT 5432
 WORKDIR $APP_ROOT
 
-# =============================================
-# System layer
+# * Setup system
+# * Install Ruby dependencies
+RUN apk add --update \
+    build-base \
+    netcat-openbsd \
+    git \
+    nodejs \
+    postgresql-dev \
+    tzdata \
+    curl \
+    curl-dev \
+    libc6-compat \
+ && rm -rf /var/cache/apk/* 
 
 # Will invalidate cache as soon as the Gemfile changes
 COPY Gemfile Gemfile.lock $APP_ROOT/
 
-# * Setup system
-# * Install Ruby dependencies
-RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get -yq dist-upgrade && apt-get install -yq --no-install-recommends \
-  curl \
-  build-essential \
-  libpq-dev \
-  tzdata \
-  netcat \
- && gem update --system \
- && gem install bundler foreman \
- && bundle config set force_ruby_platform true \
- && bundle config --global frozen 1 \
+RUN bundle config --global frozen 1 \
  && bundle config set without 'test' \
  && bundle install --jobs 2
-
-RUN curl -fsSL https://deb.nodesource.com/setup_current.x | bash - && \
-    apt-get install -y nodejs
 
 # ========================================================
 # Application layer
@@ -34,9 +31,11 @@ RUN curl -fsSL https://deb.nodesource.com/setup_current.x | bash - && \
 # Copy application code
 COPY . $APP_ROOT
 
+RUN bundle exec bootsnap precompile --gemfile app/ lib/
+
 # Precompile assets for a production environment.
 # This is done to include assets in production images on Dockerhub.
-RUN RAILS_ENV=production bundle exec rake assets:precompile
+RUN SECRET_KEY_BASE=1 RAILS_ENV=production bundle exec rake assets:precompile
 
 # Startup
 CMD ["bin/docker-start"]
