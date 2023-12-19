@@ -940,6 +940,6 @@ class Project < ApplicationRecord
   end
 
   def readme_doi_urls
-    readme_urls.select{|u| u.include?('doi.org') }
+    readme_urls.select{|u| u.include?('doi.org') }.uniq
   end
 end
