@@ -871,7 +871,7 @@ class Project < ApplicationRecord
   end
 
   def funding_links
-    (package_funding_links + repo_funding_links + owner_funding_links).uniq
+    (package_funding_links + repo_funding_links + owner_funding_links + readme_funding_links).uniq
   end
 
   def package_funding_links
@@ -917,10 +917,20 @@ class Project < ApplicationRecord
 
   def readme_urls
     return [] unless readme.present?
-    URI.extract(readme.gsub(/[\[\]]/, ' '), ['http', 'https']).uniq
+    urls = URI.extract(readme.gsub(/[\[\]]/, ' '), ['http', 'https']).uniq
+    # remove trailing )
+    urls.map{|u| u.gsub(/\)$/, '') }
   end
 
   def readme_domains
     readme_urls.map{|u| URI.parse(u).host rescue nil }.compact.uniq
+  end
+
+  def funding_domains
+    ['opencollective.com', 'ko-fi.com', 'liberapay.com', 'patreon.com', 'otechie.com', 'issuehunt.io', 'communitybridge.org', 'tidelift.com', 'buymeacoffee.com']
+  end
+
+  def readme_funding_links
+    readme_urls.select{|u| funding_domains.any?{|d| u.include?(d) } || u.include?('github.com/sponsors') }
   end
 end
