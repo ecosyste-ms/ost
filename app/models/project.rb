@@ -950,4 +950,23 @@ class Project < ApplicationRecord
   def dois
     readme_doi_urls.map{|u| URI.parse(u).path.gsub(/^\//, '') }.uniq
   end
+
+  def fetch_works
+    works = {}
+    readme_doi_urls.each do |url|
+      openalex_url = "https://api.openalex.org/works/#{url}"
+      conn = Faraday.new(url: openalex_url) do |faraday|
+        faraday.response :follow_redirects
+        faraday.adapter Faraday.default_adapter
+      end
+      response = conn.get
+      if response.success?
+        works[url] = JSON.parse(response.body)
+      else
+        works[url] = nil
+      end
+    end
+    self.works = works
+    self.save
+  end
 end
