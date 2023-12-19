@@ -948,6 +948,6 @@ class Project < ApplicationRecord
   end
 
   def dois
-    readme_doi_urls.map{|u| URI.parse(u).path.gsub(/^\//, '') }
+    readme_doi_urls.map{|u| URI.parse(u).path.gsub(/^\//, '') }.uniq
   end
 end
