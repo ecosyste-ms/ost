@@ -19,6 +19,7 @@ class Project < ApplicationRecord
   scope :unreviewed, -> { where(reviewed: nil) }
   scope :matching_criteria, -> { where(matching_criteria: true) }
   scope :with_readme, -> { where.not(readme: nil) }
+  scope :with_works, -> { where('length(works::text) > 2') }
 
   def self.import_from_csv
   
@@ -968,5 +969,9 @@ class Project < ApplicationRecord
     end
     self.works = works
     self.save
+  end
+  
+  def citation_counts
+    works.select{|k,v| v.present? }.map{|k,v| [k, v['counts_by_year'].map{|h| h["cited_by_count"]}.sum] }.to_h
   end
 end
