@@ -179,6 +179,10 @@ components:
           type: integer
         readme:
           type: string
+        funding_links:
+          type: array
+          items:
+            type: string
     Issue:
       type: object
       properties:
