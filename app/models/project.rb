@@ -938,4 +938,8 @@ class Project < ApplicationRecord
     # remove sponsor/9/website from open collective urls
     urls = urls.map{|u| u.gsub(/\/sponsor\/\d+\/website$/, '') }.uniq
   end
+
+  def readme_doi_urls
+    readme_urls.select{|u| u.include?('doi.org') }
+  end
 end
