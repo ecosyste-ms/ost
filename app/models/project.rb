@@ -917,10 +917,10 @@ class Project < ApplicationRecord
 
   def readme_urls
     return [] unless readme.present?
-    URI.extract(readme, ['http', 'https']).uniq
+    URI.extract(readme.gsub(/[\[\]]/, ' '), ['http', 'https']).uniq
   end
 
   def readme_domains
-    readme_urls.map{|u| URI.parse(u).host }.compact.uniq
+    readme_urls.map{|u| URI.parse(u).host rescue nil }.compact.uniq
   end
 end
