@@ -869,4 +869,50 @@ class Project < ApplicationRecord
       end
     end
   end
+
+  def funding_links
+    (package_funding_links + repo_funding_links + owner_funding_links).uniq
+  end
+
+  def package_funding_links
+    return [] unless packages.present?
+    packages.map{|pkg| pkg['metadata']['funding'] }.compact.map{|f| f.is_a?(Hash) ? f['url'] : f }.flatten.compact
+  end
+
+  def owner_funding_links
+    return [] if repository.blank? || repository['owner_record'].blank? ||  repository['owner_record']["metadata"].blank?
+    return [] unless repository['owner_record']["metadata"]['has_sponsors_listing']
+    ["https://github.com/sponsors/#{repository['owner_record']['login']}"]
+  end
+
+  def repo_funding_links
+    return [] if repository.blank? || repository['metadata'].blank? ||  repository['metadata']["funding"].blank?
+    return [] if repository['metadata']["funding"].is_a?(String)
+    repository['metadata']["funding"].map do |key,v|
+      next if v.blank?
+      case key
+      when "github"
+        Array(v).map{|username| "https://github.com/sponsors/#{username}" }
+      when "tidelift"
+        "https://tidelift.com/funding/github/#{v}"
+      when "community_bridge"
+        "https://funding.communitybridge.org/projects/#{v}"
+      when "issuehunt"
+        "https://issuehunt.io/r/#{v}"
+      when "open_collective"
+        "https://opencollective.com/#{v}"
+      when "ko_fi"
+        "https://ko-fi.com/#{v}"
+      when "liberapay"
+        "https://liberapay.com/#{v}"
+      when "custom"
+        v
+      when "otechie"
+        "https://otechie.com/#{v}"
+      when "patreon"
+        "https://patreon.com/#{v}"
+      end
+    end.flatten.compact
+  end
+
 end
