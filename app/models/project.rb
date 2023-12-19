@@ -814,7 +814,7 @@ class Project < ApplicationRecord
   def tokenized_readme
     return unless preprocessed_readme.present?
     
-    tokenizer = Tokenizers.from_pretrained("bert-base-cased")
+    tokenizer = Tokenizers.from_pretrained("DWDMaiMai/tiktoken_cl100k_base")
     tokenizer.encode(preprocessed_readme)
   end
 
