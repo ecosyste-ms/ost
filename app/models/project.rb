@@ -915,4 +915,12 @@ class Project < ApplicationRecord
     end.flatten.compact
   end
 
+  def readme_urls
+    return [] unless readme.present?
+    URI.extract(readme, ['http', 'https']).uniq
+  end
+
+  def readme_domains
+    readme_urls.map{|u| URI.parse(u).host }.compact.uniq
+  end
 end
