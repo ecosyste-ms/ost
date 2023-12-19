@@ -946,4 +946,8 @@ class Project < ApplicationRecord
   def readme_doi_urls
     readme_urls.select{|u| doi_domains.include?(URI.parse(u).host) }.uniq
   end
+
+  def dois
+    readme_doi_urls.map{|u| URI.parse(u).path.gsub(/^\//, '') }
+  end
 end
