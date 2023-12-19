@@ -939,7 +939,11 @@ class Project < ApplicationRecord
     urls = urls.map{|u| u.gsub(/\/sponsor\/\d+\/website$/, '') }.uniq
   end
 
+  def doi_domains
+    ['doi.org', 'dx.doi.org', 'www.doi.org']
+  end
+
   def readme_doi_urls
-    readme_urls.select{|u| u.include?('doi.org') }.uniq
+    readme_urls.select{|u| doi_domains.include?(URI.parse(u).host) }.uniq
   end
 end
