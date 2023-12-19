@@ -815,7 +815,7 @@ class Project < ApplicationRecord
     return unless preprocessed_readme.present?
     
     tokenizer = Tokenizers.from_pretrained("bert-base-cased")
-    tokenizer.tokenize(preprocessed_readme)
+    tokenizer.encode(preprocessed_readme)
   end
 
   def parse_citation_file
