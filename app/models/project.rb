@@ -784,7 +784,7 @@ class Project < ApplicationRecord
     "#{repository['html_url']}/blob/#{repository['default_branch']}/#{readme_file_name}"
   end
 
-  def prepocessed_readme
+  def preprocessed_readme
     return unless readme.present?
     text = readme
     # lowercase
@@ -812,10 +812,10 @@ class Project < ApplicationRecord
   end
 
   def tokenized_readme
-    return unless prepocessed_readme.present?
+    return unless preprocessed_readme.present?
     
-    enc = Tiktoken.encoding_for_model("gpt-4")
-    enc.encode(prepocessed_readme) 
+    tokenizer = Tokenizers.from_pretrained("bert-base-cased")
+    tokenizer.tokenize(preprocessed_readme)
   end
 
   def parse_citation_file
