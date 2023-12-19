@@ -918,8 +918,8 @@ class Project < ApplicationRecord
   def readme_urls
     return [] unless readme.present?
     urls = URI.extract(readme.gsub(/[\[\]]/, ' '), ['http', 'https']).uniq
-    # remove trailing )
-    urls.map{|u| u.gsub(/\.$/, '').gsub(/\,$/, '').gsub(/\*$/, '').gsub(/\)$/, '').gsub(/\)$/, '') }
+    # remove trailing garbage
+    urls.map{|u| u.gsub(/\:$/, '').gsub(/\*$/, '').gsub(/\.$/, '').gsub(/\,$/, '').gsub(/\*$/, '').gsub(/\)$/, '').gsub(/\)$/, '').gsub('&nbsp;','') }
   end
 
   def readme_domains
