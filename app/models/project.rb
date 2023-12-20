@@ -240,12 +240,17 @@ class Project < ApplicationRecord
   end
 
   def ping_urls
-    ([repos_ping_url] + packages_ping_urls + [owner_ping_url]).compact.uniq
+    ([repos_ping_url] + [issues_ping_url] + packages_ping_urls + [owner_ping_url]).compact.uniq
   end
 
   def repos_ping_url
     return unless repository.present?
     "https://repos.ecosyste.ms/api/v1/hosts/#{repository['host']['name']}/repositories/#{repository['full_name']}/ping"
+  end
+
+  def issues_ping_url
+    return unless repository.present?
+    "https://issues.ecosyste.ms/api/v1/hosts/#{repository['host']['name']}/repositories/#{repository['full_name']}/ping"
   end
 
   def packages_ping_urls
