@@ -874,10 +874,9 @@ class Project < ApplicationRecord
     # TODO upsert (plus unique index)
 
     issues_json.each do |issue|
-      issues.find_or_create_by(number: issue['number']) do |i|
-        i.assign_attributes(issue)
-        i.save(touch: false)
-      end
+      i = issues.find_or_create_by(number: issue['number']) 
+      i.assign_attributes(issue)
+      i.save(touch: false)
     end
   end
 
