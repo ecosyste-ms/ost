@@ -623,7 +623,7 @@ class Project < ApplicationRecord
 
   def packages_licenses
     return [] unless packages.present?
-    packages.map{|p| p['license'] }.compact
+    packages.map{|p| p['licenses'] }.compact
   end
 
   def open_source_license?
