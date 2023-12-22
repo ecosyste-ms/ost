@@ -41,4 +41,25 @@ namespace :embedding do
 
     pp categories.sort_by { |k, v| v }.reverse.to_h
   end
+
+  task suggest: :environment do
+    close = []
+
+    Project.unreviewed.matching_criteria.with_embedding.find_each do |p|
+      n = p.nearest_neighbors(:embedding, distance: "cosine").reviewed.first(3)
+      
+      if n.all? { |n| n.neighbor_distance < 0.13 }
+        puts p.url
+
+        # most common category
+        category = n.map(&:category).group_by(&:itself).values.max_by(&:size).first
+
+        close << [p, category]
+      end
+    end
+
+    groups = close.group_by{|k,v| v};nil
+
+    groups.each{|k,v| puts "# #{k}"; v.each{|p| puts "  - #{p[0].url} - #{p[0].description}"}; puts };nil
+  end
 end
