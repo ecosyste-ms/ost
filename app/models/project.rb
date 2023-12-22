@@ -22,6 +22,8 @@ class Project < ApplicationRecord
   scope :with_readme, -> { where.not(readme: nil) }
   scope :with_works, -> { where('length(works::text) > 2') }
   scope :with_repository, -> { where.not(repository: nil) }
+  scope :with_embedding, -> { where.not(embedding: nil) }
+  scope :without_embedding, -> { where(embedding: nil) }
 
   def self.import_from_csv
   
@@ -1030,5 +1032,22 @@ class Project < ApplicationRecord
       end
     end.compact
   end
+  
+  def fetch_embeddings
     url = "https://api.openai.com/v1/embeddings"
+    headers = {
+      "Authorization" => "Bearer #{ENV.fetch("OPENAI_API_KEY")}",
+      "Content-Type" => "application/json"
+    }
+    data = {
+      input: preprocessed_readme,
+      model: "text-embedding-ada-002"
+    }
+  
+    response = Net::HTTP.post(URI(url), data.to_json, headers)
+
+    if response.code == "200"
+      update(embedding: JSON.parse(response.body)['data'].first['embedding'])
+    end
+  end
 end
