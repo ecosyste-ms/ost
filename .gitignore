@@ -31,3 +31,6 @@
 /config/master.key
 
 /data/
+
+*.dump
+.env

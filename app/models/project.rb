@@ -20,6 +20,7 @@ class Project < ApplicationRecord
   scope :matching_criteria, -> { where(matching_criteria: true) }
   scope :with_readme, -> { where.not(readme: nil) }
   scope :with_works, -> { where('length(works::text) > 2') }
+  scope :with_repository, -> { where.not(repository: nil) }
 
   def self.import_from_csv
   
@@ -123,7 +124,11 @@ class Project < ApplicationRecord
   end
 
   def self.update_matching_criteria
-    unreviewed.find_each{|p| p.matching_criteria = p.matching_criteria?;p.save if p.changed?}
+    unreviewed.find_each(&:update_matching_criteria)
+  end
+
+  def update_matching_criteria
+    update(matching_criteria: matching_criteria?)
   end
 
   def self.potential_good_topics
@@ -572,7 +577,7 @@ class Project < ApplicationRecord
   end
 
   def matching_criteria?
-    no_bad_topics? && good_topics? && external_users? && open_source_license? && active?
+    good_topics? && external_users? && open_source_license? && active?
   end
 
   def matching_topics
@@ -584,7 +589,7 @@ class Project < ApplicationRecord
   end
 
   def good_topics?
-    matching_topics.length > 2
+    matching_topics.length > 0
   end
 
   def packages_count
