@@ -105,7 +105,7 @@ GEM
       rexml
     crass (1.0.6)
     date (3.3.4)
-    debug (1.9.0)
+    debug (1.9.1)
       irb (~> 1.10)
       reline (>= 0.3.8)
     dotenv (2.8.1)
@@ -118,7 +118,7 @@ GEM
     ethon (0.16.0)
       ffi (>= 1.15.0)
     execjs (2.9.1)
-    faraday (2.8.0)
+    faraday (2.8.1)
       base64
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
@@ -260,7 +260,7 @@ GEM
       psych (>= 4.0.0)
     redis (5.0.8)
       redis-client (>= 0.17.0)
-    redis-client (0.19.0)
+    redis-client (0.19.1)
       connection_pool
     reline (0.4.1)
       io-console (~> 0.5)
@@ -392,4 +392,4 @@ RUBY VERSION
    ruby 3.2.2p31
 
 BUNDLED WITH
-   2.5.1
+   2.5.2
