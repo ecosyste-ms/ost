@@ -10,10 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_12_19_191628) do
+ActiveRecord::Schema[7.1].define(version: 2023_12_22_123238) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "plpgsql"
+  enable_extension "vector"
 
   create_table "collections", force: :cascade do |t|
     t.string "name"
@@ -81,6 +82,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_19_191628) do
     t.string "sub_category"
     t.text "readme"
     t.json "works", default: {}
+    t.vector "embedding"
     t.index ["collection_id"], name: "index_projects_on_collection_id"
     t.index ["url"], name: "index_projects_on_url", unique: true
   end

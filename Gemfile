@@ -35,6 +35,8 @@ gem 'groupdate'
 gem 'simple_form'
 gem 'cff'
 gem 'tokenizers'
+gem 'pgvector'
+gem "neighbor"
 
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]

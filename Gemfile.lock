@@ -172,6 +172,8 @@ GEM
       ruby2_keywords (>= 0.0.5)
     msgpack (1.7.2)
     mutex_m (0.2.0)
+    neighbor (0.3.2)
+      activerecord (>= 6.1)
     net-imap (0.4.9)
       date
       net-protocol
@@ -200,6 +202,7 @@ GEM
       google-protobuf (>= 3.22.3)
     pghero (3.4.0)
       activerecord (>= 6)
+    pgvector (0.2.2)
     popper_js (2.11.8)
     psych (5.1.2)
       stringio
@@ -362,10 +365,12 @@ DEPENDENCIES
   jbuilder
   jquery-rails
   mocha
+  neighbor
   pagy
   pg (~> 1.5)
   pg_query
   pghero
+  pgvector
   puma
   rack-attack
   rack-attack-rate-limit

@@ -1,6 +1,7 @@
 require 'csv'
 
 class Project < ApplicationRecord
+  has_neighbors :embedding
 
   validates :url, presence: true, uniqueness: { case_sensitive: false }
 
@@ -1029,4 +1030,5 @@ class Project < ApplicationRecord
       end
     end.compact
   end
+    url = "https://api.openai.com/v1/embeddings"
 end
