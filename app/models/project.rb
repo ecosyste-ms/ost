@@ -618,7 +618,7 @@ class Project < ApplicationRecord
 
   def repository_license
     return nil unless repository.present?
-    repository['license']
+    repository['license'] || repository['metadata']['files']['license']
   end
 
   def packages_licenses
