@@ -20,6 +20,7 @@ class Project < ApplicationRecord
   scope :unreviewed, -> { where(reviewed: nil) }
   scope :matching_criteria, -> { where(matching_criteria: true) }
   scope :with_readme, -> { where.not(readme: nil) }
+  scope :without_readme, -> { where(readme: nil) }
   scope :with_works, -> { where('length(works::text) > 2') }
   scope :with_repository, -> { where.not(repository: nil) }
   scope :with_embedding, -> { where.not(embedding: nil) }
@@ -752,6 +753,13 @@ class Project < ApplicationRecord
     repository['metadata']['files']['citation']
   end
 
+  def contributing_file_name
+    return unless repository.present?
+    return unless repository['metadata'].present?
+    return unless repository['metadata']['files'].present?
+    repository['metadata']['files']['contributing']
+  end
+
   def download_url
     return unless repository.present?
     repository['download_url']
@@ -833,6 +841,8 @@ class Project < ApplicationRecord
     text = text.gsub(/\s+/, ' ')
     # remove leading and trailing spaces
     text = text.strip
+    # only first 10k characters
+    text = text.first(10000)
   end
 
   def tokenized_readme

@@ -34,3 +34,5 @@
 
 *.dump
 .env
+*.dot
+*.png
