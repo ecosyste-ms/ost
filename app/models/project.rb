@@ -626,8 +626,13 @@ class Project < ApplicationRecord
     packages.map{|p| p['licenses'] }.compact
   end
 
+  def readme_license
+    return nil unless readme.present?
+    readme_image_urls.select{|u| u.downcase.include?('license') }.any?
+  end
+
   def open_source_license?
-    (packages_licenses + [repository_license]).compact.uniq.any?
+    (packages_licenses + [repository_license] + [readme_license]).compact.uniq.any?
   end
 
   def past_year_total_commits
