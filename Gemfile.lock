@@ -196,7 +196,7 @@ GEM
     numerizer (0.1.1)
     pagy (6.2.0)
     pg (1.5.4)
-    pg_query (4.2.3)
+    pg_query (5.0.0)
       google-protobuf (>= 3.22.3)
     pghero (3.4.0)
       activerecord (>= 6)
@@ -281,7 +281,7 @@ GEM
       sprockets-rails
       tilt
     shoulda-context (2.0.0)
-    shoulda-matchers (5.3.0)
+    shoulda-matchers (6.0.0)
       activesupport (>= 5.2.0)
     sidekiq (7.2.0)
       concurrent-ruby (< 2)
@@ -392,4 +392,4 @@ RUBY VERSION
    ruby 3.2.2p31
 
 BUNDLED WITH
-   2.5.2
+   2.5.3
