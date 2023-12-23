@@ -1,0 +1,19 @@
+<% @meta_title = "Open Sustain Images" %>
+
+<div class="container-sm">
+  <h1 class='mb-3'>
+    Open Sustain Images
+  </h1>
+  
+  <p class='lead'>
+    Images extracted from Open Sustain project readmes.
+  </p>
+
+  <% @projects.each do |project|%>
+    <% project.readme_image_urls.each do |image_url| %>
+      <a href="<%= project.url %>" target="_blank">
+        <img src="<%= image_url %>" title='<%= project.name %>' style='max-width:100%'>
+      </a>
+    <% end %>  
+  <% end %>
+</div>

@@ -846,6 +846,11 @@ class Project < ApplicationRecord
     "#{repository['html_url']}/blob/#{repository['default_branch']}/#{path}"
   end 
 
+  def raw_url(path)
+    return unless repository.present?
+    "#{repository['html_url']}/raw/#{repository['default_branch']}/#{path}"
+  end 
+
   def commiter_domains
     return unless commits.present?
     return unless commits['committers'].present?
@@ -995,5 +1000,28 @@ class Project < ApplicationRecord
 
   def first_work_citations
     citation_counts.values.first
+  end
+
+  def readme_image_urls
+    return [] unless readme.present?
+    urls = readme.scan(/!\[.*?\]\((.*?)\)/).flatten.compact.uniq
+
+    # also scan for html images
+    urls += readme.scan(/<img.*?src="(.*?)"/).flatten.compact.uniq
+
+    # turn relative urls into absolute urls
+    # remove anything after a space
+    urls = urls.map{|u| u.split(' ').first }.compact.uniq
+    
+    urls = urls.map do |u|
+      if !u.starts_with?('http')
+        # if url starts with slash or alpha character, prepend repo url
+        if u.starts_with?('/') || u.match?(/^[[:alpha:]]/)
+          raw_url(u)
+        end
+      else
+        u
+      end
+    end.compact
   end
 end

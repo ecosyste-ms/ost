@@ -98,4 +98,8 @@ class ProjectsController < ApplicationController
   def packages
     @projects = Project.reviewed.select{|p| p.packages.present? }.sort_by{|p| p.packages.sum{|p| p['downloads'] || 0 } }.reverse
   end
+
+  def images
+    @projects = Project.reviewed.with_readme.select{|p| p.readme_image_urls.present? }
+  end
 end
