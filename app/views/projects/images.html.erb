@@ -12,7 +12,7 @@
   <% @projects.each do |project|%>
     <% project.readme_image_urls.each do |image_url| %>
       <a href="<%= project.url %>" target="_blank">
-        <img src="<%= image_url %>" title='<%= project.name %>' style='max-width:100%'>
+        <img loading="lazy" src="<%= image_url %>" title='<%= project.name %>' style='max-width:100%'>
       </a>
     <% end %>  
   <% end %>
