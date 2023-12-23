@@ -25,6 +25,7 @@ Rails.application.routes.draw do
         collection do
           get :lookup
           get :packages
+          get :images
         end
         member do
           get :ping
