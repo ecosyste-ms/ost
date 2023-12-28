@@ -17,14 +17,20 @@ class Project < ApplicationRecord
   scope :owner, ->(owner) { where("(repository ->> 'owner') = ?", owner) }
   scope :keyword, ->(keyword) { where("keywords @> ARRAY[?]::varchar[]", keyword) }
   scope :reviewed, -> { where(reviewed: true) }
-  scope :unreviewed, -> { where(reviewed: nil) }
+  scope :unreviewed, -> { where(reviewed: [nil, false]) }
   scope :matching_criteria, -> { where(matching_criteria: true) }
+  scope :not_matching_criteria, -> { where(matching_criteria: false) }
   scope :with_readme, -> { where.not(readme: nil) }
   scope :without_readme, -> { where(readme: nil) }
   scope :with_works, -> { where('length(works::text) > 2') }
+  scope :with_keywords, -> { where('length(keywords::text) > 2') }
   scope :with_repository, -> { where.not(repository: nil) }
   scope :with_embedding, -> { where.not(embedding: nil) }
   scope :without_embedding, -> { where(embedding: nil) }
+
+  scope :with_long_enough_readme, -> { where('length(readme::text) > 1500') }
+
+  scope :with_repo_description, -> { where("length(repository ->> 'description') > 2") }
 
   def self.import_from_csv
   
@@ -523,6 +529,7 @@ class Project < ApplicationRecord
       repository_score,
       packages_score,
       commits_score,
+      issues_score,
       dependencies_score,
       events_score
     ]
@@ -532,7 +539,9 @@ class Project < ApplicationRecord
     return 0 unless repository.present?
     Math.log [
       (repository['stargazers_count'] || 0),
-      (repository['open_issues_count'] || 0)
+      (repository['open_issues_count'] || 0),
+      (repository['forks_count'] || 0),
+      (repository['subscribers_count'] || 0)
     ].sum
   end
 
@@ -552,6 +561,16 @@ class Project < ApplicationRecord
     return 0 unless commits.present?
     Math.log [
       (commits['total_committers'] || 0),
+    ].sum
+  end
+
+  def issues_score
+    return 0 unless issues_stats.present?
+    Math.log [
+      (issues_stats['issues_count'] || 0),
+      (issues_stats['pull_requests_count'] || 0),
+      (issues_stats['issue_authors_count'] || 0),
+      (issues_stats['pull_request_authors_count'] || 0),
     ].sum
   end
 
@@ -581,7 +600,7 @@ class Project < ApplicationRecord
   end
 
   def matching_criteria?
-    good_topics? && external_users? && open_source_license? && active?
+    external_users? && open_source_license? && active?
   end
 
   def matching_topics
@@ -1043,21 +1062,110 @@ class Project < ApplicationRecord
     end.compact
   end
   
+  def repository_description
+    return unless repository.present?
+    repository['description']
+  end
+
+  def repository_name
+    return unless repository.present?
+    repository['full_name'].split('/').last
+  end
+
+  def prepare_text_for_embedding(text)
+    # Lowercase
+    text = text.downcase
+
+    # Remove punctuation
+    text = text.gsub(/[^a-z0-9\s]/i, '')
+
+    # Tokenize
+    words = text.split
+
+    # Remove stopwords
+    sieve = Stopwords::Snowball::WordSieve.new
+    filtered = sieve.filter lang: :en, words: words
+
+    words.join(' ')
+  end
+
+  def embedding_content
+    content = [repository_name, repository_description] + keywords
+    content = content.join(' ')
+
+    if readme.present?
+      content += " #{readme}"
+    end
+
+    content = prepare_text_for_embedding(content)
+    content.first(10000)
+  end
+
+  def worth_reviewing?
+    return if reviewed?
+    unless matching_criteria?
+      puts "not matching criteria"
+      puts "external_users? #{external_users?}"
+      puts "open_source_license? #{open_source_license?}"
+      puts "active? #{active?}"
+      return
+    end
+
+    n = nearest_neighbors(:embedding, distance: "cosine").reviewed.first(3)
+    
+    if n.all? { |n| n.neighbor_distance < 0.13 }
+
+      puts url
+      puts repository_description
+      puts "keywords: #{keywords.join(', ')}" 
+
+      puts "nearest_neighbors:"
+      n.each do |n|
+        puts "  - #{n.url} - #{n.category} - #{n.description} (#{n.neighbor_distance})"
+      end
+  
+      # most common category
+      category = n.map(&:category).group_by(&:itself).values.max_by(&:size).try(:first)
+
+      puts "suggested category: #{category}"
+
+      return [category, self]
+    end
+  end
+
+  def review_candidates
+    nearest_neighbors(:embedding, distance: "cosine").unreviewed.matching_criteria.first(3).select{ |n| n.neighbor_distance < 0.13 }
+  end
+
   def fetch_embeddings
-    url = "https://api.openai.com/v1/embeddings"
+    url = "http://localhost:11434/api/embeddings"
     headers = {
-      "Authorization" => "Bearer #{ENV.fetch("OPENAI_API_KEY")}",
       "Content-Type" => "application/json"
     }
     data = {
-      input: preprocessed_readme,
-      model: "text-embedding-ada-002"
+      prompt: embedding_content,
+      model: "llama2"
     }
   
     response = Net::HTTP.post(URI(url), data.to_json, headers)
 
     if response.code == "200"
-      update(embedding: JSON.parse(response.body)['data'].first['embedding'])
+      update(embedding: JSON.parse(response.body)['embedding'])
     end
+  end
+
+  def self.best_candidates(limit = 5)
+    avg = Project.reviewed.average(:embedding)
+    Project.unreviewed.with_readme.with_long_enough_readme.matching_criteria.nearest_neighbors(:embedding, avg,  distance: "cosine").first(limit)
+  end
+
+  def self.best_category_candidates(category, limit = 5)
+    avg = Project.reviewed.where(category: category).average(:embedding)
+    Project.unreviewed.matching_criteria.nearest_neighbors(:embedding, avg,  distance: "cosine").first(limit)
+  end
+
+  def self.best_sub_category_candidates(sub_category, limit = 5)
+    avg = Project.reviewed.where(sub_category: sub_category).average(:embedding)
+    Project.unreviewed.matching_criteria.nearest_neighbors(:embedding, avg,  distance: "cosine").first(limit)
   end
 end
