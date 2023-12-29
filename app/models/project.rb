@@ -74,9 +74,11 @@ class Project < ApplicationRecord
             url = link[:url].downcase
           end
 
+          url.chomp!('/')
+
           urls << url
 
-          project = Project.find_or_create_by(url: )
+          project = Project.find_or_create_by(url: url)
           project.name = link[:name]
           project.description = link[:description]
           project.reviewed = true
