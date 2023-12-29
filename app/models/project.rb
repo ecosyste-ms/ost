@@ -53,6 +53,8 @@ class Project < ApplicationRecord
     url = 'https://raw.githubusercontent.com/protontypes/open-sustainable-technology/main/README.md'
     readme = ReadmeParser.load(url)
 
+    urls = []
+
     readme.parse_links.each do |category, sub_categories|
       sub_categories.each do |sub_category, links|
         links.each do |link|
@@ -72,6 +74,8 @@ class Project < ApplicationRecord
             url = link[:url].downcase
           end
 
+          urls << url
+
           project = Project.find_or_create_by(url: )
           project.name = link[:name]
           project.description = link[:description]
@@ -82,7 +86,16 @@ class Project < ApplicationRecord
           project.sync_async unless project.last_synced_at.present?
         end
       end
-    end 
+    end
+    
+    # mark projects that are no longer in the readme as unreviewed
+    removed = Project.where.not(url: urls).reviewed
+    removed.each do |p|
+      puts "Marking #{p.url} as unreviewed"
+    end
+
+    puts "Removed #{removed.length} projects"
+    removed.update_all(reviewed: false)
   end
 
   def self.discover_via_topics(limit=100)
