@@ -7,7 +7,7 @@ class Project < ApplicationRecord
   has_many :votes, dependent: :delete_all
   has_many :issues, dependent: :delete_all
 
-  has_many :openclimateaction_issues, -> { good_first_issue }, class_name: 'Issue'
+  has_many :climatetriage_issues, -> { good_first_issue }, class_name: 'Issue'
 
   scope :active, -> { where("(repository ->> 'archived') = ?", 'false') }
   scope :archived, -> { where("(repository ->> 'archived') = ?", 'true') }

@@ -1,7 +1,7 @@
 class Api::V1::IssuesController < Api::V1::ApplicationController
   def index
     scope = Issue.where(pull_request: false, state: 'open').includes(:project)
-    scope = scope.joins(:project).where(projects: { reviewed: true }).openclimateaction.good_first_issue
+    scope = scope.joins(:project).where(projects: { reviewed: true }).climatetriage.good_first_issue
 
     if params[:sort].present? || params[:order].present?
       sort = params[:sort].presence || 'issues.created_at'
@@ -20,7 +20,7 @@ class Api::V1::IssuesController < Api::V1::ApplicationController
   def openclimateaction
     project_ids = Issue.good_first_issue.pluck(:project_id).uniq
 
-    scope = Project.where(id: project_ids).active.reviewed.includes(:openclimateaction_issues)
+    scope = Project.where(id: project_ids).active.reviewed.includes(:climatetriage_issues)
 
     if params[:sort].present? || params[:order].present?
       sort = params[:sort].presence || 'projects.updated_at'
