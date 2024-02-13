@@ -1,19 +1,11 @@
 {
   "cron": [
     {
-      "command": "bundle exec rake projects:sync",
-      "schedule": "*/30 * * * *"
-    },
-    {
       "command": "bundle exec rake projects:sync_reviewed",
       "schedule": "*/30 * * * *"
     },
     {
       "command": "bundle exec rake projects:import",
-      "schedule": "0 0 * * *"
-    },
-    {
-      "command": "bundle exec rake projects:discover",
       "schedule": "0 0 * * *"
     }
   ]
