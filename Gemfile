@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.3.0"
+ruby "3.3.1"
 
 gem "rails", "~> 7.1.3"
 gem "sprockets-rails"
@@ -35,6 +35,7 @@ gem 'simple_form'
 gem 'cff'
 # gem 'tokenizers'
 gem 'redis'
+gem 'csv'
 
 group :development, :test do
   gem 'dotenv-rails'

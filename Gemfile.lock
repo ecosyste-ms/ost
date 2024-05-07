@@ -102,6 +102,7 @@ GEM
       bigdecimal
       rexml
     crass (1.0.6)
+    csv (3.3.0)
     date (3.3.4)
     dotenv (3.1.2)
     dotenv-rails (3.1.2)
@@ -343,6 +344,7 @@ DEPENDENCIES
   bootstrap
   cff
   counter_culture
+  csv
   dotenv-rails
   faraday
   faraday-follow_redirects
@@ -379,7 +381,7 @@ DEPENDENCIES
   webmock
 
 RUBY VERSION
-   ruby 3.3.0p31
+   ruby 3.3.1p31
 
 BUNDLED WITH
    2.5.10
