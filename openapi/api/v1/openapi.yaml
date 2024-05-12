@@ -23,6 +23,12 @@ paths:
       tags:
         - projects
       parameters:
+        - name: reviewed
+          in: query
+          description: reviewed status
+          required: false
+          schema:
+            type: boolean
         - name: page
           in: query
           description: pagination page number 
@@ -35,6 +41,19 @@ paths:
           required: false
           schema:
             type: integer
+        - name: sort
+          in: query
+          description: The field to sort by
+          required: false
+          schema:
+            type: string
+        - name: order
+          in: query
+          description: The sort order (asc or desc)
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
       responses:
         200:
           description: OK
@@ -99,6 +118,21 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Project'
+  /projects/images:
+    get:
+      description: get projects with images
+      operationId: getProjectImages
+      tags:
+        - projects
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
   /issues:
     get:
       description: get issues
@@ -118,6 +152,60 @@ paths:
           required: false
           schema:
             type: integer
+        - name: sort
+          in: query
+          description: The field to sort by
+          required: false
+          schema:
+            type: string
+        - name: order
+          in: query
+          description: The sort order (asc or desc)
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Issue'
+  /issues/openclimateaction:
+    get:
+      description: get issues for openclimateaction
+      operationId: getOpenClimateActionIssues
+      tags:
+        - issues
+      parameters:
+        - name: page
+          in: query
+          description: pagination page number 
+          required: false
+          schema:
+            type: integer
+        - name: per_page
+          in: query
+          description: Number of records to return 
+          required: false
+          schema:
+            type: integer
+        - name: sort
+          in: query
+          description: The field to sort by
+          required: false
+          schema:
+            type: string
+        - name: order
+          in: query
+          description: The sort order (asc or desc)
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
       responses:
         200:
           description: OK
@@ -244,3 +332,41 @@ components:
           type: string
         url:
           type: string
+    Image:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+        last_synced_at:
+          type: string
+          format: date-time
+        repository:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        avatar_url:
+          type: string
+        category:
+          type: string
+        sub_category:
+          type: string
+        monthly_downloads:
+          type: integer
+        language:
+          type: string
+        has_new_issues:
+          type: boolean
+        readme_image_urls:
+          type: array
+          items:
+            type: string
