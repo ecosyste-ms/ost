@@ -1,6 +1,20 @@
 class Api::V1::ProjectsController < Api::V1::ApplicationController
   def index
     @projects = Project.all.where.not(last_synced_at: nil)
+
+    @projects = @projects.where(reviewed: true) if params[:reviewed] == 'true'
+
+    if params[:sort].present? || params[:order].present?
+      sort = params[:sort].presence || 'projects.updated_at'
+      if params[:order] == 'asc'
+        @projects = @projects.order(Arel.sql(sort).asc.nulls_last)
+      else
+        @projects = @projects.order(Arel.sql(sort).desc.nulls_last)
+      end
+    else
+      @projects = @projects.order('projects.updated_at DESC')
+    end
+
     @pagy, @projects = pagy(@projects)
   end
 
