@@ -277,6 +277,10 @@ components:
             type: string
         works:
           type: object
+        citation_counts:
+          type: object
+        total_citations:
+          type: integer
     Issue:
       type: object
       properties:
