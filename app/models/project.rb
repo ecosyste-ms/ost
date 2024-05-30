@@ -1091,12 +1091,14 @@ class Project < ApplicationRecord
     Contributor.where(email: commits['committers'].map{|c| c['email'] }.uniq)
   end
 
-  def contributor_topics(limit: 6, minimum: 2)
-    return unless commits.present?
-    return unless commits['committers'].present?
-    return unless contributors.length > 1
+  def contributor_topics(limit: 6, minimum: 3)
+    return [] unless commits.present?
+    return [] unless commits['committers'].present?
+    return [] unless contributors.length > 1
 
-    all_topics = contributors.flat_map { |c| c.topics }.reject{|t| keywords.include?(t) }
+    ignored_keywords = (keywords + Project.ignore_words).uniq
+
+    all_topics = contributors.flat_map { |c| c.topics }.reject{|t| ignored_keywords.include?(t) }
     
     # Group by the stemmed version of the topic
     grouped_topics = all_topics.group_by { |topic| topic.stem }
