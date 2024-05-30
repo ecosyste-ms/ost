@@ -1091,7 +1091,7 @@ class Project < ApplicationRecord
     Contributor.where(email: commits['committers'].map{|c| c['email'] }.uniq)
   end
 
-  def contributor_topics(limit: 10)
+  def contributor_topics(limit: 6, minimum: 2)
     return unless commits.present?
     return unless commits['committers'].present?
     return unless contributors.length > 1
@@ -1106,6 +1106,6 @@ class Project < ApplicationRecord
       [original_topics.first, original_topics.size]
     end.to_h
 
-    popular_topics = topic_counts.reject{|t,c| c < 2 }.sort_by { |topic, count| -count }.first(limit).to_h
+    popular_topics = topic_counts.reject{|t,c| c < minimum }.sort_by { |topic, count| -count }.first(limit).to_h
   end
 end
