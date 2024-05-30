@@ -1053,7 +1053,7 @@ class Project < ApplicationRecord
     return [] unless readme.present?
     urls = readme.scan(/!\[.*?\]\((.*?)\)/).flatten.compact.uniq
 
-    # also scan for html images
+    # also sc`an for html images
     urls += readme.scan(/<img.*?src="(.*?)"/).flatten.compact.uniq
 
     # turn relative urls into absolute urls
@@ -1090,12 +1090,21 @@ class Project < ApplicationRecord
     Contributor.where(email: commits['committers'].map{|c| c['email'] }.uniq)
   end
 
-  def contributor_topics
+  def contributor_topics(limit: 10)
     return unless commits.present?
     return unless commits['committers'].present?
     return unless contributors.length > 1
+
     all_topics = contributors.flat_map { |c| c.topics }.reject{|t| keywords.include?(t) }
-    topic_counts = all_topics.group_by { |topic| topic }.map { |topic, occurrences| [topic, occurrences.size] }.to_h
-    popular_topics = topic_counts.reject{|t,c| c < 2 }.sort_by { |topic, count| -count }.to_h
+    
+    # Group by the stemmed version of the topic
+    grouped_topics = all_topics.group_by { |topic| topic.stem }
+
+    # For each group, keep one of the original topics and count the occurrences
+    topic_counts = grouped_topics.map do |stemmed_topic, original_topics|
+      [original_topics.first, original_topics.size]
+    end.to_h
+
+    popular_topics = topic_counts.reject{|t,c| c < 2 }.sort_by { |topic, count| -count }.first(limit).to_h
   end
 end

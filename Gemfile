@@ -36,6 +36,7 @@ gem 'cff'
 # gem 'tokenizers'
 gem 'redis'
 gem 'csv'
+gem 'stemmify'
 
 group :development, :test do
   gem 'dotenv-rails'
