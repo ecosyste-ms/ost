@@ -21,6 +21,8 @@ class Project < ApplicationRecord
   scope :with_readme, -> { where.not(readme: nil) }
   scope :with_works, -> { where('length(works::text) > 2') }
   scope :with_repository, -> { where.not(repository: nil) }
+  scope :with_commits, -> { where.not(commits: nil) }
+  scope :with_keywords, -> { where.not(keywords: []) }
 
   def self.import_from_csv
   
@@ -249,7 +251,7 @@ class Project < ApplicationRecord
     keywords = []
     keywords += repository["topics"] if repository.present?
     keywords += packages.map{|p| p["keywords"]}.flatten if packages.present?
-    self.keywords = keywords.uniq.reject(&:blank?)
+    self.keywords = keywords.uniq.reject(&:blank?) # uniq should be case insensitive
     self.save
   end
 
@@ -1068,5 +1070,17 @@ class Project < ApplicationRecord
         u
       end
     end.compact
+  end
+
+  def update_committers
+    return unless commits.present?
+    return unless commits['committers'].present?
+    commits['committers'].each do |committer|
+      c = Contributor.find_or_create_by(email: committer['email'])
+      if keywords.present?
+        c.topics = (c.topics + keywords).uniq
+      end
+      c.update(committer.except('count'))
+    end
   end
 end
