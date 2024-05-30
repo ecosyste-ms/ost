@@ -1083,4 +1083,19 @@ class Project < ApplicationRecord
       c.update(committer.except('count'))
     end
   end
+
+  def contributors
+    return unless commits.present?
+    return unless commits['committers'].present?
+    Contributor.where(email: commits['committers'].map{|c| c['email'] }.uniq)
+  end
+
+  def contributor_topics
+    return unless commits.present?
+    return unless commits['committers'].present?
+    return unless contributors.length > 1
+    all_topics = contributors.flat_map { |c| c.topics }.reject{|t| keywords.include?(t) }
+    topic_counts = all_topics.group_by { |topic| topic }.map { |topic, occurrences| [topic, occurrences.size] }.to_h
+    popular_topics = topic_counts.reject{|t,c| c < 2 }.sort_by { |topic, count| -count }.to_h
+  end
 end
