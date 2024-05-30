@@ -23,6 +23,7 @@ class Project < ApplicationRecord
   scope :with_repository, -> { where.not(repository: nil) }
   scope :with_commits, -> { where.not(commits: nil) }
   scope :with_keywords, -> { where.not(keywords: []) }
+  scope :without_keywords, -> { where(keywords: []) }
 
   def self.import_from_csv
   
