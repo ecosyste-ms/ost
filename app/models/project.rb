@@ -144,7 +144,8 @@ class Project < ApplicationRecord
     'windows','snakemake','prometheus-exporter', 'opensource','nlp','nuxt','nuxtjs','rust-lang','cloud','tree', 'testing','security','command-line-tool','openai','command-line', 'performance',
     'grafana', 'devops','html','logging','router','server','bash','css','nuxt-module', 'website','algorithms','tool','serverless','real-time','llm','npm','graphql','infrastructure','mqtt','git','tools',
     'compiler','downloader','download','zsh','terminal','clustering','collaboration','angular','webapp','gpt','chatgpt','containers','swift','npm-package','reactjs','mongodb','elasticsearch','postgres',
-    'programming','threejs','csharp','shell','google','facebook','vue-component']
+    'programming','threejs','csharp','shell','google','facebook','vue-component','scikit-learn','redux','api-rest','functional-programming','node', 'html5','pyqt5','bash-script','js','flutter',
+    'google-cloud','mysql','node-js','app','expressjs','bootstrap']
   end
 
   def self.stop_words
