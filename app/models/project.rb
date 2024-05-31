@@ -139,7 +139,8 @@ class Project < ApplicationRecord
     'python-wrappers','python-module','python-3','python-client','pypi-package','cuda-fortran','cuda','gpu','gpu-computing','gpu-acceleration','scientific','scientific-computations','scientific-computing',
     'scientific-machine-learning','scientific-research','scientific-names','scientific-workflows','scientific-visualization','jupyterhub','jupyter-notebook','jupyter','jupyter-lab','jupyter-notebooks',
     'image-database','deploy','datacube','news','webgl','webgl2','joss','sample','sample-code','flat-file-db','pluto-notebooks','tailwindcss','poetry','fabric','mypy','script','static-analyzer','linux-foundation',
-    'dashboards','graph','manuscript','webservice','random-walk','tutorial','overview','trends','couchdb','io','first-good-issue','hacktoberfest2021','nlp-library', 'integration-tests','configuration']
+    'dashboards','graph','manuscript','webservice','random-walk','tutorial','overview','trends','couchdb','io','first-good-issue','hacktoberfest2021','nlp-library', 'integration-tests','configuration',
+    'digital-public-goods', 'public-goods', 'public-good','text-mining','machine-learning-algorithms','machine-translation','natural-language-processing','nlp-library']
   end
 
   def self.stop_words
