@@ -134,7 +134,12 @@ class Project < ApplicationRecord
     'data-analysis','data-visualization','backend','model','modelling','nextjs','pyam','australia','object-detection','monte-carlo-simulation','time-series-analysis','cnn','forecasting','forecast','openai-gym',
     'rails','ruby-on-rails','science',"computer-vision","image-processing","image-classification","segmentation","spatial","classification","electricity","image-segmentation","simulation",'php','leaflet',
     'regression','vector','mobile','leaflet-plugins','sentinel-1','cpu','fastapi','zigbee','metrics','big-data','cross-platform','self-driving-car','json','computing','framework','frontend',
-    'pwa','web','web-framework','react-native','analytics','electron','homeassistant','home-assistant','smarthome','home-automation','pi0']
+    'pwa','web','web-framework','react-native','analytics','electron','homeassistant','home-assistant','smarthome','home-automation','pi0','python','python3','gdal-python','python-package','python3-package',
+    'epanet-python-toolkit','ipython-notebook','geopython','data-analysis-python','python-library','plotting-in-python','python-toolkit','mhkit-python','matlab-python-interface','python-wrapper','python-awips',
+    'python-wrappers','python-module','python-3','python-client','pypi-package','cuda-fortran','cuda','gpu','gpu-computing','gpu-acceleration','scientific','scientific-computations','scientific-computing',
+    'scientific-machine-learning','scientific-research','scientific-names','scientific-workflows','scientific-visualization','jupyterhub','jupyter-notebook','jupyter','jupyter-lab','jupyter-notebooks',
+    'image-database','deploy','datacube','news','webgl','webgl2','joss','sample','sample-code','flat-file-db','pluto-notebooks','tailwindcss','poetry','fabric','mypy','script','static-analyzer','linux-foundation',
+    'dashboards','graph','manuscript','webservice','random-walk','tutorial','overview','trends','couchdb','io','first-good-issue','hacktoberfest2021']
   end
 
   def self.stop_words
