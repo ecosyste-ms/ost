@@ -1152,4 +1152,48 @@ class Project < ApplicationRecord
     sorted_keywords = unique_keywords.group_by { |keyword| keyword }.sort_by { |keyword, occurrences| -occurrences.size }.map(&:first)
     sorted_keywords
   end
+
+  def self.all_category_keywords
+    @all_category_keywords ||= Project.reviewed.where.not(category: nil).pluck(:category).uniq.map do |category|
+      {
+        category: category,
+        keywords: unique_keywords_for_category(category)
+      }
+    end
+  end
+
+  def self.all_sub_category_keywords
+    @all_sub_category_keywords ||= Project.reviewed.where.not(sub_category: nil).pluck(:sub_category).uniq.map do |subcategory|
+      {
+        sub_category: subcategory,
+        keywords: unique_keywords_for_sub_category(subcategory)
+      }
+    end
+  end
+
+  def suggest_category
+    return unless keywords.present?
+
+    cat = Project.all_category_keywords.map do |category|
+      {
+        category: category[:category],
+        score: (keywords & category[:keywords]).length
+      }
+    end.sort_by{|c| -c[:score] }.first
+    return nil if cat[:score] == 0
+    cat
+  end
+
+  def suggest_sub_category
+    return unless keywords.present?
+
+    cat = Project.all_sub_category_keywords.map do |subcategory|
+      {
+        sub_category: subcategory[:sub_category],
+        score: (keywords & subcategory[:keywords]).length
+      }
+    end.sort_by{|c| -c[:score] }.first
+    return nil if cat[:score] == 0
+    cat
+  end
 end
