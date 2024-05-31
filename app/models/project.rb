@@ -1110,4 +1110,40 @@ class Project < ApplicationRecord
 
     popular_topics = topic_counts.reject{|t,c| c < minimum }.sort_by { |topic, count| -count }.first(limit).to_h
   end
+
+  def self.unique_keywords_for_category(category)
+    # Get all keywords from all categories
+    all_keywords = Project.reviewed.where.not(category: category).flat_map(&:keywords)
+
+    # Get keywords from the specific category
+    category_keywords = Project.reviewed.where(category: category).flat_map(&:keywords)
+
+    # Get keywords that only appear in the specific category
+    unique_keywords = category_keywords - all_keywords
+
+    # remove stop words
+    unique_keywords = unique_keywords - ignore_words
+
+    # Group the unique keywords by their values and sort them by the size of each group
+    sorted_keywords = unique_keywords.group_by { |keyword| keyword }.sort_by { |keyword, occurrences| -occurrences.size }.map(&:first)
+    sorted_keywords
+  end
+
+  def self.unique_keywords_for_sub_category(subcategory)
+    # Get all keywords from all subcategory
+    all_keywords = Project.reviewed.where.not(sub_category: subcategory).flat_map(&:keywords)
+
+    # Get keywords from the specific subcategory
+    subcategory_keywords = Project.reviewed.where(sub_category: subcategory).flat_map(&:keywords)
+
+    # Get keywords that only appear in the specific subcategory
+    unique_keywords = subcategory_keywords - all_keywords
+
+    # remove stop words
+    unique_keywords = unique_keywords - ignore_words
+
+    # Group the unique keywords by their values and sort them by the size of each group
+    sorted_keywords = unique_keywords.group_by { |keyword| keyword }.sort_by { |keyword, occurrences| -occurrences.size }.map(&:first)
+    sorted_keywords
+  end
 end
