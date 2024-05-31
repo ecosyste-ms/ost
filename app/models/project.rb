@@ -140,7 +140,11 @@ class Project < ApplicationRecord
     'scientific-machine-learning','scientific-research','scientific-names','scientific-workflows','scientific-visualization','jupyterhub','jupyter-notebook','jupyter','jupyter-lab','jupyter-notebooks',
     'image-database','deploy','datacube','news','webgl','webgl2','joss','sample','sample-code','flat-file-db','pluto-notebooks','tailwindcss','poetry','fabric','mypy','script','static-analyzer','linux-foundation',
     'dashboards','graph','manuscript','webservice','random-walk','tutorial','overview','trends','couchdb','io','first-good-issue','hacktoberfest2021','nlp-library', 'integration-tests','configuration',
-    'digital-public-goods', 'public-goods', 'public-good','text-mining','machine-learning-algorithms','machine-translation','natural-language-processing','nlp-library']
+    'digital-public-goods', 'public-goods', 'public-good','text-mining','machine-learning-algorithms','machine-translation','natural-language-processing','nlp-library', 'prometheus','monitoring', 'macos',
+    'windows','snakemake','prometheus-exporter', 'opensource','nlp','nuxt','nuxtjs','rust-lang','cloud','tree', 'testing','security','command-line-tool','openai','command-line', 'performance',
+    'grafana', 'devops','html','logging','router','server','bash','css','nuxt-module', 'website','algorithms','tool','serverless','real-time','llm','npm','graphql','infrastructure','mqtt','git','tools',
+    'compiler','downloader','download','zsh','terminal','clustering','collaboration','angular','webapp','gpt','chatgpt','containers','swift','npm-package','reactjs','mongodb','elasticsearch','postgres',
+    'programming','threejs','csharp','shell','google','facebook','vue-component']
   end
 
   def self.stop_words
