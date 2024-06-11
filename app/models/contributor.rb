@@ -4,8 +4,8 @@ class Contributor < ApplicationRecord
 
   scope :with_email, -> { where.not(email: [nil, '']) }
 
-  scope :bot, -> { where('email LIKE ?', '%[bot]%') }
-  scope :human, -> { where.not('email LIKE ?', '%[bot]%') }
+  scope :bot, -> { where('email ILIKE ? OR login ILIKE ?', '%[bot]%', '%-bot') }
+  scope :human, -> { where.not('email ILIKE ?', '%[bot]%') }
 
   scope :with_reviewed_projects, -> { where('reviewed_projects_count > 0') }
 
