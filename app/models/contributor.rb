@@ -2,7 +2,7 @@ class Contributor < ApplicationRecord
   scope :with_topics, -> { where.not(topics: []) }
   scope :with_login, -> { where.not(login: nil) }
   scope :with_email, -> { where.not(email: [nil, '']) }
-  scope :with_profile, -> { where.not(profile: {}) }
+  scope :with_profile, -> { where("profile::text != '{}'") }
 
   scope :bot, -> { where('email ILIKE ? OR login ILIKE ?', '%[bot]%', '%-bot') }
   scope :human, -> { where.not('email ILIKE ?', '%[bot]%') }
@@ -12,6 +12,8 @@ class Contributor < ApplicationRecord
   scope :valid_email, -> { where('email like ?', '%@%') }
 
   scope :display, -> { valid_email.ignored_emails.human.with_reviewed_projects }
+
+  scope :with_funding_links, -> { where("LENGTH(profile ->> 'funding_links') > 2") }
 
   scope :ignored_emails, -> { where.not(email: IGNORED_EMAILS) }
 
