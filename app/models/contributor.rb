@@ -33,4 +33,18 @@ class Contributor < ApplicationRecord
   def reviewed_projects
     Project.where(id: reviewed_project_ids).order('score DESC')
   end
+
+  def ping
+    return unless ping_urls
+    Faraday.get(ping_urls)
+  end
+
+  def repos_api_url
+    return nil if login.blank?
+    "https://repos.ecosyste.ms/api/v1/hosts/Github/owners/#{login}"
+  end
+
+  def ping_urls
+    repos_api_url + '/ping' if repos_api_url
+  end
 end
