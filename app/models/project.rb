@@ -247,6 +247,7 @@ class Project < ApplicationRecord
     sync_issues if reviewed?
     fetch_citation_file if reviewed?
     fetch_readme if reviewed?
+    update_committers
     update(last_synced_at: Time.now, matching_criteria: matching_criteria?)
     update_score
     ping
