@@ -247,7 +247,7 @@ class Project < ApplicationRecord
     sync_issues if reviewed?
     fetch_citation_file if reviewed?
     fetch_readme if reviewed?
-    update_committers
+    update_committers if reviewed?
     update(last_synced_at: Time.now, matching_criteria: matching_criteria?)
     update_score
     ping
@@ -1108,10 +1108,11 @@ class Project < ApplicationRecord
       if keywords.present?
         c.topics = (c.topics + keywords).uniq
       end
-      c.categories = (c.categories + [category]).uniq
-      c.sub_categories = (c.sub_categories + [sub_category]).uniq
-      c.reviewed_project_ids = (c.reviewed_project_ids + [id]).uniq
-      c.reviewed_projects_count = c.reviewed_project_ids.length
+      
+      c.categories = (c.categories + [category]).uniq if category
+      c.sub_categories = (c.sub_categories + [sub_category]).uniq if sub_category
+      c.reviewed_project_ids = (c.reviewed_project_ids + [id]).uniq if reviewed?
+      c.reviewed_projects_count = c.reviewed_project_ids.length if reviewed?
       c.update(committer.except('count'))
     end
   end

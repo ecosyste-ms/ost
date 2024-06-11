@@ -15,8 +15,8 @@
       
         <p class="card-subtitle mb-2 text-muted"><i><small>
           <b>OST Projects:</b> <%= contributor.reviewed_projects_count %><br>
-          <b>Categories:</b> <%= contributor.categories.sort.join(', ') %><br>
-          <b>Sub Categories:</b> <%= contributor.sub_categories.sort.join(', ') %><br>
+          <b>Categories:</b> <%= contributor.categories.compact.sort.join(', ') %><br>
+          <b>Sub Categories:</b> <%= contributor.sub_categories.compact.sort.join(', ') %><br>
           <b>Topics:</b> 
           <% topics = contributor.topics_without_ignored %>
           <% if topics.size > 10 %>
