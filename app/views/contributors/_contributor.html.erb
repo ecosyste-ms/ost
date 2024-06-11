@@ -1,0 +1,26 @@
+<div class="card mb-3 contributor d-flex" id="contributor_<%= contributor.id %>">
+  <div class="card-body pb-1">
+    <div class="d-flex">
+      
+      <div class="flex-grow-1 ms-3 text-break">
+        <h5 class='card-title'>
+          <%= link_to contributor, contributor_path(contributor) %>
+          <% if contributor.login.present? %>
+
+            <small class="text-muted">
+              <%= contributor.email %>
+            </small>
+          <% end %>
+        </h5>
+      
+        <p class="card-subtitle mb-2 text-muted"><i><small>
+          <b>OST Projects:</b> <%= contributor.reviewed_projects_count %><br>
+          <b>Categories:</b> <%= contributor.categories.sort.join(', ') %><br>
+          <b>Sub Categories:</b> <%= contributor.sub_categories.sort.join(', ') %><br>
+          <b>Topics:</b> <%= contributor.topics_without_ignored.sort.join(', ') %>
+        </small></i></p>
+      </div>
+    </div>
+  </div>
+</div>
+

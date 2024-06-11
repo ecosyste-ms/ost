@@ -1107,6 +1107,10 @@ class Project < ApplicationRecord
       if keywords.present?
         c.topics = (c.topics + keywords).uniq
       end
+      c.categories = (c.categories + [category]).uniq
+      c.sub_categories = (c.sub_categories + [sub_category]).uniq
+      c.reviewed_project_ids = (c.reviewed_project_ids + [id]).uniq
+      c.reviewed_projects_count = c.reviewed_project_ids.length
       c.update(committer.except('count'))
     end
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_30_104430) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_11_093630) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "plpgsql"
@@ -32,6 +32,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_30_104430) do
     t.datetime "last_synced_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "categories", default: [], array: true
+    t.string "sub_categories", default: [], array: true
+    t.integer "reviewed_project_ids", default: [], array: true
+    t.integer "reviewed_projects_count"
   end
 
   create_table "issues", force: :cascade do |t|
