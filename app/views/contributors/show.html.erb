@@ -18,7 +18,7 @@
       <% if @contributor.profile['funding_links'].present? %>
         <b>Funding Links:</b><br>
         <% @contributor.profile['funding_links'].each do |link| %>
-          <a href="<%= link['url'] %>"><%= link['title'] %></a><br>
+          &emsp;<a href="<%= link %>"><%= link %></a><br>
         <% end %>
       <% end %>
     <% end %>
