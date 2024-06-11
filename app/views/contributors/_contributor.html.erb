@@ -17,7 +17,13 @@
           <b>OST Projects:</b> <%= contributor.reviewed_projects_count %><br>
           <b>Categories:</b> <%= contributor.categories.sort.join(', ') %><br>
           <b>Sub Categories:</b> <%= contributor.sub_categories.sort.join(', ') %><br>
-          <b>Topics:</b> <%= contributor.topics_without_ignored.sort.join(', ') %>
+          <b>Topics:</b> 
+          <% topics = contributor.topics_without_ignored %>
+          <% if topics.size > 10 %>
+            <%= topics.first(10).join(', ') %> and <%= topics.size - 10 %> more
+          <% else %>
+            <%= topics.join(', ') %>
+          <% end %>
         </small></i></p>
       </div>
     </div>
