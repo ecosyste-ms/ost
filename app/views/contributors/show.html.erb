@@ -3,25 +3,34 @@
     Contributors: <%= @contributor %>
   </h2>
 
-  <p>
-    Name: <%= @contributor.name %><br>
-    Login: <%= link_to @contributor.login, "https://github.com/#{@contributor.login}" %><br>
-    Email: <%= @contributor.email %><br>
-  </p>
-
   <p class="card-subtitle mb-2 text-muted"><i><small>
-  <b>OST Projects:</b> <%= @contributor.reviewed_projects_count %><br>
-  <b>Languages:</b> <%= @contributor.reviewed_projects.map(&:language).uniq.join(', ') %><br>
-  <b>Categories:</b> <%= @contributor.categories.sort.join(', ') %><br>
-  <b>Sub Categories:</b> <%= @contributor.sub_categories.sort.join(', ') %><br>
-  <b>Topics:</b> <%=@contributor.topics_without_ignored.join(', ') %>
+    <b>Name:</b> <%= @contributor.name %><br>
+    <b>Login:</b> <%= link_to @contributor.login, "https://github.com/#{@contributor.login}" %><br>
+    <b>Email:</b> <%= @contributor.email %><br>
+
+    <% if @contributor.profile.present? %>
+      <% @contributor.profile.each do |k,v| %>
+        <% next if ['name','login', 'email', 'uuid', 'kind', 'icon_url', 'html_url', 'owner_url', 'repositories_url', 'metadata', 'funding_links', 'created_at', 'updated_at'].include?(k) %>
+        <% next if v.blank? %>
+        <b><%= k.humanize %>:</b> <%= v %><br/>
+      <% end %>
+
+      <% if @contributor.profile['funding_links'].present? %>
+        <b>Funding Links:</b><br>
+        <% @contributor.profile['funding_links'].each do |link| %>
+          <a href="<%= link['url'] %>"><%= link['title'] %></a><br>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <b>OST Projects:</b> <%= @contributor.reviewed_projects_count %><br>
+    <b>Languages:</b> <%= @contributor.reviewed_projects.map(&:language).uniq.join(', ') %><br>
+    <b>Categories:</b> <%= @contributor.categories.sort.join(', ') %><br>
+    <b>Sub Categories:</b> <%= @contributor.sub_categories.sort.join(', ') %><br>
+    <b>Topics:</b> <%=@contributor.topics_without_ignored.join(', ') %>
   </small></i></p>
 
-  <% if @contributor.profile.present? %>
-    
-    <%= debug @contributor.profile %>    
-
-  <% end %>
+  
   
 
   <h3>Contributed Projects</h3>
