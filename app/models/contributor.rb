@@ -1,8 +1,8 @@
 class Contributor < ApplicationRecord
   scope :with_topics, -> { where.not(topics: []) }
   scope :with_login, -> { where.not(login: nil) }
-
   scope :with_email, -> { where.not(email: [nil, '']) }
+  scope :with_profile, -> { where.not(profile: {}) }
 
   scope :bot, -> { where('email ILIKE ? OR login ILIKE ?', '%[bot]%', '%-bot') }
   scope :human, -> { where.not('email ILIKE ?', '%[bot]%') }
@@ -46,5 +46,34 @@ class Contributor < ApplicationRecord
 
   def ping_urls
     repos_api_url + '/ping' if repos_api_url
+  end
+
+  def fetch_profile
+    return if repos_api_url.blank?
+    
+    response = Faraday.get repos_api_url
+    return unless response.success?
+
+    profile = JSON.parse(response.body)
+    update(profile: profile, last_synced_at: Time.now)
+  end
+
+  def import_repos
+    return if repos_api_url.blank?
+
+    response = Faraday.get("#{repos_api_url}/repositories")
+    return unless response.success?
+
+    repos = JSON.parse(response.body)
+    repos.each do |repo|
+      next if repo['archived'] || repo['fork'] || repo['private'] || repo['template']
+      
+      project = Project.find_or_create_by(url: repo['html_url'])
+      project.sync_async unless project.last_synced_at.present?
+    end
+  end
+
+  def owned_projects
+    Project.owner(login)
   end
 end

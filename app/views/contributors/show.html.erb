@@ -16,6 +16,12 @@
   <b>Sub Categories:</b> <%= @contributor.sub_categories.sort.join(', ') %><br>
   <b>Topics:</b> <%=@contributor.topics_without_ignored.join(', ') %>
   </small></i></p>
+
+  <% if @contributor.profile.present? %>
+    
+    <%= debug @contributor.profile %>    
+
+  <% end %>
   
 
   <h3>Contributed Projects</h3>
