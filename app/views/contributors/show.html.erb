@@ -5,7 +5,7 @@
 
   <p>
     Name: <%= @contributor.name %><br>
-    Login: <%= @contributor.login %><br>
+    Login: <%= link_to @contributor.login, "https://github.com/#{@contributor.login}" %><br>
     Email: <%= @contributor.email %><br>
   </p>
 
