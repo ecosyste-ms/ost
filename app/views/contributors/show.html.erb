@@ -1,0 +1,26 @@
+<div class="container-md">
+  <h2>
+    Contributors: <%= @contributor %>
+  </h2>
+
+  <p>
+    Name: <%= @contributor.name %><br>
+    Login: <%= @contributor.login %><br>
+    Email: <%= @contributor.email %><br>
+  </p>
+
+  <p class="card-subtitle mb-2 text-muted"><i><small>
+  <b>OST Projects:</b> <%= @contributor.reviewed_projects_count %><br>
+  <b>Languages:</b> <%= @contributor.reviewed_projects.map(&:language).uniq.join(', ') %><br>
+  <b>Categories:</b> <%= @contributor.categories.sort.join(', ') %><br>
+  <b>Sub Categories:</b> <%= @contributor.sub_categories.sort.join(', ') %><br>
+  <b>Topics:</b> <%=@contributor.topics_without_ignored.join(', ') %>
+  </small></i></p>
+  
+
+  <h3>Contributed Projects</h3>
+
+  <% @contributor.reviewed_projects.each do |project| %>
+    <%= render 'projects/project', project: project %>
+  <% end %>
+</div>

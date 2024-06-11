@@ -29,4 +29,8 @@ class Contributor < ApplicationRecord
   def topics_without_ignored
     topics - Project.ignore_words
   end
+
+  def reviewed_projects
+    Project.where(id: reviewed_project_ids).order('score DESC')
+  end
 end
