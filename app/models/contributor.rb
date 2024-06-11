@@ -33,7 +33,7 @@ class Contributor < ApplicationRecord
   end
 
   def reviewed_projects
-    Project.where(id: reviewed_project_ids).order('score DESC')
+    Project.where(id: reviewed_project_ids).reviewed.order('score DESC')
   end
 
   def ping
