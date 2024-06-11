@@ -63,7 +63,7 @@ class Contributor < ApplicationRecord
   def import_repos
     return if repos_api_url.blank?
 
-    response = Faraday.get("#{repos_api_url}/repositories")
+    response = Faraday.get("#{repos_api_url}/repositories?per_page=1000")
     return unless response.success?
 
     repos = JSON.parse(response.body)
