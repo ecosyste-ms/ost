@@ -5,7 +5,7 @@
       <div class="flex-grow-1 ms-3 text-break">
         <h5 class='card-title'>
           <%= link_to contributor, contributor_path(contributor) %>
-          <% if contributor.login.present? %>
+          <% if contributor.name.present? || contributor.login.present? %>
 
             <small class="text-muted">
               <%= contributor.email %>
