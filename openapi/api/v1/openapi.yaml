@@ -281,6 +281,10 @@ components:
           type: object
         total_citations:
           type: integer
+        keywords_from_contributors:
+          type: array
+          items:
+            type: string
     Issue:
       type: object
       properties:
