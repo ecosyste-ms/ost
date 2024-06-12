@@ -256,6 +256,7 @@ class Project < ApplicationRecord
     fetch_citation_file if reviewed?
     fetch_readme if reviewed?
     update_committers
+    update_keywords_from_contributors
     update(last_synced_at: Time.now, matching_criteria: matching_criteria?)
     update_score
     ping
