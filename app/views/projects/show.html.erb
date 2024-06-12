@@ -21,8 +21,20 @@
   <% if @project.last_synced_at %>
   
     <% if @project.keywords.any? %>
+      <h4>Keywords</h4>
       <p>
         <% @project.keywords.each do |keyword| %>
+          <span class="badge bg-light text-dark">
+            <%= keyword %>
+          </span>
+        <% end %>
+      </p>
+    <% end %>
+
+    <% if @project.keywords_from_contributors.any? %>
+      <h4>Keywords from Contributors</h4>
+      <p>
+        <% @project.keywords_from_contributors.each do |keyword| %>
           <span class="badge bg-light text-dark">
             <%= keyword %>
           </span>
