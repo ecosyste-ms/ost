@@ -17,6 +17,9 @@ class Contributor < ApplicationRecord
 
   scope :ignored_emails, -> { where.not(email: IGNORED_EMAILS) }
 
+  scope :category, ->(category) { where("categories @> ARRAY[?]::varchar[]", category) }
+  scope :sub_category, ->(sub_category) { where("sub_categories @> ARRAY[?]::varchar[]", sub_category) }
+
   IGNORED_EMAILS = ['badger@gitter.im', 'you@example.com', 'actions@github.com', 'badger@codacy.com', 'snyk-bot@snyk.io',
   'dependabot[bot]@users.noreply.github.com', 'renovate[bot]@app.renovatebot.com', 'dependabot-preview[bot]@users.noreply.github.com',
   'myrmecocystus+ropenscibot@gmail.com', 'support@dependabot.com', 'action@github.com', 'support@stickler-ci.com',

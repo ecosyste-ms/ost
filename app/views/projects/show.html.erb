@@ -10,6 +10,13 @@
     <%= link_to @project.url, @project.url %>
   </p>
 
+  <% if @project.reviewed %>
+    <p>
+      Category: <%= link_to @project.category, category_path(@project.category) %><br>
+      Sub Category: <%= link_to @project.sub_category, sub_category_category_path(@project.category, @project.sub_category) %>
+    </p>
+  <% end %>
+
       
   <% if @project.last_synced_at %>
   

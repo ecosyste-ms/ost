@@ -49,6 +49,12 @@ Rails.application.routes.draw do
   
   resources :contributors, only: [:index, :show] 
 
+  resources :categories, only: [:index, :show] do
+    member do
+      get '/:sub_category', action: :show, as: :sub_category
+    end
+  end
+
   resources :exports, only: [:index], path: 'open-data'
 
   get '/404', to: 'errors#not_found'

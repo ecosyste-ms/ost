@@ -1240,4 +1240,28 @@ class Project < ApplicationRecord
     return nil if cat[:score] == 0
     cat
   end
+
+  def self.category_tree
+    sql = <<-SQL
+      SELECT category, sub_category, COUNT(*)
+      FROM projects
+      WHERE reviewed = true AND category IS NOT NULL
+      GROUP BY category, sub_category
+    SQL
+
+    results = ActiveRecord::Base.connection.execute(sql)
+
+    results.group_by { |row| row['category'] }.map do |category, rows|
+      {
+        category: category,
+        count: rows.sum { |row| row['count'] },
+        sub_categories: rows.map do |row|
+          {
+            sub_category: row['sub_category'],
+            count: row['count']
+          }
+        end
+      }
+    end
+  end
 end

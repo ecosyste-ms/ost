@@ -1,0 +1,18 @@
+<div class="container-md">
+  <h1>Categories</h1>
+
+  <ul>
+    <% @categories.each do |category| %>
+      <li>
+        <%= link_to category[:category], category_path(category[:category]) %> - <%= category[:count] %> projects
+        <ul>
+          <% category[:sub_categories].each do |sub_category| %>
+            <li>
+              <%= link_to sub_category[:sub_category], sub_category_category_path(category[:category], sub_category[:sub_category]) %> - <%= sub_category[:count] %> projects
+            </li>
+          <% end %>
+        </ul>
+      </li>
+    <% end %>
+  </ul>
+</div>
