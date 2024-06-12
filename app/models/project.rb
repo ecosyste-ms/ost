@@ -1163,10 +1163,10 @@ class Project < ApplicationRecord
 
   def self.unique_keywords_for_category(category)
     # Get all keywords from all categories
-    all_keywords = Project.reviewed.where.not(category: category).pluck(:keywords).flatten
+    all_keywords = Project.where.not(category: category).pluck(:keywords).flatten
 
     # Get keywords from the specific category
-    category_keywords = Project.reviewed.where(category: category).pluck(:keywords).flatten
+    category_keywords = Project.where(category: category).pluck(:keywords).flatten
 
     # Get keywords that only appear in the specific category
     unique_keywords = category_keywords - all_keywords
@@ -1181,10 +1181,10 @@ class Project < ApplicationRecord
 
   def self.unique_keywords_for_sub_category(subcategory)
     # Get all keywords from all subcategory
-    all_keywords = Project.reviewed.where.not(sub_category: subcategory).pluck(:keywords).flatten
+    all_keywords = Project.where.not(sub_category: subcategory).pluck(:keywords).flatten
 
     # Get keywords from the specific subcategory
-    subcategory_keywords = Project.reviewed.where(sub_category: subcategory).pluck(:keywords).flatten
+    subcategory_keywords = Project.where(sub_category: subcategory).pluck(:keywords).flatten
 
     # Get keywords that only appear in the specific subcategory
     unique_keywords = subcategory_keywords - all_keywords
@@ -1198,7 +1198,7 @@ class Project < ApplicationRecord
   end
 
   def self.all_category_keywords
-    @all_category_keywords ||= Project.reviewed.where.not(category: nil).pluck(:category).uniq.map do |category|
+    @all_category_keywords ||= Project.where.not(category: nil).pluck(:category).uniq.map do |category|
       {
         category: category,
         keywords: unique_keywords_for_category(category)
@@ -1207,7 +1207,7 @@ class Project < ApplicationRecord
   end
 
   def self.all_sub_category_keywords
-    @all_sub_category_keywords ||= Project.reviewed.where.not(sub_category: nil).pluck(:sub_category).uniq.map do |subcategory|
+    @all_sub_category_keywords ||= Project.where.not(sub_category: nil).pluck(:sub_category).uniq.map do |subcategory|
       {
         sub_category: subcategory,
         keywords: unique_keywords_for_sub_category(subcategory)
@@ -1245,7 +1245,7 @@ class Project < ApplicationRecord
     sql = <<-SQL
       SELECT category, sub_category, COUNT(*)
       FROM projects
-      WHERE reviewed = true AND category IS NOT NULL
+      WHERE category IS NOT NULL
       GROUP BY category, sub_category
     SQL
 

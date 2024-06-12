@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_12_133151) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_12_161900) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "plpgsql"
@@ -97,6 +97,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_12_133151) do
     t.text "readme"
     t.json "works", default: {}
     t.string "keywords_from_contributors", default: [], array: true
+    t.index ["category", "sub_category"], name: "index_projects_on_category_and_sub_category", where: "((category IS NOT NULL) AND (sub_category IS NOT NULL))"
     t.index ["collection_id"], name: "index_projects_on_collection_id"
     t.index ["url"], name: "index_projects_on_url", unique: true
   end

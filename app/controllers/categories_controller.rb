@@ -8,10 +8,10 @@ class CategoriesController < ApplicationController
     @category = params[:id]
     if params[:sub_category]  
       @sub_category = params[:sub_category]
-      project_scope = Project.where(category: @category, sub_category: @sub_category).reviewed.order('score DESC')
+      project_scope = Project.where(category: @category, sub_category: @sub_category).order('score DESC')
       contributor_scope = Contributor.category(@category).sub_category(@sub_category).display.order('reviewed_projects_count DESC')
     else
-      project_scope = Project.where(category: @category).reviewed.order('score DESC')
+      project_scope = Project.where(category: @category).order('score DESC')
       contributor_scope = Contributor.category(@category).display.order('reviewed_projects_count DESC')
     end
     @sub_categories = @categories.find { |category| category[:category] == @category }[:sub_categories]
