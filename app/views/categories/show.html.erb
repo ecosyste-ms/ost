@@ -6,7 +6,18 @@
     <% end %>
   </h1>
 
-  <% unless @sub_category %>
+  <% if @sub_category %>
+    <h2>Topics</h2>
+
+    <p>
+      <small>
+        <% Project.unique_keywords_for_sub_category(@sub_category).each do |topic| %>
+          <%= link_to topic, "https://github.com/topics/#{topic}", target: :_blank %>,
+        <% end %>
+      </small>
+    </p>
+
+  <% else %>
     <h2>Sub Categories</h2>
     <ul>
       <% @sub_categories.each do |sub_category| %>
@@ -15,6 +26,16 @@
         </li>
       <% end %>
     </ul>
+
+    <h2>Topics</h2>
+
+    <p>
+      <small>
+        <% Project.unique_keywords_for_category(@category).each do |topic| %>
+          <%= link_to topic, "https://github.com/topics/#{topic}", target: :_blank %>,
+        <% end %>
+      </small>
+    </p>
   <% end %>
 
   <div class='row'>
