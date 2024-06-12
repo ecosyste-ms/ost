@@ -25,6 +25,8 @@ class Project < ApplicationRecord
   scope :with_keywords, -> { where.not(keywords: []) }
   scope :without_keywords, -> { where(keywords: []) }
 
+  scope :with_keywords_from_contributors, -> { where.not(keywords_from_contributors: []) }
+
   def self.import_from_csv
   
     # url = 'https://raw.githubusercontent.com/protontypes/open-source-in-environmental-sustainability/main/open-source-in-environmental-sustainability/csv/projects.csv'
@@ -1128,10 +1130,10 @@ class Project < ApplicationRecord
     Contributor.where(email: commits['committers'].map{|c| c['email'] }.uniq)
   end
 
-  def contributor_topics(limit: 6, minimum: 3)
-    return [] unless commits.present?
-    return [] unless commits['committers'].present?
-    return [] unless contributors.length > 1
+  def contributor_topics(limit: 10, minimum: 3)
+    return {} unless commits.present?
+    return {} unless commits['committers'].present?
+    return {} unless contributors.length > 1
 
     ignored_keywords = (keywords + Project.ignore_words).uniq
 
@@ -1146,6 +1148,11 @@ class Project < ApplicationRecord
     end.to_h
 
     popular_topics = topic_counts.reject{|t,c| c < minimum }.sort_by { |topic, count| -count }.first(limit).to_h
+  end
+
+  def update_keywords_from_contributors
+    ct = contributor_topics(limit: 10, minimum: 3)
+    update(keywords_from_contributors: ct.keys) if ct.present?
   end
 
   def self.unique_keywords_for_category(category)
