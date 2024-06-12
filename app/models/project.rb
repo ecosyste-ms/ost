@@ -254,7 +254,7 @@ class Project < ApplicationRecord
     sync_issues if reviewed?
     fetch_citation_file if reviewed?
     fetch_readme if reviewed?
-    update_committers if reviewed?
+    update_committers
     update(last_synced_at: Time.now, matching_criteria: matching_criteria?)
     update_score
     ping
@@ -1161,10 +1161,10 @@ class Project < ApplicationRecord
 
   def self.unique_keywords_for_category(category)
     # Get all keywords from all categories
-    all_keywords = Project.reviewed.where.not(category: category).flat_map(&:keywords)
+    all_keywords = Project.reviewed.where.not(category: category).pluck(:keywords).flatten
 
     # Get keywords from the specific category
-    category_keywords = Project.reviewed.where(category: category).flat_map(&:keywords)
+    category_keywords = Project.reviewed.where(category: category).pluck(:keywords).flatten
 
     # Get keywords that only appear in the specific category
     unique_keywords = category_keywords - all_keywords
@@ -1179,10 +1179,10 @@ class Project < ApplicationRecord
 
   def self.unique_keywords_for_sub_category(subcategory)
     # Get all keywords from all subcategory
-    all_keywords = Project.reviewed.where.not(sub_category: subcategory).flat_map(&:keywords)
+    all_keywords = Project.reviewed.where.not(sub_category: subcategory).pluck(:keywords).flatten
 
     # Get keywords from the specific subcategory
-    subcategory_keywords = Project.reviewed.where(sub_category: subcategory).flat_map(&:keywords)
+    subcategory_keywords = Project.reviewed.where(sub_category: subcategory).pluck(:keywords).flatten
 
     # Get keywords that only appear in the specific subcategory
     unique_keywords = subcategory_keywords - all_keywords
