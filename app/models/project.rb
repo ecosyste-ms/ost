@@ -26,6 +26,7 @@ class Project < ApplicationRecord
   scope :without_keywords, -> { where(keywords: []) }
 
   scope :with_keywords_from_contributors, -> { where.not(keywords_from_contributors: []) }
+  scope :without_keywords_from_contributors, -> { where(keywords_from_contributors: []) }
 
   def self.import_from_csv
   
