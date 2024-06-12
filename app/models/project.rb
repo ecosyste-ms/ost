@@ -632,6 +632,10 @@ class Project < ApplicationRecord
     good_topics? && external_users? && open_source_license? && active?
   end
 
+  def high_quality?
+    external_users? && open_source_license? && active?
+  end
+
   def matching_topics
     (keywords & Project.relevant_keywords)
   end
