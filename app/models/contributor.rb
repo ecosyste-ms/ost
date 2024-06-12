@@ -24,7 +24,7 @@ class Contributor < ApplicationRecord
   'dependabot[bot]@users.noreply.github.com', 'renovate[bot]@app.renovatebot.com', 'dependabot-preview[bot]@users.noreply.github.com',
   'myrmecocystus+ropenscibot@gmail.com', 'support@dependabot.com', 'action@github.com', 'support@stickler-ci.com',
   'github-bot@pyup.io', 'iron@waffle.io', 'ImgBotHelp@gmail.com', 'compathelper_noreply@julialang.org','bot@deepsource.io',
-  'badges@fossa.io', 'github-actions@github.com' 
+  'badges@fossa.io', 'github-actions@github.com', 'bot@stepsecurity.io'
 ].freeze
 
   def to_s
