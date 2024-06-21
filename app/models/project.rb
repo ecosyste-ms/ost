@@ -288,7 +288,7 @@ class Project < ApplicationRecord
     keywords = []
     keywords += repository["topics"] if repository.present?
     keywords += packages.map{|p| p["keywords"]}.flatten if packages.present?
-    self.keywords = keywords.uniq.reject(&:blank?) # uniq should be case insensitive
+    self.keywords = keywords.reject(&:blank?).uniq { |keyword| keyword.downcase }.dup
     self.save
   end
 
