@@ -38,6 +38,7 @@ gem 'redis'
 gem 'csv'
 gem 'stemmify'
 gem 'appsignal'
+gem "net-pop", github: "ruby/net-pop" # temporary fix for net-pop until ruby 3.3.4
 
 group :development, :test do
   gem 'dotenv-rails'
