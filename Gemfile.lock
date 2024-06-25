@@ -3,6 +3,7 @@ GIT
   revision: e8d0afe2773b9eb6a23c39e9e437f6fc0fc7c733
   specs:
     net-pop (0.1.2)
+      net-protocol
 
 GEM
   remote: https://rubygems.org/
@@ -83,7 +84,7 @@ GEM
       tzinfo (~> 2.0)
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
-    appsignal (3.9.0)
+    appsignal (3.9.1)
       rack
     autoprefixer-rails (10.4.16.0)
       execjs (~> 2)
@@ -280,7 +281,7 @@ GEM
       connection_pool
     reline (0.5.9)
       io-console (~> 0.5)
-    rexml (3.3.0)
+    rexml (3.3.1)
       strscan
     rswag-api (2.13.0)
       activesupport (>= 3.1, < 7.2)
