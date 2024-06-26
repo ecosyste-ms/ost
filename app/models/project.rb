@@ -229,6 +229,7 @@ class Project < ApplicationRecord
   end
 
   def github_pages_to_repo_url(github_pages_url)
+    return if github_pages_url.blank?
     match = github_pages_url.chomp('/').match(/https?:\/\/(.+)\.github\.io\/(.+)/)
     return nil unless match
   
