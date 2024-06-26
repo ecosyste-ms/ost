@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_12_161900) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_26_125315) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "plpgsql"
@@ -37,6 +37,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_12_161900) do
     t.integer "reviewed_project_ids", default: [], array: true
     t.integer "reviewed_projects_count"
     t.json "profile", default: {}
+  end
+
+  create_table "dependencies", force: :cascade do |t|
+    t.string "ecosystem"
+    t.string "name"
+    t.integer "count"
+    t.json "package", default: {}
+    t.string "repository_url"
+    t.integer "project_id"
+    t.float "average_ranking"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "issues", force: :cascade do |t|

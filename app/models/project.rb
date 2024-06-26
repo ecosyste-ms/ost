@@ -1272,23 +1272,47 @@ class Project < ApplicationRecord
 
     dependencies.each do |(ecosystem, package_name), count|
       puts "Checking #{ecosystem} #{package_name}"
-      if existing_packages.any?{|p| p['ecosystem'] == ecosystem && p['name'] == package_name }
-        puts "  Already exists"
-        next 
-      end
-      purl = "https://packages.ecosyste.ms/api/v1/packages/lookup?ecosystem=#{ecosystem}&package_name=#{package_name}"
-      conn = Faraday.new(url: purl) do |faraday|
-        faraday.response :follow_redirects
-        faraday.adapter Faraday.default_adapter
-      end
 
-      response = conn.get
-      puts "  Response: #{response.status}"
-      next unless response.success?
-      package = JSON.parse(response.body)
-      puts " #{package['repository_url']}"
-      project = Project.create(url: package['repository_url'])
-      project.sync_async
+      dependency = Dependency.find_or_create_by(ecosystem: ecosystem, name: package_name)
+
+      dependency.update(count: count)
+
+      next if dependency.package.present?
+
+      existing_package = existing_packages.find{|p| p['ecosystem'] == ecosystem && p['name'] == package_name }
+      
+      if existing_package.present?
+        puts "  Already exists"
+
+        project = Project.find_by(url: existing_package['repository_url'])
+
+        dependency.update(package: existing_package, repository_url: existing_package['repository_url'], project_id: project.try(:id), average_ranking: existing_package['rankings']['average'])
+      else
+        # TODO
+        # load it from the packages API
+        # purl = "https://packages.ecosyste.ms/api/v1/packages/lookup?ecosystem=#{ecosystem}&name=#{package_name}"
+      
+        # puts "  Fetching #{purl}"
+        
+        # conn = Faraday.new(url: purl) do |faraday|
+        #   faraday.response :follow_redirects
+        #   faraday.adapter Faraday.default_adapter
+        # end
+
+        # response = conn.get
+        # puts "  Response: #{response.status}"
+        # next unless response.success?
+        # packages = JSON.parse(response.body)
+        # package = packages.first
+        # next unless package.present?
+        # puts " #{package['repository_url']}"
+        # project = Project.create(url: package['repository_url'])
+        # project.sync_async
+
+        # dependency.update(package: package, repository_url: package['repository_url'], project_id: project.id, average_ranking: package['rankings']['average'])
+
+      end
+      
     end
   end
 end
