@@ -58,10 +58,26 @@
     <div class='col-md-4'>
       <div class="card mb-3 d-flex">
         <div class="card-header">
-          Most used package managers across all categories
+          Most used package managers across all projects
         </div>
         <ul class="list-group list-group-flush">
           <% Project.reviewed.map(&:dependency_ecosystems).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse.each do |ecosystem, count| %>
+            <li class="list-group-item">
+              <%= ecosystem %>
+              <small class='ps-3 text-muted'>
+                <i><%= pluralize count, 'project' %></i>
+              </small>
+            </li>  
+          <% end %>
+        </ul>
+      </div>
+
+      <div class="card mb-3 d-flex">
+        <div class="card-header">
+          Most popular package managers by package count
+        </div>
+        <ul class="list-group list-group-flush">
+          <% Dependency.group(:ecosystem).count.sort_by{|k,v| v}.reverse.each do |ecosystem, count| %>
             <li class="list-group-item">
               <%= ecosystem %>
               <small class='ps-3 text-muted'>
