@@ -1264,4 +1264,25 @@ class Project < ApplicationRecord
       }
     end
   end
+
+  def self.sync_dependencies
+    @dependencies = Project.reviewed.map(&:dependency_packages).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse
+    @existing_packages = Project.select{|p| p.packages.present? }.map(&:packages).flatten(1)
+
+    @dependencies.each do |(ecosystem, package_name), count|
+      next if @existing_packages.any?{|p| p['ecosystem'] == ecosystem && p['name'] == package_name }
+      purl = "https://packages.ecosyste.ms/api/v1/packages/lookup?ecosystem=#{ecosystem}&package_name=#{package_name}"
+      conn = Faraday.new(url: purl) do |faraday|
+        faraday.response :follow_redirects
+        faraday.adapter Faraday.default_adapter
+      end
+
+      response = conn.get
+      next unless response.success?
+      package = JSON.parse(response.body)
+
+      project = Project.create(url: package['repository_url'])
+      project.sync_async
+    end
+  end
 end

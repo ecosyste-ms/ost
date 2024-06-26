@@ -21,4 +21,9 @@ namespace :projects do
     Project.discover_via_topics
     Project.discover_via_keywords
   end
+
+  desc 'sync dependencies'
+  task :sync_dependencies => :environment do
+    Project.sync_dependencies
+  end
 end
