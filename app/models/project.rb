@@ -287,11 +287,13 @@ class Project < ApplicationRecord
   end
 
   def combine_keywords
-    keywords = []
-    keywords += repository["topics"] if repository.present?
-    keywords += packages.map{|p| p["keywords"]}.flatten if packages.present?
-    self.keywords = keywords.reject(&:blank?).uniq { |keyword| keyword.downcase }.dup
+    all_keywords = []
+    all_keywords += repository["topics"] if repository.present?
+    all_keywords += packages.map{|p| p["keywords"]}.flatten if packages.present?
+    self.keywords = all_keywords.reject(&:blank?).uniq { |keyword| keyword.downcase }.dup
     self.save
+  rescue FrozenError
+    puts "Error combining keywords for #{repository_url}"
   end
 
   def ping
