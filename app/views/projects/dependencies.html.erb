@@ -17,13 +17,18 @@
           Most used dependencies across all categories
         </div>
         <ul class="list-group list-group-flush">
+          <% i = 0 %>
           <% @dependencies.each do |dependency, count| %>
+            <% next if i > 50 %>
+            <% package = @dependency_records.find{|p| p['ecosystem'] == dependency[0] && p['name'] == dependency[1] } %>
+            <% next if params[:threshold] && package.average_ranking && package.average_ranking < params[:threshold].to_f %>
+
             <li class="list-group-item">
               <%= dependency[0] %> : <%= link_to dependency[1], "https://packages.ecosyste.ms/packages/lookup?ecosystem=#{dependency[0]}&name=#{dependency[1]}", target: :_blank %>
               <small class='ps-3 text-muted'>
                 <i><%= pluralize count, 'dependent project' %></i>
               
-                <% package = @dependency_records.find{|p| p['ecosystem'] == dependency[0] && p['name'] == dependency[1] } %>
+                
                 <% if package && package.average_ranking %>
                   <i>
                     - Top <%= package.average_ranking.round(2) %>%
@@ -37,7 +42,7 @@
                 <% end %>
               </small>
             </li>  
-
+            <% i = i + 1%>
           <% end %>
         </ul>
       </div>
