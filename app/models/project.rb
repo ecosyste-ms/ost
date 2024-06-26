@@ -24,6 +24,7 @@ class Project < ApplicationRecord
   scope :with_commits, -> { where.not(commits: nil) }
   scope :with_keywords, -> { where.not(keywords: []) }
   scope :without_keywords, -> { where(keywords: []) }
+  scope :with_packages, -> { where.not(packages: [nil, []]) }
 
   scope :with_keywords_from_contributors, -> { where.not(keywords_from_contributors: []) }
   scope :without_keywords_from_contributors, -> { where(keywords_from_contributors: []) }
@@ -1266,11 +1267,15 @@ class Project < ApplicationRecord
   end
 
   def self.sync_dependencies
-    @dependencies = Project.reviewed.map(&:dependency_packages).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse
-    @existing_packages = Project.select{|p| p.packages.present? }.map(&:packages).flatten(1)
+    dependencies = Project.reviewed.map(&:dependency_packages).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse
+    existing_packages = Project.with_packages.map(&:packages).flatten(1)
 
-    @dependencies.each do |(ecosystem, package_name), count|
-      next if @existing_packages.any?{|p| p['ecosystem'] == ecosystem && p['name'] == package_name }
+    dependencies.each do |(ecosystem, package_name), count|
+      puts "Checking #{ecosystem} #{package_name}"
+      if existing_packages.any?{|p| p['ecosystem'] == ecosystem && p['name'] == package_name }
+        puts "  Already exists"
+        next 
+      end
       purl = "https://packages.ecosyste.ms/api/v1/packages/lookup?ecosystem=#{ecosystem}&package_name=#{package_name}"
       conn = Faraday.new(url: purl) do |faraday|
         faraday.response :follow_redirects
@@ -1278,9 +1283,10 @@ class Project < ApplicationRecord
       end
 
       response = conn.get
+      puts "  Response: #{response.status}"
       next unless response.success?
       package = JSON.parse(response.body)
-
+      puts " #{package['repository_url']}"
       project = Project.create(url: package['repository_url'])
       project.sync_async
     end
