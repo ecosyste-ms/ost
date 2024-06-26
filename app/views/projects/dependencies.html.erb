@@ -21,7 +21,10 @@
           <% @dependencies.each do |dependency, count| %>
             <% next if i > 50 %>
             <% package = @dependency_records.find{|p| p['ecosystem'] == dependency[0] && p['name'] == dependency[1] } %>
-            <% next if params[:threshold] && package.average_ranking && package.average_ranking < params[:threshold].to_f %>
+            
+            <% if params[:threshold] && package.average_ranking && package.average_ranking < params[:threshold].to_f  %>
+              <% next unless package.project && package.project.reviewed? %>
+            <% end %>
 
             <li class="list-group-item">
               <%= dependency[0] %> : <%= link_to dependency[1], "https://packages.ecosyste.ms/packages/lookup?ecosystem=#{dependency[0]}&name=#{dependency[1]}", target: :_blank %>
