@@ -93,7 +93,8 @@ class ProjectsController < ApplicationController
   def dependencies
     @projects = Project.reviewed
     @dependencies = @projects.map(&:dependency_packages).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse.first(50)
-    @packages = Project.reviewed.select{|p| p.packages.present? }.map(&:packages).flatten(1)
+    @dependency_records = Dependency.where('count > 1').includes(:project)
+    @packages = []
   end
 
   def packages

@@ -23,11 +23,17 @@
               <small class='ps-3 text-muted'>
                 <i><%= pluralize count, 'dependent project' %></i>
               
-                <% package = @packages.find{|p| p['ecosystem'] == dependency[0] && p['name'] == dependency[1] } %>
-                <% if package %>
+                <% package = @dependency_records.find{|p| p['ecosystem'] == dependency[0] && p['name'] == dependency[1] } %>
+                <% if package && package.average_ranking %>
                   <i>
-                    <%= link_to '(in OST)', lookup_projects_path(url: package['repository_url']), method: :post %>
+                    - Top <%= package.average_ranking.round(2) %>%
                   </i>
+
+                  <% if package.project && package.project.reviewed? %>
+                    <i>
+                      - <%= link_to '(in OST)', lookup_projects_path(url: package['repository_url']), method: :post %>
+                    </i>
+                  <% end %>
                 <% end %>
               </small>
             </li>  
@@ -53,11 +59,17 @@
 
                 <small class='ps-3 text-muted'>
                   <i><%= pluralize count, 'dependent project' %></i>
-                  <% package = @packages.find{|p| p['ecosystem'] == dependency[0] && p['name'] == dependency[1] } %>
-                  <% if package %>
+                  <% package = @dependency_records.find{|p| p['ecosystem'] == dependency[0] && p['name'] == dependency[1] } %>
+                  <% if package && package.average_ranking %>
                     <i>
-                      <%= link_to '(in OST)', lookup_projects_path(url: package['repository_url']), method: :post %>
+                      - Top <%= package.average_ranking.round(2) %>%
                     </i>
+
+                    <% if package.project && package.project.reviewed? %>
+                      <i>
+                        - <%= link_to '(in OST)', lookup_projects_path(url: package['repository_url']), method: :post %>
+                      </i>
+                    <% end %>
                   <% end %>
                 </small>
               </li>  
