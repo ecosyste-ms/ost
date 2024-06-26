@@ -14,12 +14,16 @@
       
       <div class="card mb-3 d-flex">
         <div class="card-header">
-          Most used dependencies across all categories
+          100 Most used dependencies across all categories
+          <% if params[:threshold].present? %>
+            (Excluding Top <%= params[:threshold] %>% packages within each ecosystem)
+          <% end %>
         </div>
         <ul class="list-group list-group-flush">
           <% i = 0 %>
           <% @dependencies.each do |dependency, count| %>
-            <% next if i > 50 %>
+            <% next if ['python', 'r'].include?(dependency[1]) %>
+            <% next if i > 100 %>
             <% package = @dependency_records.find{|p| p['ecosystem'] == dependency[0] && p['name'] == dependency[1] } %>
             
             <% if params[:threshold] && package.average_ranking && package.average_ranking < params[:threshold].to_f  %>
@@ -50,42 +54,6 @@
         </ul>
       </div>
 
-      <% top_dependencies = @dependencies.map(&:first) %>
-
-      <% @projects.group_by(&:category).each do |category, projects|%>
-        <div class="card mb-3 d-flex">
-          <div class="card-header">
-            Most used dependencies in <%= category %>
-          </div>
-          <ul class="list-group list-group-flush">
-            <% dependencies = projects.map(&:dependency_packages).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse %>
-            <% filtered_dependencies = dependencies.reject{|p| top_dependencies.include? p[0]}.first(50) %>
-            <% filtered_dependencies.each do |dependency, count| %>
-              <% next if count < 2 %>
-              <li class="list-group-item">
-                <%= dependency[0] %> : <%= link_to dependency[1], "https://packages.ecosyste.ms/packages/lookup?ecosystem=#{dependency[0]}&name=#{dependency[1]}", target: :_blank %>
-
-                <small class='ps-3 text-muted'>
-                  <i><%= pluralize count, 'dependent project' %></i>
-                  <% package = @dependency_records.find{|p| p['ecosystem'] == dependency[0] && p['name'] == dependency[1] } %>
-                  <% if package && package.average_ranking %>
-                    <i>
-                      - Top <%= package.average_ranking.round(2) %>%
-                    </i>
-
-                    <% if package.project && package.project.reviewed? %>
-                      <i>
-                        - <%= link_to '(in OST)', lookup_projects_path(url: package['repository_url']), method: :post %>
-                      </i>
-                    <% end %>
-                  <% end %>
-                </small>
-              </li>  
-            <% end %>
-          </ul>
-        </div>
-      <% end %>
-
     </div>
     <div class='col-md-4'>
       <div class="card mb-3 d-flex">
@@ -93,7 +61,7 @@
           Most used package managers across all categories
         </div>
         <ul class="list-group list-group-flush">
-          <% @projects.map(&:dependency_ecosystems).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse.each do |ecosystem, count| %>
+          <% Project.reviewed.map(&:dependency_ecosystems).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse.each do |ecosystem, count| %>
             <li class="list-group-item">
               <%= ecosystem %>
               <small class='ps-3 text-muted'>
@@ -104,22 +72,6 @@
         </ul>
       </div>
 
-      <% @projects.group_by(&:category).each do |category, projects|%>
-        <div class="card mb-3 d-flex">
-          <div class="card-header">
-            Most used package managers in <%= category %>
-          </div>
-          <ul class="list-group list-group-flush">
-            <% projects.map(&:dependency_ecosystems).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse.each do |ecosystem, count| %>
-            <li class="list-group-item">
-              <%= ecosystem %>
-              <small class='ps-3 text-muted'>
-                <i><%= pluralize count, 'project' %></i>
-              </small>
-            </li>  
-          <% end %>
-          </ul>
-        </div>
-      <% end %>
+      
     </div>
 </div>
