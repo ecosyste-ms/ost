@@ -101,7 +101,7 @@
             </ul>
           </li>
         <% end %>
-        <% if @project.repository['metadata']['funding'] %>
+        <% if @project.repository['metadata']['funding'] && @project.repository['metadata']['funding'].is_a?(Array) %>
           <li>
             Funding: 
             <ul>
