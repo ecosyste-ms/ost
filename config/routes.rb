@@ -44,7 +44,10 @@ Rails.application.routes.draw do
       get :images
     end
     resources :votes, only: [:create]
+    resources :releases, only: [:index, :show]
   end
+
+  resources :releases, only: [:index]
 
   resources :issues, only: [:index]
   

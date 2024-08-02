@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_26_125315) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_02_102353) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "plpgsql"
@@ -112,6 +112,25 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_26_125315) do
     t.index ["category", "sub_category"], name: "index_projects_on_category_and_sub_category", where: "((category IS NOT NULL) AND (sub_category IS NOT NULL))"
     t.index ["collection_id"], name: "index_projects_on_collection_id"
     t.index ["url"], name: "index_projects_on_url", unique: true
+  end
+
+  create_table "releases", force: :cascade do |t|
+    t.integer "project_id"
+    t.string "uuid"
+    t.string "tag_name"
+    t.string "target_commitish"
+    t.string "name"
+    t.text "body"
+    t.boolean "draft"
+    t.boolean "prerelease"
+    t.datetime "published_at"
+    t.string "author"
+    t.json "assets"
+    t.datetime "last_synced_at"
+    t.string "tag_url"
+    t.string "html_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "votes", force: :cascade do |t|

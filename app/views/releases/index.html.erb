@@ -1,0 +1,15 @@
+<% @meta_title = "Releases" %>
+
+<div class="container-sm">
+  <h1 class='mb-3'>
+    Recent Releases of
+    <% if @project.present? %>
+      <%= link_to @project.to_s, project_url(@project) %>
+    <% else %>
+      Open Sustainable Technology Projects
+    <% end %>
+  </h1>
+  
+  <%= render @releases %>
+  <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>  
+</div>

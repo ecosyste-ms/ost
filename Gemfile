@@ -38,6 +38,7 @@ gem 'redis'
 gem 'csv'
 gem 'stemmify'
 gem 'appsignal'
+gem 'commonmarker'
 
 group :development, :test do
   gem 'dotenv-rails'

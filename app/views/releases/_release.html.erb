@@ -1,0 +1,31 @@
+<div class="card mb-3 release d-flex" id="release_<%= release.id %>">
+  <div class="card-body pb-1">
+    <div class="d-flex">
+      
+      <div class="flex-grow-1 ms-3 text-break">
+        <h5 class='card-title'>
+          <%= link_to release.project.to_s, project_url(release.project) %> - <%= link_to release.name, release.html_url %>
+        </h5>
+
+        <p class="card-text">
+          <%== render_markdown release.body %>
+        </p>
+      
+        <p class="card-subtitle mb-2 text-muted"><small>
+          <% if release.project.category %>
+            <%= release.project.category %> - <%= release.project.sub_category %>
+          <% end %>
+          <% if release.project.language%>
+            - <%= release.project.language %>
+          <% end %>
+          <br/>
+          Published by <%= release.author %> <%= time_ago_in_words(release.published_at) %> ago
+          <br />
+        </small></p>
+      </div>
+      <div class="flex-shrink-0">
+        <img src="<%= release.project.avatar_url %>" class="rounded" height='40' width='40' onerror="this.style.display='none'">
+      </div>  
+    </div>
+  </div>
+</div>

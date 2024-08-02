@@ -26,4 +26,8 @@ module ApplicationHelper
     return 0 unless number
     number_with_delimiter(number.round(2))
   end
+
+  def render_markdown(str)
+    Commonmarker.to_html(str)
+  end
 end

@@ -6,6 +6,7 @@ class Project < ApplicationRecord
 
   has_many :votes, dependent: :delete_all
   has_many :issues, dependent: :delete_all
+  has_many :releases, dependent: :delete_all
 
   has_many :climatetriage_issues, -> { good_first_issue }, class_name: 'Issue'
 
@@ -257,6 +258,7 @@ class Project < ApplicationRecord
     sync_issues if reviewed?
     fetch_citation_file if reviewed?
     fetch_readme if reviewed?
+    sync_releases if reviewed?
     update_committers
     update_keywords_from_contributors
     update(last_synced_at: Time.now, matching_criteria: matching_criteria?)
@@ -845,6 +847,11 @@ class Project < ApplicationRecord
     repository['metadata']['files']['readme']
   end
 
+  def readme_is_markdown?
+    return unless readme_file_name.present?
+    readme_file_name.downcase.ends_with?('.md') || readme_file_name.downcase.ends_with?('.markdown')
+  end
+
   def fetch_readme
     if readme_file_name.blank? || download_url.blank?
       fetch_readme_fallback
@@ -1282,6 +1289,24 @@ class Project < ApplicationRecord
       next if dependency.package.present?
 
       dependency.sync_package if count > min_count
+    end
+  end
+
+  def sync_releases
+    return unless repository.present?
+    return unless repository['releases_url'].present?
+
+    conn = Faraday.new(url: repository['releases_url'] + '?per_page=1000') do |faraday|
+      faraday.response :follow_redirects
+      faraday.adapter Faraday.default_adapter
+    end
+    response = conn.get
+    return unless response.success?
+    releases = JSON.parse(response.body)
+
+    releases.each do |release|
+      r = Release.find_or_create_by(project_id: id, uuid: release['uuid'])
+      r.update(release.except('release_url'))
     end
   end
 end
