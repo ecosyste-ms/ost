@@ -77,9 +77,9 @@ GEM
       tzinfo (~> 2.0)
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
-    appsignal (3.12.3)
+    appsignal (3.12.5)
       rack
-    autoprefixer-rails (10.4.16.0)
+    autoprefixer-rails (10.4.19.0)
       execjs (~> 2)
     base64 (0.2.0)
     bigdecimal (3.1.8)
@@ -115,7 +115,7 @@ GEM
     ethon (0.16.0)
       ffi (>= 1.15.0)
     execjs (2.9.1)
-    faraday (2.10.0)
+    faraday (2.10.1)
       faraday-net_http (>= 2.0, < 3.2)
       logger
     faraday-follow_redirects (0.3.0)
@@ -135,19 +135,19 @@ GEM
     ffi (1.17.0-x86_64-linux-musl)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    google-protobuf (4.27.2)
+    google-protobuf (4.27.3)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.27.2-aarch64-linux)
+    google-protobuf (4.27.3-aarch64-linux)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.27.2-arm64-darwin)
+    google-protobuf (4.27.3-arm64-darwin)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.27.2-x86_64-darwin)
+    google-protobuf (4.27.3-x86_64-darwin)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.27.2-x86_64-linux)
+    google-protobuf (4.27.3-x86_64-linux)
       bigdecimal
       rake (>= 13)
     groupdate (6.4.0)
@@ -209,7 +209,7 @@ GEM
     nokogiri (1.16.7-x86_64-linux)
       racc (~> 1.4)
     numerizer (0.1.1)
-    pagy (9.0.4)
+    pagy (9.0.5)
     pg (1.5.7)
     pg_query (5.1.0)
       google-protobuf (>= 3.22.3)
@@ -319,7 +319,7 @@ GEM
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
-    sprockets-rails (3.5.1)
+    sprockets-rails (3.5.2)
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       sprockets (>= 3.0.0)
@@ -404,4 +404,4 @@ RUBY VERSION
    ruby 3.3.4p31
 
 BUNDLED WITH
-   2.5.16
+   2.5.17
