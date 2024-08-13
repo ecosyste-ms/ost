@@ -34,9 +34,10 @@ namespace :papers do
         toc << "  - [#{sub_category}](##{sub_category.downcase.gsub(' ', '-')})\n"
       end
     end
-    toc << "\n\n"
+    toc << "\n"
 
     markdown_string = "# Open Sustainable Papers\n\n" + toc + markdown_string
     
+    puts markdown_string
   end
 end
