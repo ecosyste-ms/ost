@@ -28,6 +28,7 @@ module ApplicationHelper
   end
 
   def render_markdown(str)
+    return '' unless str.present?
     Commonmarker.to_html(str)
   end
 end
