@@ -247,6 +247,7 @@ class Project < ApplicationRecord
 
   def sync
     check_url
+    return unless self.persisted?
     fetch_repository
     fetch_owner
     fetch_dependencies
