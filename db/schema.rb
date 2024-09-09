@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_02_102353) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_09_122300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "plpgsql"
@@ -111,6 +111,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_02_102353) do
     t.string "keywords_from_contributors", default: [], array: true
     t.index ["category", "sub_category"], name: "index_projects_on_category_and_sub_category", where: "((category IS NOT NULL) AND (sub_category IS NOT NULL))"
     t.index ["collection_id"], name: "index_projects_on_collection_id"
+    t.index ["reviewed"], name: "index_projects_on_reviewed"
     t.index ["url"], name: "index_projects_on_url", unique: true
   end
 
@@ -140,5 +141,4 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_02_102353) do
     t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_votes_on_project_id"
   end
-
 end
