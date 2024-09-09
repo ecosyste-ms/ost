@@ -1257,7 +1257,7 @@ class Project < ApplicationRecord
     sql = <<-SQL
       SELECT category, sub_category, COUNT(*)
       FROM projects
-      WHERE category IS NOT NULL
+      WHERE projects.reviewed = true 
       GROUP BY category, sub_category
     SQL
 
