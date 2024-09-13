@@ -39,6 +39,7 @@ gem 'csv'
 gem 'stemmify'
 gem 'appsignal'
 gem 'commonmarker'
+gem 'ostruct'
 
 group :development, :test do
   gem 'dotenv-rails'
