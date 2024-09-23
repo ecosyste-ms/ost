@@ -9,11 +9,15 @@ module ApplicationHelper
     @meta_description || 'A curated list of open technology projects to sustain a stable climate, energy supply, biodiversity and natural resources.'
   end
 
-  def obfusticate_email(email)
-    return unless email
+  def obfustcate_email(email)
+    return unless email.present?
+    
     email.split('@').map do |part|
-      # part.gsub(/./, '*') 
-      part.tap { |p| p[1...-1] = "****" }
+      if part.length > 2
+        part.tap { |p| p[1...-1] = "****" }
+      else
+        part
+      end
     end.join('@')
   end
 

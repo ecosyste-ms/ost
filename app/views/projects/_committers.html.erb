@@ -43,7 +43,7 @@
         <% @project.commits['committers'].first(30).each do |committer| %>
           <tr>
             <td><%= link_to_unless committer['login'].blank?, committer['name'], "https://github.com/#{committer['login']}" %></td>
-            <td><%= obfusticate_email(committer['email']) %></td>
+            <td><%= obfustcate_email(committer['email']) %></td>
             <td><%= committer['count'] %></td>
           </tr>
         <% end %>
