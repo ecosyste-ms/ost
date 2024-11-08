@@ -215,7 +215,7 @@ GEM
     nokogiri (1.16.7-x86_64-linux)
       racc (~> 1.4)
     numerizer (0.1.1)
-    ostruct (0.6.0)
+    ostruct (0.6.1)
     pagy (9.2.0)
     pg (1.5.9)
     pg_query (5.1.0)
