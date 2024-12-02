@@ -110,7 +110,7 @@ GEM
       rexml
     crass (1.0.6)
     csv (3.3.0)
-    date (3.4.0)
+    date (3.4.1)
     dotenv (3.1.4)
     dotenv-rails (3.1.4)
       dotenv (= 3.1.4)
@@ -175,7 +175,7 @@ GEM
     json (2.8.2)
     json_schema (0.20.9)
     language_list (1.2.1)
-    logger (1.6.1)
+    logger (1.6.2)
     loofah (2.23.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -191,7 +191,7 @@ GEM
     mocha (2.6.1)
       ruby2_keywords (>= 0.0.5)
     msgpack (1.7.5)
-    net-http (0.5.0)
+    net-http (0.6.0)
       uri
     net-imap (0.5.1)
       date
@@ -223,7 +223,8 @@ GEM
     pghero (3.6.1)
       activerecord (>= 6.1)
     popper_js (2.11.8)
-    psych (5.2.0)
+    psych (5.2.1)
+      date
       stringio
     public_suffix (6.0.1)
     puma (6.5.0)
@@ -301,7 +302,7 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    securerandom (0.3.2)
+    securerandom (0.4.0)
     shoulda-context (2.0.0)
     shoulda-matchers (6.4.0)
       activesupport (>= 5.2.0)
