@@ -11,11 +11,9 @@ class Api::V1::ProjectsController < Api::V1::ApplicationController
       else
         @projects = @projects.order(Arel.sql(sort).desc.nulls_last)
       end
-    else
-      @projects = @projects.order('projects.updated_at DESC')
     end
 
-    @pagy, @projects = pagy(@projects)
+    @pagy, @projects = pagy_countless(@projects)
   end
 
   def show
