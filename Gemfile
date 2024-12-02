@@ -40,6 +40,7 @@ gem 'stemmify'
 gem 'appsignal'
 gem 'commonmarker'
 gem 'ostruct'
+gem 'dalli'
 
 group :development, :test do
   gem 'dotenv-rails'

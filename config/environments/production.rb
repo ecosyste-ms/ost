@@ -92,4 +92,6 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   config.secret_key_base = '<%= ENV["SECRET_KEY_BASE"] %>'
+
+  config.cache_store = :mem_cache_store, ENV['MEMCACHED_URL'], { pool: {size: 10, timeout: 5 } }
 end

@@ -110,6 +110,7 @@ GEM
       rexml
     crass (1.0.6)
     csv (3.3.0)
+    dalli (3.2.8)
     date (3.4.1)
     dotenv (3.1.4)
     dotenv-rails (3.1.4)
@@ -371,6 +372,7 @@ DEPENDENCIES
   commonmarker
   counter_culture
   csv
+  dalli
   dotenv-rails
   faraday
   faraday-follow_redirects
