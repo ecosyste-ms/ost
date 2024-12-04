@@ -1,1 +1,1 @@
-json.array! @projects, partial: 'api/v1/projects/project', as: :project, cached: true
+json.array! @projects, partial: 'api/v1/projects/project', as: :project
