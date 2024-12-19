@@ -176,7 +176,7 @@ GEM
     json (2.9.0)
     json_schema (0.20.9)
     language_list (1.2.1)
-    logger (1.6.3)
+    logger (1.6.4)
     loofah (2.23.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
