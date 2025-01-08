@@ -1,23 +1,20 @@
-FROM ruby:3.4.1-alpine
+FROM ruby:3.4.1-slim
 
-ENV APP_ROOT /usr/src/app
-ENV DATABASE_PORT 5432
+ENV APP_ROOT=/usr/src/app
+ENV DATABASE_PORT=5432
 WORKDIR $APP_ROOT
 
 # * Setup system
 # * Install Ruby dependencies
-RUN apk add --update \
-    build-base \
-    netcat-openbsd \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
     git \
     nodejs \
-    postgresql-dev \
+    libpq-dev \
     tzdata \
     curl \
-    curl-dev \
-    libc6-compat \
-    musl-dev \
- && rm -rf /var/cache/apk/* 
+    libcurl4-openssl-dev \
+ && rm -rf /var/lib/apt/lists/*
 
 # Will invalidate cache as soon as the Gemfile changes
 COPY Gemfile Gemfile.lock .ruby-version $APP_ROOT/
