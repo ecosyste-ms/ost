@@ -38,7 +38,7 @@ gem 'redis'
 gem 'csv'
 gem 'stemmify'
 gem 'appsignal'
-gem 'commonmarker', '2.0.1'
+gem 'commonmarker'
 gem 'ostruct'
 gem 'dalli'
 
