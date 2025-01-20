@@ -57,6 +57,58 @@ class Project < ApplicationRecord
     end
   end
 
+  def self.import_education
+    url = 'https://raw.githubusercontent.com/protontypes/open-sustainable-technology/refs/heads/main/education.md'
+
+    readme = ReadmeParser.load(url)
+
+    urls = []
+
+    readme.parse_links.each do |category, sub_categories|
+      sub_categories.each do |sub_category, links|
+        links.each do |link|
+          conn = Faraday.new(url: link[:url].downcase) do |faraday|
+            faraday.response :follow_redirects
+            faraday.adapter Faraday.default_adapter
+          end
+          
+          begin
+            response = conn.get
+            if response.success?
+              url = response.env.url.to_s.downcase
+            else
+              url = link[:url].downcase
+            end
+          rescue
+            url = link[:url].downcase
+          end
+
+          url.chomp!('/')
+
+          urls << url
+
+          project = Project.find_or_create_by(url: url)
+          project.name = link[:name]
+          project.description = link[:description]
+          project.reviewed = true
+          project.category = "Sustainable Development"
+          project.sub_category = "Education"
+          project.save
+          project.sync_async unless project.last_synced_at.present?
+        end
+      end
+    end
+    
+    # mark projects that are no longer in the readme as unreviewed
+    removed = Project.where.not(url: urls).reviewed.where(category: "Sustainable Development", sub_category: "Education")
+    removed.each do |p|
+      puts "Marking #{p.url} as unreviewed"
+    end
+
+    puts "Removed #{removed.length} projects"
+    removed.update_all(reviewed: false)
+  end
+
   def self.import_from_readme
     url = 'https://raw.githubusercontent.com/protontypes/open-sustainable-technology/main/README.md'
     readme = ReadmeParser.load(url)
@@ -99,7 +151,7 @@ class Project < ApplicationRecord
     end
     
     # mark projects that are no longer in the readme as unreviewed
-    removed = Project.where.not(url: urls).reviewed
+    removed = Project.where.not(url: urls).reviewed.where.not(sub_category: 'Education')
     removed.each do |p|
       puts "Marking #{p.url} as unreviewed"
     end

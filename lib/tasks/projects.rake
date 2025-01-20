@@ -14,6 +14,7 @@ namespace :projects do
   desc 'import projects'
   task :import => :environment do
     Project.import_from_readme
+    Project.import_education
   end
 
   desc 'discover projects'
