@@ -99,14 +99,14 @@ class Project < ApplicationRecord
       end
     end
     
-    # mark projects that are no longer in the readme as unreviewed
-    removed = Project.where.not(url: urls).reviewed.where(category: "Sustainable Development", sub_category: "Education")
-    removed.each do |p|
-      puts "Marking #{p.url} as unreviewed"
-    end
+    # # mark projects that are no longer in the readme as unreviewed
+    # removed = Project.where.not(url: urls).reviewed.where(category: "Sustainable Development", sub_category: "Education")
+    # removed.each do |p|
+    #   puts "Marking #{p.url} as unreviewed"
+    # end
 
-    puts "Removed #{removed.length} projects"
-    removed.update_all(reviewed: false)
+    # puts "Removed #{removed.length} projects"
+    # removed.update_all(reviewed: false)
   end
 
   def self.import_from_readme
