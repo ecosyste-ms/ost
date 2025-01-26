@@ -28,8 +28,8 @@ class ProjectsController < ApplicationController
   end
 
   def search
-    @projects = Project.pagy_search(params[:q])
-    @pagy, @projects = pagy_meilisearch(@projects, limit: 100)
+    @projects = Project.pagy_search(params[:q], facets: ['keywords', 'language'])
+    @pagy, @projects = pagy_meilisearch(@projects, limit: 20)
   end
 
   def lookup

@@ -7,11 +7,14 @@ class Project < ApplicationRecord
   ActiveRecord_Relation.include Pagy::Meilisearch
 
   meilisearch if: :reviewed? do
+    add_attribute :language
     searchable_attributes [:name, :description, :url, :keywords, :owner, :category, :sub_category, :rubric, :readme, :works, :citation_file]
-    displayed_attributes [:id, :name, :description, :url, :keywords, :owner, :category, :sub_category, :rubric, :readme, :works, :citation_file]
+    displayed_attributes [:id, :name, :description, :url, :keywords,  :owner, :category, :sub_category, :rubric, :readme, :works, :citation_file]
     filterable_attributes [:language, :keywords]
 
     sortable_attributes [:name, :score]
+
+    faceting "sortFacetValuesBy": {'*'=> 'count'}
   end 
 
   validates :url, presence: true, uniqueness: { case_sensitive: false }

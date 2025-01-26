@@ -6,12 +6,59 @@
     </div>
   <% end %>
 
-  <% if @projects.any? %>
-    <%= render @projects %>
-    <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>  
-  <% else %>
-    <div class="alert alert-info" role="alert">
-      No projects found for the search term "<%= params[:q] %>"
+  <div class="row">
+    <div class="col-md-3">
+      <% @projects.facets_distribution.each do |facet, values| %>
+        <div class="mb-3">
+          <ul class="list-group">
+            <li class="list-group-item list-group-item-secondary">
+              <%= facet.humanize %>
+            </li>
+            <% values.each_with_index do |(value, count), index| %>
+              <li class="list-group-item facet-item <%= 'd-none' if index >= 20 %>" data-facet="<%= facet %>">
+                <%= link_to search_projects_path(q: params[:q], facet => value), class: "text-decoration-none d-flex justify-content-between align-items-center" do %>
+                  <span><%= value %></span>
+                  <span class="badge bg-secondary"><%= count %></span>
+                <% end %>
+              </li>
+            <% end %>
+            <% if values.size > 20 %>
+              <li class="list-group-item text-center">
+                <button class="btn btn-link p-0 show-more" data-facet="<%= facet %>">Show More</button>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
     </div>
-  <% end %>
+
+    <div class="col-md-9">
+      <% if @projects.any? %>
+        <%= render @projects %>
+        <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>
+      <% else %>
+        <div class="alert alert-info" role="alert">
+          No projects found for the search term "<%= params[:q] %>"
+        </div>
+      <% end %>
+    </div>
+  </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".show-more").forEach(button => {
+      button.addEventListener("click", function() {
+        const facet = this.dataset.facet;
+        
+        // Show all hidden facet items
+        document.querySelectorAll(`.facet-item[data-facet="${facet}"].d-none`).forEach(el => {
+          el.classList.remove("d-none");
+        });
+
+        // Remove the entire list-group-item containing the button
+        this.closest(".list-group-item").remove();
+      });
+    });
+  });
+</script>
