@@ -2,6 +2,18 @@ require 'csv'
 
 class Project < ApplicationRecord
 
+  include MeiliSearch::Rails
+  extend Pagy::Meilisearch
+  ActiveRecord_Relation.include Pagy::Meilisearch
+
+  meilisearch if: :reviewed? do
+    searchable_attributes [:name, :description, :url, :keywords, :owner, :category, :sub_category, :rubric, :readme, :works, :citation_file]
+    displayed_attributes [:id, :name, :description, :url, :keywords, :owner, :category, :sub_category, :rubric, :readme, :works, :citation_file]
+    filterable_attributes [:language, :keywords]
+
+    sortable_attributes [:name, :score]
+  end 
+
   validates :url, presence: true, uniqueness: { case_sensitive: false }
 
   has_many :votes, dependent: :delete_all

@@ -57,3 +57,5 @@ group :test do
   gem "mocha"
   gem "rails-controller-testing"
 end
+
+gem "meilisearch-rails", "~> 0.14.2"

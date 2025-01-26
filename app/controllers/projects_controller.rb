@@ -27,6 +27,11 @@ class ProjectsController < ApplicationController
     @pagy, @projects = pagy(@scope)
   end
 
+  def search
+    @projects = Project.pagy_search(params[:q])
+    @pagy, @projects = pagy_meilisearch(@projects, limit: 100)
+  end
+
   def lookup
     @project = Project.find_by(url: params[:url].downcase)
     if @project.nil?

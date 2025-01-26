@@ -42,6 +42,7 @@ Rails.application.routes.draw do
       get :dependencies
       get :packages
       get :images
+      get :search
     end
     resources :votes, only: [:create]
     resources :releases, only: [:index, :show]
