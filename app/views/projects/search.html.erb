@@ -10,24 +10,27 @@
     <div class="col-md-3">
       <% @projects.facets_distribution.each do |facet, values| %>
         <div class="mb-3">
-          <ul class="list-group">
-            <li class="list-group-item list-group-item-secondary">
+          <div class="list-group">
+            <div class="list-group-item list-group-item-secondary">
               <%= facet.humanize %>
-            </li>
+            </div>
             <% values.each_with_index do |(value, count), index| %>
-              <li class="list-group-item facet-item <%= 'd-none' if index >= 20 %>" data-facet="<%= facet %>">
-                <%= link_to search_projects_path(q: params[:q], facet => value), class: "text-decoration-none d-flex justify-content-between align-items-center" do %>
-                  <span><%= value %></span>
-                  <span class="badge bg-secondary"><%= count %></span>
-                <% end %>
-              </li>
+              <% is_selected = params[facet] == value %>
+              <%= link_to search_projects_path(
+                    is_selected ? params.permit!.except(facet) : params.permit!.merge(facet => value)
+                  ), 
+                  class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center #{'active' if is_selected} #{'d-none' if index >= 20}",
+                  data: { facet: facet } do %>
+                <span><%= value %></span>
+                <span class="badge bg-secondary"><%= count %></span>
+              <% end %>
             <% end %>
             <% if values.size > 20 %>
-              <li class="list-group-item text-center">
+              <div class="list-group-item text-center">
                 <button class="btn btn-link p-0 show-more" data-facet="<%= facet %>">Show More</button>
-              </li>
+              </div>
             <% end %>
-          </ul>
+          </div>
         </div>
       <% end %>
     </div>
@@ -52,7 +55,7 @@
         const facet = this.dataset.facet;
         
         // Show all hidden facet items
-        document.querySelectorAll(`.facet-item[data-facet="${facet}"].d-none`).forEach(el => {
+        document.querySelectorAll(`.list-group-item[data-facet="${facet}"].d-none`).forEach(el => {
           el.classList.remove("d-none");
         });
 

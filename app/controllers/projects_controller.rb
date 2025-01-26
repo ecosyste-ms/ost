@@ -28,7 +28,13 @@ class ProjectsController < ApplicationController
   end
 
   def search
-    @projects = Project.pagy_search(params[:q], facets: ['keywords', 'language'])
+    filters = []
+    filters << "keywords = #{params[:keywords]}" if params[:keywords].present?
+    filters << "language = #{params[:language]}" if params[:language].present?
+  
+    filter_string = filters.join(" AND ") if filters.any?
+  
+    @projects = Project.pagy_search(params[:q], facets: ['keywords', 'language'], filter: filter_string)
     @pagy, @projects = pagy_meilisearch(@projects, limit: 20)
   end
 
