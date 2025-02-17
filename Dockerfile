@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tzdata \
     curl \
     libcurl4-openssl-dev \
+    libyaml-dev \
  && rm -rf /var/lib/apt/lists/*
 
 # Will invalidate cache as soon as the Gemfile changes
