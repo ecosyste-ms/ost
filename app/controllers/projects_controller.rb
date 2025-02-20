@@ -21,7 +21,7 @@ class ProjectsController < ApplicationController
     if params[:sort]
       @scope = @scope.order("#{params[:sort]} #{params[:order]}")
     else
-      @scope = @scope.order('last_synced_at DESC nulls last')
+      @scope = @scope.order('score DESC nulls last')
     end
 
     @pagy, @projects = pagy(@scope)
