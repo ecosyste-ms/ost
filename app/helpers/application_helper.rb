@@ -6,7 +6,15 @@ module ApplicationHelper
   end
 
   def meta_description
-    @meta_description || 'A curated list of open technology projects to sustain a stable climate, energy supply, biodiversity and natural resources.'
+    @meta_description || app_description
+  end
+
+  def app_name
+    "Open Sustainable Technology"
+  end
+
+  def app_description
+    'A curated list of open technology projects to sustain a stable climate, energy supply, biodiversity and natural resources.'
   end
 
   def obfustcate_email(email)

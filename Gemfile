@@ -59,3 +59,5 @@ group :test do
 end
 
 gem "meilisearch-rails", "~> 0.14.2"
+
+gem "bootstrap-icons-helper", "~> 2.0"
