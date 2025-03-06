@@ -13,8 +13,7 @@
 ActiveRecord::Schema[8.0].define(version: 2025_03_06_083816) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
-  enable_extension "pg_catalog.plpgsql"
-  enable_extension "vector"
+  enable_extension "plpgsql"
 
   create_table "collections", force: :cascade do |t|
     t.string "name"
