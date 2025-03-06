@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       resources :jobs
       resources :projects, constraints: { id: /.*/ }, only: [:index, :show] do
         collection do
+          get :esd
           get :lookup
           get :packages
           get :images

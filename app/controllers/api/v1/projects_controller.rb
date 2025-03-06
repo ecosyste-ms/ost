@@ -42,4 +42,20 @@ class Api::V1::ProjectsController < Api::V1::ApplicationController
   def images
     @projects = Project.reviewed.with_readme.select{|p| p.readme_image_urls.present? }
   end
+
+  def esd
+    @projects = Project.all.where.not(last_synced_at: nil).where(est: true)
+
+    if params[:sort].present? || params[:order].present?
+      sort = params[:sort].presence || 'projects.updated_at'
+      if params[:order] == 'asc'
+        @projects = @projects.order(Arel.sql(sort).asc.nulls_last)
+      else
+        @projects = @projects.order(Arel.sql(sort).desc.nulls_last)
+      end
+    end
+
+    @pagy, @projects = pagy_countless(@projects)
+    render :index
+  end
 end
