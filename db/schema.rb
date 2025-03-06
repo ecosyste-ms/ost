@@ -10,10 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_09_122300) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_06_083816) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
-  enable_extension "plpgsql"
+  enable_extension "pg_catalog.plpgsql"
+  enable_extension "vector"
 
   create_table "collections", force: :cascade do |t|
     t.string "name"
@@ -80,40 +81,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_09_122300) do
     t.index ["project_id"], name: "index_issues_on_project_id"
   end
 
-  create_table "projects", force: :cascade do |t|
-    t.citext "url"
-    t.json "repository"
-    t.json "packages"
-    t.json "commits"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.json "dependent_repos"
-    t.integer "collection_id"
-    t.json "events"
-    t.string "keywords", default: [], array: true
-    t.json "dependencies"
-    t.datetime "last_synced_at"
-    t.json "issues_stats"
-    t.float "score", default: 0.0
-    t.json "owner"
-    t.string "name"
-    t.string "description"
-    t.boolean "reviewed"
-    t.boolean "matching_criteria"
-    t.string "rubric"
-    t.integer "vote_count", default: 0
-    t.integer "vote_score", default: 0
-    t.text "citation_file"
-    t.string "category"
-    t.string "sub_category"
-    t.text "readme"
-    t.json "works", default: {}
-    t.string "keywords_from_contributors", default: [], array: true
-    t.index ["category", "sub_category"], name: "index_projects_on_category_and_sub_category", where: "((category IS NOT NULL) AND (sub_category IS NOT NULL))"
-    t.index ["collection_id"], name: "index_projects_on_collection_id"
-    t.index ["reviewed"], name: "index_projects_on_reviewed"
-    t.index ["url"], name: "index_projects_on_url", unique: true
-  end
+# Could not dump table "projects" because of following StandardError
+#   Unknown type 'vector' for column 'embedding'
+
 
   create_table "releases", force: :cascade do |t|
     t.integer "project_id"
