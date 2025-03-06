@@ -44,7 +44,7 @@ class Api::V1::ProjectsController < Api::V1::ApplicationController
   end
 
   def esd
-    @projects = Project.all.where.not(last_synced_at: nil).where(est: true)
+    @projects = Project.all.where.not(last_synced_at: nil).where(esd: true)
 
     if params[:sort].present? || params[:order].present?
       sort = params[:sort].presence || 'projects.updated_at'
