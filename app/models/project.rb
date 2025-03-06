@@ -72,6 +72,29 @@ class Project < ApplicationRecord
     end
   end
 
+  def self.import_esd_projects
+    url = 'https://raw.githubusercontent.com/open-energy-transition/open-esd-analysis/refs/heads/main/esd_list.csv'
+
+    conn = Faraday.new(url: url) do |faraday|
+      faraday.response :follow_redirects
+      faraday.adapter Faraday.default_adapter
+    end
+
+    response = conn.get
+    return unless response.success?
+    csv = response.body
+    csv_data = CSV.new(csv, headers: true)
+
+    csv_data.each do |row|
+      puts "Processing #{row['project_name']}"
+      project_url = row['project_url']
+      id = project_url.split('/').last
+      project = Project.find_by(id: id)
+      next unless project.present?
+      project.update(esd: true)
+    end
+  end
+
   def self.import_education
     url = 'https://raw.githubusercontent.com/protontypes/open-sustainable-technology/refs/heads/main/education.md'
 
