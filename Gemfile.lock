@@ -201,10 +201,10 @@ GEM
       net-pop
       net-smtp
     marcel (1.0.4)
-    meilisearch (0.28.4)
-      httparty (~> 0.17)
-    meilisearch-rails (0.14.3)
-      meilisearch (~> 0.28.4)
+    meilisearch (0.31.0)
+      httparty (~> 0.22)
+    meilisearch-rails (0.15.0)
+      meilisearch (~> 0.31.0)
       mutex_m (~> 0.2)
     mini_mime (1.1.5)
     mini_portile2 (2.8.8)
@@ -425,7 +425,7 @@ DEPENDENCIES
   groupdate
   jbuilder
   jquery-rails
-  meilisearch-rails (~> 0.14.2)
+  meilisearch-rails (~> 0.15.0)
   mocha
   ostruct
   pagy
@@ -536,8 +536,8 @@ CHECKSUMS
   loofah (2.24.0) sha256=61e6a710883abb8210887f3dc868cf3ed66594c509d9ff6987621efa6651ee1e
   mail (2.8.1) sha256=ec3b9fadcf2b3755c78785cb17bc9a0ca9ee9857108a64b6f5cfc9c0b5bfc9ad
   marcel (1.0.4) sha256=0d5649feb64b8f19f3d3468b96c680bae9746335d02194270287868a661516a4
-  meilisearch (0.28.4) sha256=a25965b44fc5d1e01b78600eb6a6d296c11d222ebb845092175f20b24c6e8411
-  meilisearch-rails (0.14.3) sha256=fc50d3b6a66c43d8963b0a1bc7e65fc65abbb18cdfce4604c9afc12de42a3338
+  meilisearch (0.31.0) sha256=f32a49b195d56434f671fc95aae75b08ee78629b167dd4db514ef824393a7cd6
+  meilisearch-rails (0.15.0) sha256=5a59f0e605455e506f90633518407f69549e99a771505919adc44ed8eda5d930
   mini_mime (1.1.5) sha256=8681b7e2e4215f2a159f9400b5816d85e9d8c6c6b491e96a12797e798f8bccef
   mini_portile2 (2.8.8) sha256=8e47136cdac04ce81750bb6c09733b37895bf06962554e4b4056d78168d70a75
   minitest (5.25.5) sha256=391b6c6cb43a4802bfb7c93af1ebe2ac66a210293f4a3fb7db36f2fc7dc2c756
