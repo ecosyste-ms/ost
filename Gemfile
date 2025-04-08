@@ -41,6 +41,7 @@ gem 'appsignal'
 gem 'commonmarker'
 gem 'ostruct'
 gem 'dalli'
+gem 'oj'
 
 group :development, :test do
   gem 'dotenv-rails'
