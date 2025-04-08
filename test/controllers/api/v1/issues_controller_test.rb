@@ -161,8 +161,8 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     actual_response = Oj.load(@response.body)
-    assert_not_nil actual_response['projects'] # Expect 'projects' key due to Pagy
-    assert_instance_of Array, actual_response['projects']
+    assert_not_nil actual_response
+    assert_instance_of Array, actual_response
     # Add more specific assertions based on expected projects if necessary
   end
 end
