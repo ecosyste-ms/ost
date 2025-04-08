@@ -79,7 +79,7 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_issues_path
     assert_response :success
 
-    actual_response = Oj.load(@response.body)['issues'] # Assuming Pagy wraps it
+    actual_response = Oj.load(@response.body)
     assert_equal 2, actual_response.length
   end
 
@@ -87,47 +87,47 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_issues_path(category: 'Climate')
     assert_response :success
 
-    json_response = Oj.load(@response.body)['issues']
-    assert_equal 1, json_response.length
-    assert_equal 'Climate Issue', json_response[0]['title']
+    actual_response = Oj.load(@response.body)
+    assert_equal 1, actual_response.length
+    assert_equal 'Climate Issue', actual_response[0]['title']
   end
 
   test 'should filter issues by language' do
     get api_v1_issues_path(language: 'JavaScript')
     assert_response :success
 
-    json_response = Oj.load(@response.body)['issues']
-    assert_equal 1, json_response.length
-    assert_equal 'Energy Issue', json_response[0]['title']
+    actual_response = Oj.load(@response.body)
+    assert_equal 1, actual_response.length
+    assert_equal 'Energy Issue', actual_response[0]['title']
   end
 
   test 'should filter issues by keyword' do
     get api_v1_issues_path(keyword: 'renewable')
     assert_response :success
 
-    json_response = Oj.load(@response.body)['issues']
-    assert_equal 1, json_response.length
-    assert_equal 'Energy Issue', json_response[0]['title']
+    actual_response = Oj.load(@response.body)
+    assert_equal 1, actual_response.length
+    assert_equal 'Energy Issue', actual_response[0]['title']
   end
 
   test 'should sort issues by created_at' do
     get api_v1_issues_path(sort: 'created_at', order: 'asc')
     assert_response :success
 
-    json_response = Oj.load(@response.body)['issues']
-    assert_equal 2, json_response.length
-    assert_equal 'Energy Issue', json_response[0]['title'] # Created earlier
-    assert_equal 'Climate Issue', json_response[1]['title'] # Created later
+    actual_response = Oj.load(@response.body)
+    assert_equal 2, actual_response.length
+    assert_equal 'Energy Issue', actual_response[0]['title'] # Created earlier
+    assert_equal 'Climate Issue', actual_response[1]['title'] # Created later
   end
 
   test 'should sort issues by updated_at' do
     get api_v1_issues_path(sort: 'updated_at', order: 'desc')
     assert_response :success
 
-    json_response = Oj.load(@response.body)['issues']
-    assert_equal 2, json_response.length
-    assert_equal 'Energy Issue', json_response[0]['title'] # Updated more recently
-    assert_equal 'Climate Issue', json_response[1]['title'] # Updated less recently
+    actual_response = Oj.load(@response.body)
+    assert_equal 2, actual_response.length
+    assert_equal 'Energy Issue', actual_response[0]['title'] # Updated more recently
+    assert_equal 'Climate Issue', actual_response[1]['title'] # Updated less recently
   end
 
   test 'should sort issues by stars' do
@@ -139,20 +139,20 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_issues_path(sort: 'stars', order: 'desc')
     assert_response :success
 
-    json_response = Oj.load(@response.body)['issues']
-    assert_equal 2, json_response.length
+    actual_response = Oj.load(@response.body)
+    assert_equal 2, actual_response.length
     # Order based on the created @energy_project (200 stars) and @climate_project (100 stars)
-    assert_equal 'Energy Issue', json_response[0]['title'] # 200 stars
-    assert_equal 'Climate Issue', json_response[1]['title'] # 100 stars
+    assert_equal 'Energy Issue', actual_response[0]['title'] # 200 stars
+    assert_equal 'Climate Issue', actual_response[1]['title'] # 100 stars
   end
 
   test 'should combine filtering and sorting' do
     get api_v1_issues_path(category: 'Climate', sort: 'stars', order: 'desc')
     assert_response :success
 
-    json_response = Oj.load(@response.body)['issues']
-    assert_equal 1, json_response.length
-    assert_equal 'Climate Issue', json_response[0]['title']
+    actual_response = Oj.load(@response.body)
+    assert_equal 1, actual_response.length
+    assert_equal 'Climate Issue', actual_response[0]['title']
   end
 
   # Update test for openclimateaction endpoint - ensure it checks the correct response structure
@@ -160,9 +160,9 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     get openclimateaction_api_v1_issues_path
     assert_response :success
 
-    json_response = Oj.load(@response.body)
-    assert_not_nil json_response['projects'] # Expect 'projects' key due to Pagy
-    assert_instance_of Array, json_response['projects']
+    actual_response = Oj.load(@response.body)
+    assert_not_nil actual_response['projects'] # Expect 'projects' key due to Pagy
+    assert_instance_of Array, actual_response['projects']
     # Add more specific assertions based on expected projects if necessary
   end
 end
