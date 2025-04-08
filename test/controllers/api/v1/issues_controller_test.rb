@@ -2,16 +2,6 @@ require 'test_helper'
 
 class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
   setup do
-    # Core stubs
-    # Project.any_instance.stubs(:sync_async).returns(true) # Stub instance method if called
-    # Issue.stubs(:climatetriage).returns(Issue.all)
-    # Issue.stubs(:good_first_issue).returns(Issue.all)
-    # Project.stubs(:active).returns(Project.all)
-
-    # # Stub scopes used directly by the controller
-    # Project.stubs(:language).with(any_parameters).returns(Project.all)
-    # Project.stubs(:keyword).with(any_parameters).returns(Project.all)
-
     # Create test projects
     @climate_project = Project.create!(
       url: 'https://github.com/example/climate-project',
@@ -131,11 +121,6 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should sort issues by stars' do
-    # Ensure the stubbed data reflects the stars correctly if needed for sorting logic
-    # Since we stubbed Project.all, the DB query for sorting might not work as expected
-    # without real data or more specific stubs.
-    # However, the controller logic *should* attempt the sort.
-    # Let's adjust the expectation based on the setup data
     get api_v1_issues_path(sort: 'stars', order: 'desc')
     assert_response :success
 
@@ -155,7 +140,6 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Climate Issue', actual_response[0]['title']
   end
 
-  # Update test for openclimateaction endpoint - ensure it checks the correct response structure
   test 'should get openclimateaction projects' do
     get openclimateaction_api_v1_issues_path
     assert_response :success
@@ -163,6 +147,5 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     actual_response = Oj.load(@response.body)
     assert_not_nil actual_response
     assert_instance_of Array, actual_response
-    # Add more specific assertions based on expected projects if necessary
   end
 end
