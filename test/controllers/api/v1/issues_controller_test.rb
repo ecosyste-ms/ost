@@ -69,7 +69,7 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_issues_path
     assert_response :success
 
-    actual_response = Oj.load(@response.body)
+    actual_response = JSON.parse(@response.body)
     assert_equal 2, actual_response.length
   end
 
@@ -77,7 +77,7 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_issues_path(category: 'Climate')
     assert_response :success
 
-    actual_response = Oj.load(@response.body)
+    actual_response = JSON.parse(@response.body)
     assert_equal 1, actual_response.length
     assert_equal 'Climate Issue', actual_response[0]['title']
   end
@@ -86,7 +86,7 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_issues_path(language: 'JavaScript')
     assert_response :success
 
-    actual_response = Oj.load(@response.body)
+    actual_response = JSON.parse(@response.body)
     assert_equal 1, actual_response.length
     assert_equal 'Energy Issue', actual_response[0]['title']
   end
@@ -95,7 +95,7 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_issues_path(keyword: 'renewable')
     assert_response :success
 
-    actual_response = Oj.load(@response.body)
+    actual_response = JSON.parse(@response.body)
     assert_equal 1, actual_response.length
     assert_equal 'Energy Issue', actual_response[0]['title']
   end
@@ -104,7 +104,7 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_issues_path(sort: 'created_at', order: 'asc')
     assert_response :success
 
-    actual_response = Oj.load(@response.body)
+    actual_response = JSON.parse(@response.body)
     assert_equal 2, actual_response.length
     assert_equal 'Energy Issue', actual_response[0]['title'] # Created earlier
     assert_equal 'Climate Issue', actual_response[1]['title'] # Created later
@@ -114,7 +114,7 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_issues_path(sort: 'updated_at', order: 'desc')
     assert_response :success
 
-    actual_response = Oj.load(@response.body)
+    actual_response = JSON.parse(@response.body)
     assert_equal 2, actual_response.length
     assert_equal 'Energy Issue', actual_response[0]['title'] # Updated more recently
     assert_equal 'Climate Issue', actual_response[1]['title'] # Updated less recently
@@ -124,7 +124,7 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_issues_path(sort: 'stars', order: 'desc')
     assert_response :success
 
-    actual_response = Oj.load(@response.body)
+    actual_response = JSON.parse(@response.body)
     assert_equal 2, actual_response.length
     # Order based on the created @energy_project (200 stars) and @climate_project (100 stars)
     assert_equal 'Energy Issue', actual_response[0]['title'] # 200 stars
@@ -135,7 +135,7 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     get api_v1_issues_path(category: 'Climate', sort: 'stars', order: 'desc')
     assert_response :success
 
-    actual_response = Oj.load(@response.body)
+    actual_response = JSON.parse(@response.body)
     assert_equal 1, actual_response.length
     assert_equal 'Climate Issue', actual_response[0]['title']
   end
@@ -144,7 +144,7 @@ class Api::V1::IssuesControllerTest < ActionDispatch::IntegrationTest
     get openclimateaction_api_v1_issues_path
     assert_response :success
 
-    actual_response = Oj.load(@response.body)
+    actual_response = JSON.parse(@response.body)
     assert_not_nil actual_response
     assert_instance_of Array, actual_response
   end
