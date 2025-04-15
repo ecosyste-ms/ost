@@ -1,6 +1,24 @@
 class Issue < ApplicationRecord
   belongs_to :project
 
+  scope :past_year, -> { where('created_at > ?', 1.year.ago) }
+  scope :bot, -> { where('issues.user ILIKE ?', '%[bot]') }
+  scope :human, -> { where.not('issues.user ILIKE ?', '%[bot]') }
+  scope :with_author_association, -> { where.not(author_association: nil) }
+  scope :merged, -> { where.not(merged_at: nil) }
+  scope :not_merged, -> { where(merged_at: nil).where.not(closed_at: nil) }
+  scope :closed, -> { where.not(closed_at: nil) }
+  scope :created_after, ->(date) { where('created_at > ?', date) }
+  scope :created_before, ->(date) { where('created_at < ?', date) }
+  scope :updated_after, ->(date) { where('updated_at > ?', date) }
+  scope :pull_request, -> { where(pull_request: true) }
+  scope :issue, -> { where(pull_request: false) }
+
+  scope :user, ->(user) { where(user: user) }
+  scope :owner, ->(owner) { joins(:repository).where('repositories.owner = ?', owner) }
+  scope :maintainers, -> { where(author_association: MAINTAINER_ASSOCIATIONS) }
+
+
   CLIMATETRIAGE_LABELS = [":beginner: good first issue",
   ":open_hands: help wanted",
   "Good First Issue",

@@ -18,6 +18,7 @@ Rails.application.routes.draw do
       resources :issues do
         collection do
           get :openclimateaction
+          get :climatetriage_counts
         end
       end
       resources :jobs

@@ -49,4 +49,23 @@ class Api::V1::IssuesController < Api::V1::ApplicationController
 
     @pagy, @projects = pagy(scope)
   end
+
+  def climatetriage_counts
+    scope = Issue.where(pull_request: false)
+    scope = scope.joins(:project).where(projects: { reviewed: true }).climatetriage.good_first_issue
+
+    scope = scope.where('issues.created_at > ?', 1.month.ago)
+
+    scope = scope.joins(:project).where(projects: { category: params[:category] }) if params[:category].present?
+    scope = scope.joins(:project).merge(Project.language(params[:language])) if params[:language].present?
+    scope = scope.joins(:project).merge(Project.keyword(params[:keyword])) if params[:keyword].present?
+
+    json = {
+      opened: scope.count,
+      closed: scope.closed.count,
+      merged: scope.merged.count,
+    }
+
+    render json: json
+  end
 end
