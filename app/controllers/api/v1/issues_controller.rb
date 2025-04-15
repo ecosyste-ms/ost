@@ -8,6 +8,8 @@ class Api::V1::IssuesController < Api::V1::ApplicationController
     scope = scope.joins(:project).merge(Project.language(params[:language])) if params[:language].present?
     scope = scope.joins(:project).merge(Project.keyword(params[:keyword])) if params[:keyword].present?
 
+    scope = scope.where('issues.created_at > ?', 1.day.ago) if params[:recent].present?
+
     # Define allowed sort fields with database expressions
     allowed_sort_fields = {
       'created_at' => 'issues.created_at',
@@ -54,15 +56,15 @@ class Api::V1::IssuesController < Api::V1::ApplicationController
     scope = Issue.where(pull_request: false)
     scope = scope.joins(:project).where(projects: { reviewed: true }).climatetriage.good_first_issue
 
-    scope = scope.where('issues.created_at > ?', 1.month.ago)
-
     scope = scope.joins(:project).where(projects: { category: params[:category] }) if params[:category].present?
     scope = scope.joins(:project).merge(Project.language(params[:language])) if params[:language].present?
     scope = scope.joins(:project).merge(Project.keyword(params[:keyword])) if params[:keyword].present?
 
     json = {
-      opened: scope.count,
-      closed: scope.closed.count,
+      opened_count: scope.where('issues.created_at > ?', 1.month.ago).count,
+      closed_count: scope.where('issues.closed_at > ?', 1.month.ago).count,
+      opened_histogram: scope.where('issues.created_at > ?', 1.month.ago).group_by_day(:created_at).count,
+      closed_histogram: scope.where('issues.closed_at > ?', 1.month.ago).group_by_day(:closed_at).count,
     }
 
     render json: json
