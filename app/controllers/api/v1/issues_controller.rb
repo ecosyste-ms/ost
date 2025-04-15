@@ -63,7 +63,6 @@ class Api::V1::IssuesController < Api::V1::ApplicationController
     json = {
       opened: scope.count,
       closed: scope.closed.count,
-      merged: scope.merged.count,
     }
 
     render json: json
