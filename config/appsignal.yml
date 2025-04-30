@@ -14,3 +14,7 @@ production:
     - Pagy::OverflowError 
     - ActiveRecord::StatementInvalid
     - SignalException
+    - ActionController::UnknownFormat
+    - ActionController::BadRequest
+    - ActionDispatch::Http::MimeNegotiation::InvalidType
+    - ActionDispatch::RemoteIp::IpSpoofAttackError
