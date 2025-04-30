@@ -29,8 +29,8 @@ class ProjectsController < ApplicationController
 
   def search
     filters = []
-    filters << "keywords = #{params[:keywords]}" if params[:keywords].present?
-    filters << "language = #{params[:language]}" if params[:language].present?
+    filters << "keywords = \"#{params[:keywords]}\"" if params[:keywords].present?
+    filters << "language = \"#{params[:language]}\"" if params[:language].present?
   
     filter_string = filters.join(" AND ") if filters.any?
   
