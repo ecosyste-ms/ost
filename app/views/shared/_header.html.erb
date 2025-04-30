@@ -42,9 +42,13 @@
           </h1>
         </div>
         <div class="col-lg-5 col-md-8">
-          <p class="header__local__description">
-            <%= app_description %>
-          </p>
+			<%= form_tag search_projects_path, method: :get, class: "mb-4 mt-3 mt-md-0" do %>
+			<label for="query" class="ps-3 mb-2 visually-hidden">Fund name</label>
+			<div class="input-group rounded-input-group">
+			  <%= text_field_tag :q, params[:q], class: "form-control form-control", placeholder: "Find a project" %>
+			  <button type="submit" class="btn btn-danger pe-4" aria-label="Find a fund">Search</button>
+			</div>
+			<% end %>
         </div>
         <div class="col-lg-4 col-md-12">
           <%= render 'shared/menu' %>

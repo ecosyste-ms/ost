@@ -1,11 +1,4 @@
 <div class="container-md">
-  <%= form_with url: search_projects_path, method: :get, local: true do %>
-    <div class="form-group d-flex mb-3">
-      <%= text_field_tag :q, params[:q], class: "form-control me-2", placeholder: "Enter search term" %>
-      <%= submit_tag "Search", class: "btn btn-primary", name: nil %>
-    </div>
-  <% end %>
-
   <div class="row">
     <div class="col-md-3">
       <% @projects.facets_distribution.each do |facet, values| %>
