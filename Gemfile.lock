@@ -119,6 +119,7 @@ GEM
       dotenv (= 3.1.8)
       railties (>= 6.1)
     drb (2.2.1)
+    erb (5.0.1)
     erubi (1.13.1)
     ethon (0.16.0)
       ffi (>= 1.15.0)
@@ -300,7 +301,8 @@ GEM
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
     rake (13.2.1)
-    rdoc (6.13.1)
+    rdoc (6.14.0)
+      erb
       psych (>= 4.0.0)
     redis (5.4.0)
       redis-client (>= 0.22.0)
@@ -378,7 +380,7 @@ GEM
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    zeitwerk (2.7.2)
+    zeitwerk (2.7.3)
 
 PLATFORMS
   aarch64-linux
@@ -479,6 +481,7 @@ CHECKSUMS
   dotenv (3.1.8) sha256=9e1176060ced581f8e6ce4384e91361817763a76e3c625c8bddc18b35bd392c3
   dotenv-rails (3.1.8) sha256=46c9d1226a8b58a83b5f61325aa8cffd25cea1c0fafdfbbbee1e5dfea77980c4
   drb (2.2.1) sha256=e9d472bf785f558b96b25358bae115646da0dbfd45107ad858b0bc0d935cb340
+  erb (5.0.1) sha256=760439803b36cc93eca8a266aab614614e588024a89bc30a62e78d98ff452c23
   erubi (1.13.1) sha256=a082103b0885dbc5ecf1172fede897f9ebdb745a4b97a5e8dc63953db1ee4ad9
   ethon (0.16.0) sha256=bba0da1cea8ac3e1f5cdd7cb1cb5fc78d7ac562c33736f18f0c3eb2b63053d9e
   faraday (2.13.1) sha256=cc531eb5467e7d74d4517630fa96f1a7003647cbf20a9a3e067d098941217b75
@@ -560,7 +563,7 @@ CHECKSUMS
   rails-html-sanitizer (1.6.2) sha256=35fce2ca8242da8775c83b6ba9c1bcaad6751d9eb73c1abaa8403475ab89a560
   railties (8.0.2) sha256=0d7c3f40c49ba74980f1bac1d4bb153a9331c5ee8a9631d89c7bf79db82e5cf9
   rake (13.2.1) sha256=46cb38dae65d7d74b6020a4ac9d48afed8eb8149c040eccf0523bec91907059d
-  rdoc (6.13.1) sha256=62a0dac99493c94e8eb7a3fb44e55aefcb4cecb119f7991f25bddc5ed8d472f7
+  rdoc (6.14.0) sha256=2c46de58d7129b8743fcf6d76e3db971bdc914150e15ac06b386549bd82ed7db
   redis (5.4.0) sha256=798900d869418a9fc3977f916578375b45c38247a556b61d58cba6bb02f7d06b
   redis-client (0.24.0) sha256=ee65ee39cb2c38608b734566167fd912384f3c1241f59075e22858f23a085dbb
   reline (0.6.1) sha256=1afcc9d7cb1029cdbe780d72f2f09251ce46d3780050f3ec39c3ccc6b60675fb
@@ -593,7 +596,7 @@ CHECKSUMS
   webmock (3.25.1) sha256=ab9d5d9353bcbe6322c83e1c60a7103988efc7b67cd72ffb9012629c3d396323
   websocket-driver (0.7.7) sha256=056d99f2cd545712cfb1291650fde7478e4f2661dc1db6a0fa3b966231a146b4
   websocket-extensions (0.1.5) sha256=1c6ba63092cda343eb53fc657110c71c754c56484aad42578495227d717a8241
-  zeitwerk (2.7.2) sha256=842e067cb11eb923d747249badfb5fcdc9652d6f20a1f06453317920fdcd4673
+  zeitwerk (2.7.3) sha256=b2e86b4a9b57d26ba68a15230dcc7fe6f040f06831ce64417b0621ad96ba3e85
 
 RUBY VERSION
    ruby 3.4.3p32
