@@ -90,8 +90,6 @@
           
         </div>
 
-        <%= button_to "👍 #{project.votes.select{|v| v.score > 0}.length}", project_votes_path(project_id: project, vote: {score: 1}), class: "btn btn-light", form_class: 'd-inline' %>
-        <%= button_to "👎 #{project.votes.select{|v| v.score < 0}.length}", project_votes_path(project_id: project, vote: {score: -1}), class: "btn btn-light", form_class: 'd-inline' %>
       </div>
       <div class="flex-shrink-0">
         <img src="<%= project.avatar_url %>" class="rounded" height='40' width='40' onerror="this.style.display='none'">
