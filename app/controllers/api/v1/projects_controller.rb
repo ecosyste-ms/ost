@@ -58,4 +58,15 @@ class Api::V1::ProjectsController < Api::V1::ApplicationController
     @pagy, @projects = pagy_countless(@projects)
     render :index
   end
+
+  def search
+    filters = []
+    filters << "keywords = \"#{params[:keywords]}\"" if params[:keywords].present?
+    filters << "language = \"#{params[:language]}\"" if params[:language].present?
+  
+    filter_string = filters.join(" AND ") if filters.any?
+  
+    @projects = Project.pagy_search(params[:q], facets: ['keywords', 'language'], filter: filter_string)
+    @pagy, @projects = pagy_meilisearch(@projects, limit: 20)
+  end
 end

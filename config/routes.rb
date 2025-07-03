@@ -28,6 +28,7 @@ Rails.application.routes.draw do
           get :lookup
           get :packages
           get :images
+          get :search
         end
         member do
           get :ping
