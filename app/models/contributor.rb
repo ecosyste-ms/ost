@@ -1,4 +1,5 @@
 class Contributor < ApplicationRecord
+  include EcosystemApiClient
   scope :with_topics, -> { where.not(topics: []) }
   scope :with_login, -> { where.not(login: nil) }
   scope :with_email, -> { where.not(email: [nil, '']) }
@@ -41,7 +42,7 @@ class Contributor < ApplicationRecord
 
   def ping
     return unless ping_urls
-    Faraday.get(ping_urls)
+    self.class.ecosystem_http_get(ping_urls)
   end
 
   def repos_api_url
@@ -56,7 +57,7 @@ class Contributor < ApplicationRecord
   def fetch_profile
     return if repos_api_url.blank?
     
-    response = Faraday.get repos_api_url
+    response = self.class.ecosystem_http_get(repos_api_url)
     return unless response.success?
 
     profile = JSON.parse(response.body)
@@ -66,7 +67,7 @@ class Contributor < ApplicationRecord
   def import_repos
     return if repos_api_url.blank?
 
-    response = Faraday.get("#{repos_api_url}/repositories?per_page=1000")
+    response = self.class.ecosystem_http_get("#{repos_api_url}/repositories?per_page=1000")
     return unless response.success?
 
     repos = JSON.parse(response.body)

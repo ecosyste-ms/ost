@@ -1,6 +1,7 @@
 require 'csv'
 
 class Project < ApplicationRecord
+  include EcosystemApiClient
 
   include Meilisearch::Rails
   extend Pagy::Meilisearch
@@ -442,10 +443,7 @@ class Project < ApplicationRecord
   end
 
   def fetch_repository
-    conn = Faraday.new(url: repos_api_url) do |faraday|
-      faraday.response :follow_redirects
-      faraday.adapter Faraday.default_adapter
-    end
+    conn = ecosystem_http_client(repos_api_url)
 
     response = conn.get
     return unless response.success?
@@ -473,10 +471,7 @@ class Project < ApplicationRecord
 
   def fetch_owner
     return unless owner_api_url.present?
-    conn = Faraday.new(url: owner_api_url) do |faraday|
-      faraday.response :follow_redirects
-      faraday.adapter Faraday.default_adapter
-    end
+    conn = ecosystem_http_client(owner_api_url)
 
     response = conn.get
     return unless response.success?
@@ -495,19 +490,13 @@ class Project < ApplicationRecord
 
   def fetch_events
     return unless timeline_url.present?
-    conn = Faraday.new(url: timeline_url) do |faraday|
-      faraday.response :follow_redirects
-      faraday.adapter Faraday.default_adapter
-    end
+    conn = ecosystem_http_client(timeline_url)
 
     response = conn.get
     return unless response.success?
     summary = JSON.parse(response.body)
 
-    conn = Faraday.new(url: timeline_url+'?after='+1.year.ago.to_fs(:iso8601)) do |faraday|
-      faraday.response :follow_redirects
-      faraday.adapter Faraday.default_adapter
-    end
+    conn = ecosystem_http_client(timeline_url+'?after='+1.year.ago.to_fs(:iso8601))
 
     response = conn.get
     return unless response.success?
@@ -530,10 +519,7 @@ class Project < ApplicationRecord
   end
 
   def fetch_packages
-    conn = Faraday.new(url: packages_url) do |faraday|
-      faraday.response :follow_redirects
-      faraday.adapter Faraday.default_adapter
-    end
+    conn = ecosystem_http_client(packages_url)
 
     response = conn.get
     return unless response.success?
@@ -552,10 +538,7 @@ class Project < ApplicationRecord
   end
 
   def fetch_commits
-    conn = Faraday.new(url: commits_api_url) do |faraday|
-      faraday.response :follow_redirects
-      faraday.adapter Faraday.default_adapter
-    end
+    conn = ecosystem_http_client(commits_api_url)
     response = conn.get
     return unless response.success?
     self.commits = JSON.parse(response.body)
@@ -584,10 +567,7 @@ class Project < ApplicationRecord
 
   def fetch_dependencies
     return unless repository.present?
-    conn = Faraday.new(url: repository['manifests_url']) do |faraday|
-      faraday.response :follow_redirects
-      faraday.adapter Faraday.default_adapter
-    end
+    conn = ecosystem_http_client(repository['manifests_url'])
     response = conn.get
     return unless response.success?
     self.dependencies = JSON.parse(response.body)
@@ -617,7 +597,7 @@ class Project < ApplicationRecord
       # TODO paginate
       # TODO group dependencies by repo
       dependent_repos_url = "https://repos.ecosyste.ms/api/v1/usage/#{package["ecosystem"]}/#{package["name"]}/dependencies"
-      conn = Faraday.new(url: dependent_repos_url)
+      conn = ecosystem_http_client(dependent_repos_url)
       response = conn.get
       return unless response.success?
       dependent_repos += JSON.parse(response.body)
@@ -635,10 +615,7 @@ class Project < ApplicationRecord
   end
 
   def fetch_issue_stats
-    conn = Faraday.new(url: issues_api_url) do |faraday|
-      faraday.response :follow_redirects
-      faraday.adapter Faraday.default_adapter
-    end
+    conn = ecosystem_http_client(issues_api_url)
     response = conn.get
     return unless response.success?
     self.issues_stats = JSON.parse(response.body)
@@ -847,7 +824,7 @@ class Project < ApplicationRecord
   end
 
   def self.import_topic(topic)
-    resp = Faraday.get("https://repos.ecosyste.ms/api/v1/topics/#{ERB::Util.url_encode(topic)}?per_page=100&sort=created_at&order=desc")
+    resp = ecosystem_http_get("https://repos.ecosyste.ms/api/v1/topics/#{ERB::Util.url_encode(topic)}?per_page=100&sort=created_at&order=desc")
     if resp.status == 200
       data = JSON.parse(resp.body)
       urls = data['repositories'].map{|p| p['html_url'] }.uniq.reject(&:blank?)
@@ -864,7 +841,7 @@ class Project < ApplicationRecord
   end
 
   def self.import_keyword(keyword)
-    resp = Faraday.get("https://packages.ecosyste.ms/api/v1/keywords/#{ERB::Util.url_encode(keyword)}?per_page=100&sort=created_at&order=desc")
+    resp = ecosystem_http_get("https://packages.ecosyste.ms/api/v1/keywords/#{ERB::Util.url_encode(keyword)}?per_page=100&sort=created_at&order=desc")
     if resp.status == 200
       data = JSON.parse(resp.body)
       urls = data['packages'].reject{|p| p['status'].present? }.map{|p| p['repository_url'] }.uniq.reject(&:blank?)
@@ -881,7 +858,7 @@ class Project < ApplicationRecord
   end
 
   def self.import_org(host, org)
-    resp = Faraday.get("https://repos.ecosyste.ms/api/v1/hosts/#{host}/owners/#{org}/repositories?per_page=100")
+    resp = ecosystem_http_get("https://repos.ecosyste.ms/api/v1/hosts/#{host}/owners/#{org}/repositories?per_page=100")
     if resp.status == 200
       data = JSON.parse(resp.body)
       urls = data.map{|p| p['html_url'] }.uniq.reject(&:blank?)
@@ -917,10 +894,7 @@ class Project < ApplicationRecord
   def fetch_citation_file
     return unless citation_file_name.present?
     return unless download_url.present?
-    conn = Faraday.new(url: archive_url(citation_file_name)) do |faraday|
-      faraday.response :follow_redirects
-      faraday.adapter Faraday.default_adapter
-    end
+    conn = ecosystem_http_client(archive_url(citation_file_name))
     response = conn.get
     return unless response.success?
     json = JSON.parse(response.body)
@@ -948,10 +922,7 @@ class Project < ApplicationRecord
       fetch_readme_fallback
     else
       return unless download_url.present?
-      conn = Faraday.new(url: archive_url(readme_file_name)) do |faraday|
-        faraday.response :follow_redirects
-        faraday.adapter Faraday.default_adapter
-      end
+      conn = ecosystem_http_client(archive_url(readme_file_name))
       response = conn.get
       return unless response.success?
       json = JSON.parse(response.body)
@@ -1046,19 +1017,13 @@ class Project < ApplicationRecord
   end
 
   def sync_issues
-    conn = Faraday.new(url: issues_api_url) do |faraday|
-      faraday.response :follow_redirects
-      faraday.adapter Faraday.default_adapter
-    end
+    conn = ecosystem_http_client(issues_api_url)
     response = conn.get
     return unless response.success?
     issues_list_url = JSON.parse(response.body)['issues_url'] + '?per_page=1000&pull_request=false'
     # issues_list_url = issues_list_url + '&updated_after=' + last_synced_at.to_fs(:iso8601) if last_synced_at.present?
 
-    conn = Faraday.new(url: issues_list_url) do |faraday|
-      faraday.response :follow_redirects
-      faraday.adapter Faraday.default_adapter
-    end
+    conn = ecosystem_http_client(issues_list_url)
     response = conn.get
     return unless response.success?
     
@@ -1389,10 +1354,7 @@ class Project < ApplicationRecord
     return unless repository.present?
     return unless repository['releases_url'].present?
 
-    conn = Faraday.new(url: repository['releases_url'] + '?per_page=1000') do |faraday|
-      faraday.response :follow_redirects
-      faraday.adapter Faraday.default_adapter
-    end
+    conn = ecosystem_http_client(repository['releases_url'] + '?per_page=1000')
     response = conn.get
     return unless response.success?
     releases = JSON.parse(response.body)

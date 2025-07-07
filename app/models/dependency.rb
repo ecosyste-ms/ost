@@ -1,4 +1,6 @@
 class Dependency < ApplicationRecord
+  include EcosystemApiClient
+  
   belongs_to :project, optional: true
 
   def sync_package
@@ -7,10 +9,7 @@ class Dependency < ApplicationRecord
       
     puts "  Fetching #{purl}"
     
-    conn = Faraday.new(url: purl) do |faraday|
-      faraday.response :follow_redirects
-      faraday.adapter Faraday.default_adapter
-    end
+    conn = ecosystem_http_client(purl)
 
     response = conn.get
     puts "  Response: #{response.status}"
