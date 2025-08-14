@@ -18,3 +18,4 @@ production:
     - ActionController::BadRequest
     - ActionDispatch::Http::MimeNegotiation::InvalidType
     - ActionDispatch::RemoteIp::IpSpoofAttackError
+    - Meilisearch::ApiError
