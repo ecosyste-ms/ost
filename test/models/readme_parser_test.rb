@@ -33,4 +33,38 @@ class ReadmeParserTest < ActiveSupport::TestCase
     }
     assert_equal expected_links, @parser.parse_links
   end
+
+  def test_parse_links_without_description
+    readme_without_description = <<-README
+## Category 1
+### Sub-Category 1
+[Link without description](http://example.com/1)
+  README
+    parser = ReadmeParser.new(readme_without_description)
+    expected_links = {
+      'Category 1' => {
+        'Sub-Category 1' => [
+          { name: 'Link without description', url: 'http://example.com/1', description: '' }
+        ]
+      }
+    }
+    assert_equal expected_links, parser.parse_links
+  end
+
+  def test_parse_links_with_malformed_markdown
+    malformed_readme = <<-README
+## Category 1
+### Sub-Category 1
+[Incomplete link](
+[No closing bracket(http://example.com/2)
+Link without brackets http://example.com/3
+  README
+    parser = ReadmeParser.new(malformed_readme)
+    expected_links = {
+      'Category 1' => {
+        'Sub-Category 1' => []
+      }
+    }
+    assert_equal expected_links, parser.parse_links
+  end
 end

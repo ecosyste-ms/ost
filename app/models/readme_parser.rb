@@ -45,16 +45,20 @@ class ReadmeParser
         current_sub_category = line[4..-1].strip
         links[current_category][current_sub_category] ||= []
       elsif current_category && line.include?('](')
-        link_text_start = line.index('[') + 1
-        link_text_end = line.index(']')
-        link_text = line[link_text_start...link_text_end]
+        link_text_start_idx = line.index('[')
+        link_text_end_idx = line.index(']')
+        next unless link_text_start_idx && link_text_end_idx
+        
+        link_text = line[link_text_start_idx + 1...link_text_end_idx]
   
-        link_url_start = line.index('](') + 2
-        link_url_end = line.index(')', link_url_start)
-        link_url = line[link_url_start...link_url_end]
+        link_url_start_idx = line.index('](')
+        link_url_end_idx = link_url_start_idx ? line.index(')', link_url_start_idx + 2) : nil
+        next unless link_url_start_idx && link_url_end_idx
+        
+        link_url = line[link_url_start_idx + 2...link_url_end_idx]
   
-        description_start = line.index('-', link_url_end) + 1
-        description = line[description_start..-1].strip
+        description_start = line.index('-', link_url_end_idx)
+        description = description_start ? line[description_start + 1..-1].strip : ''
   
         links[current_category][current_sub_category] ||= []
         links[current_category][current_sub_category] << { name: link_text, url: link_url, description: description }
