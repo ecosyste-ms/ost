@@ -392,7 +392,7 @@ class Project < ApplicationRecord
 
   def ping
     ping_urls.each do |url|
-      Faraday.get(url) rescue nil
+      Faraday.get(url, nil, {'User-Agent' => 'ost.ecosyste.ms'}) rescue nil
     end
   end
 
