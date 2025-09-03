@@ -351,7 +351,6 @@ class Project < ApplicationRecord
     fetch_citation_file if reviewed?
     fetch_readme if reviewed?
     sync_releases if reviewed?
-    sync_commits if reviewed?
     update_committers
     update_keywords_from_contributors
     update(last_synced_at: Time.now, matching_criteria: matching_criteria?)
@@ -397,10 +396,6 @@ class Project < ApplicationRecord
     end
   end
 
-  def sync_commits
-    Faraday.post(sync_commits_url, nil, {'User-Agent' => 'ost.ecosyste.ms'}) rescue nil
-  end
-
   def ping_urls
     ([repos_ping_url] + [issues_ping_url] + [commits_ping_url] + packages_ping_urls + [owner_ping_url]).compact.uniq
   end
@@ -418,11 +413,6 @@ class Project < ApplicationRecord
   def commits_ping_url
     return unless repository.present?
     "https://commits.ecosyste.ms/api/v1/hosts/#{repository['host']['name']}/repositories/#{repository['full_name']}/ping"
-  end
-
-  def sync_commits_url
-    return unless repository.present?
-    "https://commits.ecosyste.ms/api/v1/hosts/#{repository['host']['name']}/repositories/#{repository['full_name']}/sync_commits"
   end
 
   def packages_ping_urls
