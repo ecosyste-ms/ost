@@ -1,4 +1,4 @@
-FROM ruby:3.4.5-slim
+FROM ruby:3.4.6-slim
 
 ENV APP_ROOT=/usr/src/app
 ENV DATABASE_PORT=5432
