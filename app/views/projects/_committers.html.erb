@@ -39,15 +39,17 @@
           <th>Commits</th>
         </tr>
       </thead>
-      <tbody>        
-        <% @project.commits['committers'].first(30).each do |committer| %>
-          <tr>
-            <td><%= link_to_unless committer['login'].blank?, committer['name'], "https://github.com/#{committer['login']}" %></td>
-            <td><%= obfustcate_email(committer['email']) %></td>
-            <td><%= committer['count'] %></td>
-          </tr>
+      <tbody>
+        <% if @project.commits['committers'].present? %>
+          <% @project.commits['committers'].first(30).each do |committer| %>
+            <tr>
+              <td><%= link_to_unless committer['login'].blank?, committer['name'], "https://github.com/#{committer['login']}" %></td>
+              <td><%= obfustcate_email(committer['email']) %></td>
+              <td><%= committer['count'] %></td>
+            </tr>
+          <% end %>
         <% end %>
-        <% if @project.commits['total_committers'] > 30 %>
+        <% if @project.commits['committers'].present? && @project.commits['total_committers'] > 30 %>
           <tr>
             <td colspan='3'>
               <i>
