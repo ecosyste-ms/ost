@@ -5,6 +5,7 @@ module EcosystemApiClient
     def ecosystem_http_client(url)
       Faraday.new(url: url) do |faraday|
         faraday.headers['User-Agent'] = 'ost.ecosyste.ms'
+        faraday.headers['X-API-Key'] = ENV['ECOSYSTEMS_API_KEY'] if ENV['ECOSYSTEMS_API_KEY']
         faraday.response :follow_redirects
         faraday.adapter Faraday.default_adapter
       end
@@ -15,6 +16,7 @@ module EcosystemApiClient
     def ecosystem_http_get(url)
       conn = Faraday.new(url: url) do |faraday|
         faraday.headers['User-Agent'] = 'ost.ecosyste.ms'
+        faraday.headers['X-API-Key'] = ENV['ECOSYSTEMS_API_KEY'] if ENV['ECOSYSTEMS_API_KEY']
         faraday.response :follow_redirects
         faraday.adapter Faraday.default_adapter
       end
