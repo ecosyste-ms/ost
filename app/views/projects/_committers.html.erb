@@ -15,8 +15,8 @@
           <p>
             Total Commits: <%= number_with_delimiter @project.commits['total_commits'] %><br>
             Total Committers: <%= number_with_delimiter @project.commits['total_committers'] %><br>
-            Avg Commits per committer: <%= number_with_delimiter @project.commits['mean_commits'].round(3) %><br>
-            Development Distribution Score (<a href='https://report.opensustain.tech/chapters/development-distribution-score.html' target="_blank">DDS</a>): <%= @project.commits['dds'].round(3) %><br/>
+            Avg Commits per committer: <%= number_with_delimiter @project.commits['mean_commits']&.round(3) %><br>
+            Development Distribution Score (<a href='https://report.opensustain.tech/chapters/development-distribution-score.html' target="_blank">DDS</a>): <%= @project.commits['dds']&.round(3) %><br/>
           </p>
         </div>
         <div class='col-md-6'>
@@ -24,8 +24,8 @@
             <p>
               Commits in past year: <%= number_with_delimiter @project.commits['past_year_total_commits'] %><br>
               Committers  in past year: <%= number_with_delimiter @project.commits['past_year_total_committers'] %><br>
-              Avg Commits per committer in past year: <%= number_with_delimiter @project.commits['past_year_mean_commits'].round(3) %><br>
-              Development Distribution Score (<a href='https://report.opensustain.tech/chapters/development-distribution-score.html' target="_blank">DDS</a>)  in past year: <%= @project.commits['past_year_dds'].round(3) %><br/>
+              Avg Commits per committer in past year: <%= number_with_delimiter @project.commits['past_year_mean_commits']&.round(3) %><br>
+              Development Distribution Score (<a href='https://report.opensustain.tech/chapters/development-distribution-score.html' target="_blank">DDS</a>)  in past year: <%= @project.commits['past_year_dds']&.round(3) %><br/>
             </p>
           <% end %>
         </div>
