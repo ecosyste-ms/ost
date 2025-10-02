@@ -15,7 +15,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     libcurl4-openssl-dev \
     libyaml-dev \
+    libjemalloc2 \
  && rm -rf /var/lib/apt/lists/*
+
+ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
+ENV RUBY_YJIT_ENABLE=1
 
 # Will invalidate cache as soon as the Gemfile changes
 COPY Gemfile Gemfile.lock .ruby-version $APP_ROOT/
