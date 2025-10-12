@@ -741,6 +741,16 @@ class Project < ApplicationRecord
     packages.map{|p| p["downloads"] || 0 }.sum
   end
 
+  def total_dependent_repos
+    return 0 unless packages.present?
+    packages.map{|p| p["dependent_repos_count"] || 0 }.sum
+  end
+
+  def total_dependent_packages
+    return 0 unless packages.present?
+    packages.map{|p| p["dependent_packages_count"] || 0 }.sum
+  end
+
   def issue_associations
     return [] unless issues_stats.present?
     (issues_stats['issue_author_associations_count'].keys + issues_stats['pull_request_author_associations_count'].keys).uniq
