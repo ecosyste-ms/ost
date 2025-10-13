@@ -1,0 +1,35 @@
+# Git files
+.git
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Development files
+.env
+.env.*
+
+# Dependencies
+node_modules
+
+# Logs
+*.log
+log/
+
+# Temporary files
+tmp/
+*.tmp
+
+# Test files
+test/
+spec/
+
+# Coverage reports
+coverage/
+
+# Database dumps
+*.dump
+
+# Data directory
+/data/
