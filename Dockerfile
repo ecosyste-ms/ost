@@ -68,5 +68,8 @@ COPY --from=builder $APP_ROOT/tmp/cache/bootsnap $APP_ROOT/tmp/cache/bootsnap
 # Copy precompiled assets from builder
 COPY --from=builder $APP_ROOT/public/assets $APP_ROOT/public/assets
 
+# Create tmp directories for runtime
+RUN mkdir -p tmp/pids tmp/cache tmp/sockets
+
 # Startup
 CMD ["bin/docker-start"]
