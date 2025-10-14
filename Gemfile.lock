@@ -57,13 +57,12 @@ GEM
       language_list (~> 1.2.1)
     chronic_duration (0.10.6)
       numerizer (~> 0.1.1)
-    commonmarker (2.4.1)
+    commonmarker (2.5.0)
       rb_sys (~> 0.9)
-    commonmarker (2.4.1-aarch64-linux)
-    commonmarker (2.4.1-aarch64-linux-musl)
-    commonmarker (2.4.1-x86_64-darwin)
-    commonmarker (2.4.1-x86_64-linux)
-    commonmarker (2.4.1-x86_64-linux-musl)
+    commonmarker (2.5.0-aarch64-linux)
+    commonmarker (2.5.0-aarch64-linux-musl)
+    commonmarker (2.5.0-x86_64-linux)
+    commonmarker (2.5.0-x86_64-linux-musl)
     concurrent-ruby (1.3.5)
     connection_pool (2.5.4)
     counter_culture (3.11.2)
@@ -398,12 +397,11 @@ CHECKSUMS
   builder (3.3.0) sha256=497918d2f9dca528fdca4b88d84e4ef4387256d984b8154e9d5d3fe5a9c8835f
   cff (1.3.0) sha256=d2b65d57160040ad244087d65b89769558a40aafb34b13d048e0ea72bc521316
   chronic_duration (0.10.6) sha256=fac58d4147d3183a40811400380cafcef049f2bb02421d2fd1c6e685fbe8facc
-  commonmarker (2.4.1) sha256=d38096f9c6f7ea94761f24cd74b43e638d3fc91d1bea4be15056ab14849ae3f7
-  commonmarker (2.4.1-aarch64-linux) sha256=0a1be2672ccd4d3efe09850ab43cf4567b19566b8374f7e4de6e73a514dcea8a
-  commonmarker (2.4.1-aarch64-linux-musl) sha256=22854e0cd23bcb12598ccf0c5f0b49ff6ea91610fd3f0c6c9d1c7318d172e72c
-  commonmarker (2.4.1-x86_64-darwin) sha256=c21bb6f335018600ea0066e7fd1bb2f27fcc3259b4f9149bfdd03ad18a380d4b
-  commonmarker (2.4.1-x86_64-linux) sha256=33328ca07e8cb82e3d8298db0136e0119526be6afc346a53e9c66c00cef5e21b
-  commonmarker (2.4.1-x86_64-linux-musl) sha256=5b6f9d3e736cbb3f4f2299121e7e48593f3ebb238a2bfc99179398faaf646815
+  commonmarker (2.5.0) sha256=fc84f9e01b271298691a7cfc298cbbaadb893395dc92e9b51644675abff248b5
+  commonmarker (2.5.0-aarch64-linux) sha256=5812585cbd6081483331a750b0227cd0b6d951b76103bab10ee116aa58d7e526
+  commonmarker (2.5.0-aarch64-linux-musl) sha256=b72636814379033e20d77433f8a0df6c3446fbd9557ba029445d59c53cd693af
+  commonmarker (2.5.0-x86_64-linux) sha256=9b0d79a883a5df132291c181253cbe31254e6c5c6f131dc7e7a321f872b10db9
+  commonmarker (2.5.0-x86_64-linux-musl) sha256=3ac20d8de38260d02306e3a539b90d136818998bcfb203114f7054ad7fdb7b37
   concurrent-ruby (1.3.5) sha256=813b3e37aca6df2a21a3b9f1d497f8cbab24a2b94cab325bffe65ee0f6cbebc6
   connection_pool (2.5.4) sha256=e9e1922327416091f3f6542f5f4446c2a20745276b9aa796dd0bb2fd0ea1e70a
   counter_culture (3.11.2) sha256=10f62d78f9f6e042640124847902761af8cc37aa96d3c40bdc253805b6efe33d
