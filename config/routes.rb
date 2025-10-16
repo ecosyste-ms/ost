@@ -29,6 +29,7 @@ Rails.application.routes.draw do
           get :packages
           get :images
           get :search
+          get :dependencies
         end
         member do
           get :ping

@@ -65,6 +65,40 @@ class Api::V1::ProjectsControllerTest < ActionDispatch::IntegrationTest
       last_synced_at: 1.hour.ago,
       esd: true
     )
+
+    # Projects with dependencies for testing dependencies endpoint
+    @project_with_deps_1 = Project.create!(
+      url: 'https://github.com/example/deps-project-1',
+      name: 'Project with Dependencies 1',
+      repository: { 'host' => { 'name' => 'GitHub' } },
+      reviewed: true,
+      last_synced_at: 1.hour.ago,
+      dependencies: [
+        {
+          'dependencies' => [
+            { 'ecosystem' => 'npm', 'package_name' => 'React', 'direct' => true },
+            { 'ecosystem' => 'npm', 'package_name' => 'Express', 'direct' => true },
+            { 'ecosystem' => 'python', 'package_name' => 'Django', 'direct' => true }
+          ]
+        }
+      ]
+    )
+
+    @project_with_deps_2 = Project.create!(
+      url: 'https://github.com/example/deps-project-2',
+      name: 'Project with Dependencies 2',
+      repository: { 'host' => { 'name' => 'GitHub' } },
+      reviewed: true,
+      last_synced_at: 1.hour.ago,
+      dependencies: [
+        {
+          'dependencies' => [
+            { 'ecosystem' => 'npm', 'package_name' => 'React', 'direct' => true },
+            { 'ecosystem' => 'npm', 'package_name' => 'Vue', 'direct' => true }
+          ]
+        }
+      ]
+    )
   end
 
   teardown do
@@ -78,7 +112,7 @@ class Api::V1::ProjectsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     actual_response = JSON.parse(@response.body)
-    assert_equal 3, actual_response.length
+    assert_equal 5, actual_response.length
 
     # Should not include unsynced project
     project_names = actual_response.map { |p| p['name'] }
@@ -92,7 +126,7 @@ class Api::V1::ProjectsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     actual_response = JSON.parse(@response.body)
-    assert_equal 3, actual_response.length
+    assert_equal 5, actual_response.length
     actual_response.each do |project|
       # All returned projects should be reviewed
       project_record = Project.find(project['id'])
@@ -259,6 +293,81 @@ class Api::V1::ProjectsControllerTest < ActionDispatch::IntegrationTest
 
     actual_response = JSON.parse(@response.body)
     assert actual_response.is_a?(Array)
+  end
+
+  # DEPENDENCIES TESTS
+  test 'should get dependencies' do
+    get dependencies_api_v1_projects_path
+    assert_response :success
+
+    actual_response = JSON.parse(@response.body)
+    assert actual_response.is_a?(Array)
+  end
+
+  test 'dependencies should have required fields' do
+    get dependencies_api_v1_projects_path
+    assert_response :success
+
+    actual_response = JSON.parse(@response.body)
+    if actual_response.any?
+      dependency = actual_response.first
+      assert_includes dependency.keys, 'ecosystem'
+      assert_includes dependency.keys, 'package_name'
+      assert_includes dependency.keys, 'count'
+      assert_includes dependency.keys, 'in_ost'
+    end
+  end
+
+  test 'dependencies should filter out python and r packages' do
+    get dependencies_api_v1_projects_path
+    assert_response :success
+
+    actual_response = JSON.parse(@response.body)
+    actual_response.each do |dependency|
+      assert_not_equal 'python', dependency['ecosystem']
+      assert_not_equal 'r', dependency['ecosystem']
+    end
+  end
+
+  test 'dependencies should be sorted by count descending' do
+    get dependencies_api_v1_projects_path
+    assert_response :success
+
+    actual_response = JSON.parse(@response.body)
+    if actual_response.length > 1
+      # Check that counts are in descending order
+      counts = actual_response.map { |d| d['count'] }
+      assert_equal counts, counts.sort.reverse
+    end
+  end
+
+  test 'dependencies should support pagination' do
+    get dependencies_api_v1_projects_path(per_page: 1)
+    assert_response :success
+
+    actual_response = JSON.parse(@response.body)
+    # Should only return 1 item per page
+    assert actual_response.length <= 1
+
+    # Check pagination headers are present
+    assert_not_nil response.headers['Current-Page']
+    assert_not_nil response.headers['Page-Items']
+  end
+
+  test 'dependencies should support custom per_page parameter' do
+    get dependencies_api_v1_projects_path(per_page: 50)
+    assert_response :success
+
+    actual_response = JSON.parse(@response.body)
+    assert actual_response.length <= 50
+  end
+
+  test 'dependencies should default to 100 items per page' do
+    get dependencies_api_v1_projects_path
+    assert_response :success
+
+    # Check pagination headers
+    assert_equal '100', response.headers['Page-Items']
   end
 
 end

@@ -63,10 +63,35 @@ class Api::V1::ProjectsController < Api::V1::ApplicationController
     filters = []
     filters << "keywords = \"#{params[:keywords]}\"" if params[:keywords].present?
     filters << "language = \"#{params[:language]}\"" if params[:language].present?
-  
+
     filter_string = filters.join(" AND ") if filters.any?
-  
+
     @projects = Project.pagy_search(params[:q], facets: ['keywords', 'language'], filter: filter_string)
     @pagy, @projects = pagy_meilisearch(@projects, limit: 20)
+  end
+
+  def dependencies
+    all_dependencies = Project.reviewed.map(&:dependency_packages).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse
+    dependency_records = Dependency.where('count > 1').includes(:project)
+
+    # Filter out python and r packages (matching HTML behavior)
+    filtered_dependencies = all_dependencies.reject { |dep, count| ['python', 'r'].include?(dep[0]) }
+
+    # Convert to array format for pagination
+    @dependencies = filtered_dependencies.map do |dep, count|
+      package = dependency_records.find { |p| p['ecosystem'] == dep[0] && p['name'] == dep[1] }
+      in_ost = package&.project&.reviewed? || false
+
+      {
+        ecosystem: dep[0],
+        package_name: dep[1],
+        count: count,
+        in_ost: in_ost
+      }
+    end
+
+    # Paginate with pagy_array
+    items_per_page = params[:per_page]&.to_i || 100
+    @pagy, @dependencies = pagy_array(@dependencies, items: items_per_page)
   end
 end
