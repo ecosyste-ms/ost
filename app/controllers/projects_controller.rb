@@ -124,6 +124,7 @@ class ProjectsController < ApplicationController
   end
 
   def zenodo
-    @projects = Project.reviewed.with_readme.select{|p| p.zenodo_url.present? }
+    projects = Project.reviewed.with_readme.select{|p| p.zenodo_url.present? }
+    @pagy, @projects = pagy_array(projects)
   end
 end

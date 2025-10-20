@@ -180,22 +180,16 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal "https://zenodo.org/record/1234567", project.zenodo_url
   end
 
-  test "zenodo_url returns latestdoi url when no doi or record url" do
-    readme = "[![DOI](https://zenodo.org/badge/224614782.svg)](https://zenodo.org/badge/latestdoi/224614782)"
-    project = Project.new(readme: readme)
-    assert_equal "https://zenodo.org/badge/latestdoi/224614782", project.zenodo_url
-  end
-
   test "zenodo_url converts badge doi svg to doi url" do
     readme = "[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7551310.svg)](https://example.com)"
     project = Project.new(readme: readme)
     assert_equal "https://doi.org/10.5281/zenodo.7551310", project.zenodo_url
   end
 
-  test "zenodo_url converts badge svg to record url" do
-    readme = "[![DOI](https://zenodo.org/badge/377399301.svg)](https://example.com)"
+  test "zenodo_url returns nil when only badge svg without doi" do
+    readme = "[![Badge](https://zenodo.org/badge/377399301.svg)](https://example.com)"
     project = Project.new(readme: readme)
-    assert_equal "https://zenodo.org/record/377399301", project.zenodo_url
+    assert_nil project.zenodo_url
   end
 
   test "zenodo_url returns nil when no zenodo information" do

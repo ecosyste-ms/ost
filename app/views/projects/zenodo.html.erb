@@ -11,8 +11,10 @@
   </p>
 
   <p class='text-muted'>
-    <%= @projects.length %> projects found
+    <%= @pagy.count %> projects found
   </p>
+
+  <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>
 
   <% @projects.each do |project|%>
     <div class="card mb-3 project d-flex" id="project_<%= project.id %>">
@@ -30,13 +32,11 @@
 
             <% if project.zenodo_url.present? %>
               <p>
-                <a href="<%= project.zenodo_url %>" target="_blank" rel="noopener">
-                  <% if project.zenodo_badge_urls.any? %>
-                    <img src="<%= project.zenodo_badge_urls.first %>" alt="Zenodo DOI">
-                  <% else %>
-                    <span class="badge bg-primary">View on Zenodo</span>
-                  <% end %>
-                </a>
+                <span class="badge bg-primary">
+                  <a href="<%= project.zenodo_url %>" target="_blank" rel="noopener" class="text-white text-decoration-none">
+                    Zenodo DOI
+                  </a>
+                </span>
               </p>
             <% end %>
 
@@ -69,5 +69,7 @@
       </div>
     </div>
   <% end %>
+
+  <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>
 
 </div>

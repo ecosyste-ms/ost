@@ -1207,22 +1207,13 @@ class Project < ApplicationRecord
     record_url = urls.find{|u| u.match?(/zenodo\.org\/record\/\d+/) }
     return record_url if record_url
 
-    latestdoi_url = urls.find{|u| u.match?(/zenodo\.org\/badge\/latestdoi\/\d+/) }
-    return latestdoi_url if latestdoi_url
-
     badge_doi = urls.find{|u| u.match?(/zenodo\.org\/badge\/DOI\/10\.5281\/zenodo\.\d+\.svg/) }
     if badge_doi
       doi_match = badge_doi.match(/10\.5281\/zenodo\.\d+/)
       return "https://doi.org/#{doi_match[0]}" if doi_match
     end
 
-    badge_id = urls.find{|u| u.match?(/zenodo\.org\/badge\/\d+\.svg/) }
-    if badge_id
-      id_match = badge_id.match(/badge\/(\d+)\.svg/)
-      return "https://zenodo.org/record/#{id_match[1]}" if id_match
-    end
-
-    urls.first
+    nil
   end
 
   def readme_image_urls
