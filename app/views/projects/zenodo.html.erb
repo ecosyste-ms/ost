@@ -1,0 +1,73 @@
+<% @meta_title = "Open Sustain Projects with Zenodo DOIs" %>
+<% @meta_description = "Open Sustain projects that have Zenodo badges and DOIs for citing research outputs" %>
+
+<div class="container-sm">
+  <h1 class='mb-3'>
+    Open Sustain Projects with Zenodo DOIs
+  </h1>
+
+  <p class='lead'>
+    Projects that have Zenodo badges and DOIs for citing research outputs.
+  </p>
+
+  <p class='text-muted'>
+    <%= @projects.length %> projects found
+  </p>
+
+  <% @projects.each do |project|%>
+    <div class="card mb-3 project d-flex" id="project_<%= project.id %>">
+      <div class="card-body pb-1">
+        <div class="d-flex">
+
+          <div class="flex-grow-1 ms-3 text-break">
+            <h5 class='card-title'>
+              <%= link_to project, project_path(project) %>
+            </h5>
+
+            <p class="card-subtitle mb-2 text-muted">
+              <%= project.description %>
+            </p>
+
+            <% if project.zenodo_url.present? %>
+              <p>
+                <a href="<%= project.zenodo_url %>" target="_blank" rel="noopener">
+                  <% if project.zenodo_badge_urls.any? %>
+                    <img src="<%= project.zenodo_badge_urls.first %>" alt="Zenodo DOI">
+                  <% else %>
+                    <span class="badge bg-primary">View on Zenodo</span>
+                  <% end %>
+                </a>
+              </p>
+            <% end %>
+
+            <% if project.keywords.any? %>
+              <p>
+                <% project.keywords.each do |keyword| %>
+                  <span class="badge bg-light text-dark">
+                    <%= link_to keyword, url_for(keyword: keyword) %>
+                  </span>
+                <% end %>
+              </p>
+            <% end %>
+
+            <% if project.last_synced_at %>
+            <p class="card-subtitle mb-2 text-muted"><i><small>
+              <% if project.category %>
+                <%= project.category %> - <%= project.sub_category %> -
+              <% end %>
+              Last synced: <%= project.last_synced_at.strftime("%d %b %Y") %>
+              <% if project.score %>
+                - Ranking: <%= project.score.round(1) %>
+              <% end %>
+            </small></i></p>
+            <% end %>
+          </div>
+          <div class="flex-shrink-0">
+            <img src="<%= project.avatar_url %>" class="rounded" height='40' width='40' onerror="this.style.display='none'">
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+</div>

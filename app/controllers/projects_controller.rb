@@ -122,4 +122,8 @@ class ProjectsController < ApplicationController
   def images
     @projects = Project.reviewed.with_readme.select{|p| p.readme_image_urls.present? }
   end
+
+  def zenodo
+    @projects = Project.reviewed.with_readme.select{|p| p.zenodo_url.present? }
+  end
 end

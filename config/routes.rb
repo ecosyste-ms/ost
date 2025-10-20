@@ -46,6 +46,7 @@ Rails.application.routes.draw do
       get :dependencies
       get :packages
       get :images
+      get :zenodo
       get :search
     end
     resources :votes, only: [:create]

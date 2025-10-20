@@ -1171,6 +1171,60 @@ class Project < ApplicationRecord
     citation_counts.values.first
   end
 
+  def zenodo_domains
+    ['zenodo.org', 'www.zenodo.org']
+  end
+
+  def readme_zenodo_urls
+    readme_urls.select{|u| zenodo_domains.include?(URI.parse(u).host) }.uniq
+  rescue URI::InvalidURIError
+    []
+  end
+
+  def zenodo_dois
+    dois.select{|doi| doi.start_with?('10.5281/zenodo') }
+  end
+
+  def zenodo_badge_urls
+    return [] unless readme.present?
+    readme_image_urls.select{|u| u.match?(/zenodo/i) }
+  end
+
+  def zenodo_from_badge
+    return nil unless readme.present?
+    badge_match = readme.scan(/\[!\[DOI\]\(https:\/\/zenodo\.org\/badge\/DOI\/(10\.5281\/zenodo\.\d+)\.svg\)\]\((https:\/\/doi\.org\/10\.5281\/zenodo\.\d+)\)/i).first
+    badge_match&.last || readme.scan(/https:\/\/(?:www\.)?zenodo\.org\/(?:badge\/|record\/|doi\/)(\d+)/i).flatten.first&.then{|id| "https://zenodo.org/record/#{id}" }
+  end
+
+  def zenodo_url
+    return nil if readme_zenodo_urls.empty?
+
+    urls = readme_zenodo_urls
+
+    doi_url = urls.find{|u| u.match?(/zenodo\.org\/doi\/10\.5281\/zenodo\.\d+/) }
+    return doi_url if doi_url
+
+    record_url = urls.find{|u| u.match?(/zenodo\.org\/record\/\d+/) }
+    return record_url if record_url
+
+    latestdoi_url = urls.find{|u| u.match?(/zenodo\.org\/badge\/latestdoi\/\d+/) }
+    return latestdoi_url if latestdoi_url
+
+    badge_doi = urls.find{|u| u.match?(/zenodo\.org\/badge\/DOI\/10\.5281\/zenodo\.\d+\.svg/) }
+    if badge_doi
+      doi_match = badge_doi.match(/10\.5281\/zenodo\.\d+/)
+      return "https://doi.org/#{doi_match[0]}" if doi_match
+    end
+
+    badge_id = urls.find{|u| u.match?(/zenodo\.org\/badge\/\d+\.svg/) }
+    if badge_id
+      id_match = badge_id.match(/badge\/(\d+)\.svg/)
+      return "https://zenodo.org/record/#{id_match[1]}" if id_match
+    end
+
+    urls.first
+  end
+
   def readme_image_urls
     return [] unless readme.present?
     urls = readme.scan(/!\[.*?\]\((.*?)\)/).flatten.compact.uniq
