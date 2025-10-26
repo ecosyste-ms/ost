@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_06_083816) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_26_161954) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -110,6 +110,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_06_083816) do
     t.json "works", default: {}
     t.string "keywords_from_contributors", default: [], array: true
     t.boolean "esd", default: false
+    t.json "joss_metadata"
+    t.float "science_score"
+    t.json "science_score_breakdown", default: {}
     t.index ["category", "sub_category"], name: "index_projects_on_category_and_sub_category", where: "((category IS NOT NULL) AND (sub_category IS NOT NULL))"
     t.index ["collection_id"], name: "index_projects_on_collection_id"
     t.index ["reviewed"], name: "index_projects_on_reviewed"

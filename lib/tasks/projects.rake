@@ -27,4 +27,9 @@ namespace :projects do
   task :sync_dependencies => :environment do
     Project.sync_dependencies
   end
+
+  desc 'import projects from JOSS (Journal of Open Source Software)'
+  task :import_joss => :environment do
+    Project.import_from_joss
+  end
 end

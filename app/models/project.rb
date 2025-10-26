@@ -46,8 +46,12 @@ class Project < ApplicationRecord
   scope :with_keywords_from_contributors, -> { where.not(keywords_from_contributors: []) }
   scope :without_keywords_from_contributors, -> { where(keywords_from_contributors: []) }
 
+  scope :with_joss, -> { where.not(joss_metadata: nil) }
+  scope :scientific, -> { where('science_score >= ?', 20) }
+  scope :highly_scientific, -> { where('science_score >= ?', 75) }
+
   def self.import_from_csv
-  
+
     # url = 'https://raw.githubusercontent.com/protontypes/open-source-in-environmental-sustainability/main/open-source-in-environmental-sustainability/csv/projects.csv'
     url = 'https://gist.githubusercontent.com/andrew/44442a6a84395df81bc1b0a153c5abaf/raw/fb4d3ff68eb65ebca9c9387fadb30349e3563e1b/Projects-Gridview.csv'
 
@@ -71,6 +75,65 @@ class Project < ApplicationRecord
       project.save
       project.sync_async unless project.last_synced_at.present?
     end
+  end
+
+  def self.import_from_joss
+    puts "Starting JOSS import..."
+    page = 1
+    total_created = 0
+    total_existing = 0
+
+    loop do
+      puts "Fetching page #{page}..."
+      url = "https://joss.theoj.org/papers/published.json?page=#{page}"
+
+      conn = Faraday.new(url: url) do |faraday|
+        faraday.response :follow_redirects
+        faraday.request :retry, max: 3, interval: 0.5, interval_randomness: 0.5, backoff_factor: 2
+        faraday.adapter Faraday.default_adapter
+      end
+
+      response = conn.get
+      break unless response.success?
+
+      papers = JSON.parse(response.body)
+      break if papers.empty?
+
+      papers.each do |paper|
+        next if paper['software_repository'].blank?
+
+        # Normalize the URL (lowercase and remove trailing slash)
+        repo_url = paper['software_repository'].downcase.chomp('/')
+
+        existing_project = Project.find_by(url: repo_url)
+        if existing_project.present?
+          total_existing += 1
+          # Update JOSS metadata if project exists
+          existing_project.update(
+            joss_metadata: paper
+          )
+        else
+          project = Project.create(
+            url: repo_url,
+            name: paper['title'],
+            description: "#{paper['title']} - Published in JOSS (#{paper['year']})",
+            joss_metadata: paper
+          )
+          if project.persisted?
+            total_created += 1
+            project.sync_async
+          end
+        end
+      end
+
+      puts "Page #{page}: #{papers.size} papers processed"
+      page += 1
+    end
+
+    puts "JOSS import complete!"
+    puts "Total new projects created: #{total_created}"
+    puts "Total existing projects found: #{total_existing}"
+    puts "Grand total: #{total_created + total_existing}"
   end
 
   def self.import_esd_projects
@@ -355,6 +418,7 @@ class Project < ApplicationRecord
     update_keywords_from_contributors
     update(last_synced_at: Time.now, matching_criteria: matching_criteria?)
     update_score
+    update_science_score
     ping
   end
 
@@ -642,6 +706,24 @@ class Project < ApplicationRecord
 
   def update_score
     update_attribute :score, score_parts.sum
+  end
+
+  def update_science_score
+    result = calculate_science_score_breakdown
+    update(science_score: result[:score], science_score_breakdown: result)
+  end
+
+  def science_score_breakdown
+    # Return stored breakdown from database
+    # This method should only be called from views/API, never calculate on the fly
+    breakdown = read_attribute(:science_score_breakdown)
+    breakdown&.with_indifferent_access
+  end
+
+  def calculate_science_score_breakdown
+    # This method should only be called from background jobs
+    calculator = ScienceScoreCalculator.new(self)
+    calculator.calculate
   end
 
   def score_parts
