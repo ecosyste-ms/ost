@@ -753,56 +753,76 @@ class Project < ApplicationRecord
 
   def dependent_repos_urls
     return [] unless packages.present?
-    
+
     repo_urls = Set.new
 
-    packages.each do |p| 
+    packages.each do |p|
       page = 0
+      Rails.logger.info "dependent_repos_urls: Processing package #{p['ecosystem']}/#{p['name']}"
       loop do
         page += 1
         break if page > 250
         break if p['ecosystem'].blank? || p['name'].blank?
 
-        url = "https://repos.ecosyste.ms/api/v1/usage/#{p['ecosystem']}/#{p['name']}/dependencies?per_page=50&page=#{page}"  
+        Rails.logger.info "dependent_repos_urls: Fetching page #{page} for #{p['ecosystem']}/#{p['name']}"
+        url = "https://repos.ecosyste.ms/api/v1/usage/#{p['ecosystem']}/#{p['name']}/dependencies?per_page=50&page=#{page}"
         conn = ecosystem_http_client(url)
         response = conn.get
-        break unless response.success?
+        unless response.success?
+          Rails.logger.warn "dependent_repos_urls: Failed to fetch page #{page} for #{p['ecosystem']}/#{p['name']} (status: #{response.status})"
+          break
+        end
         data = JSON.parse(response.body)
-        break if data.blank?
+        if data.blank?
+          Rails.logger.info "dependent_repos_urls: No data on page #{page} for #{p['ecosystem']}/#{p['name']}, stopping"
+          break
+        end
+        Rails.logger.info "dependent_repos_urls: Found #{data.size} dependencies on page #{page} for #{p['ecosystem']}/#{p['name']}"
         data.each do |dep|
           next unless dep['repository'].present?
           repo_urls << dep['repository']['html_url']
-        end 
+        end
       end
     end
-      
+
+    Rails.logger.info "dependent_repos_urls: Completed with #{repo_urls.size} unique repository URLs"
     repo_urls.to_a
   end
 
   def dependent_packages_urls
     return [] unless packages.present?
-    
+
     package_urls = Set.new
 
-    packages.each do |p| 
+    packages.each do |p|
       page = 0
+      Rails.logger.info "dependent_packages_urls: Processing package #{p['registry']['name']}/#{p['name']}"
       loop do
         page += 1
         break if page > 250
         break if p['ecosystem'].blank? || p['name'].blank?
 
+        Rails.logger.info "dependent_packages_urls: Fetching page #{page} for #{p['registry']['name']}/#{p['name']}"
         url = "https://packages.ecosyste.ms/api/v1/registries/#{p['registry']['name']}/packages/#{p['name']}/dependent_packages?per_page=50&page=#{page}"
         conn = ecosystem_http_client(url)
         response = conn.get
-        break unless response.success?
+        unless response.success?
+          Rails.logger.warn "dependent_packages_urls: Failed to fetch page #{page} for #{p['registry']['name']}/#{p['name']} (status: #{response.status})"
+          break
+        end
         data = JSON.parse(response.body)
-        break if data.blank?
+        if data.blank?
+          Rails.logger.info "dependent_packages_urls: No data on page #{page} for #{p['registry']['name']}/#{p['name']}, stopping"
+          break
+        end
+        Rails.logger.info "dependent_packages_urls: Found #{data.size} dependencies on page #{page} for #{p['registry']['name']}/#{p['name']}"
         data.each do |dep|
           package_urls << dep['repository_url']
-        end 
+        end
       end
     end
-      
+
+    Rails.logger.info "dependent_packages_urls: Completed with #{package_urls.size} unique package URLs"
     package_urls.to_a
   end
 
