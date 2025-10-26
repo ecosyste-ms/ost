@@ -264,6 +264,87 @@ class Project < ApplicationRecord
     analysis
   end
 
+  def self.find_joss_candidates_by_keywords(min_keyword_matches: 2, limit: 100)
+    # Get reviewed JOSS projects and their keywords
+    reviewed_joss = reviewed.with_joss
+    reviewed_joss_count = reviewed_joss.count
+
+    puts "Analyzing #{reviewed_joss_count} reviewed JOSS projects..."
+
+    # Collect all keywords from reviewed JOSS projects
+    all_keywords = reviewed_joss
+      .where.not(keywords: [])
+      .pluck(:keywords)
+      .flatten
+      .compact
+      .map(&:downcase)
+      .group_by(&:itself)
+      .transform_values(&:count)
+      .sort_by { |k, v| -v }
+
+    # Get top keywords (appearing in at least 2 projects)
+    top_keywords = all_keywords.select { |k, v| v >= 2 }.map(&:first)
+
+    puts "Found #{top_keywords.size} common keywords across reviewed JOSS projects"
+    puts "Top 20 keywords: #{top_keywords.take(20).join(', ')}"
+
+    # Find unreviewed JOSS projects with matching keywords
+    unreviewed_joss = with_joss.unreviewed
+
+    candidates = []
+    unreviewed_joss.find_each do |project|
+      next if project.keywords.blank?
+
+      project_keywords = project.keywords.map(&:downcase)
+      matching_keywords = project_keywords & top_keywords
+
+      if matching_keywords.size >= min_keyword_matches
+        candidates << {
+          id: project.id,
+          name: project.name,
+          url: project.url,
+          keywords: project.keywords,
+          matching_keywords: matching_keywords,
+          match_count: matching_keywords.size,
+          description: project.description,
+          joss_year: project.joss_metadata&.dig('year'),
+          joss_title: project.joss_metadata&.dig('title')
+        }
+      end
+    end
+
+    # Sort by match count
+    candidates.sort_by! { |c| -c[:match_count] }
+
+    puts "\nFound #{candidates.size} unreviewed JOSS projects with #{min_keyword_matches}+ matching keywords"
+
+    candidates.take(limit)
+  end
+
+  def self.print_joss_candidates(min_keyword_matches: 2, limit: 50)
+    candidates = find_joss_candidates_by_keywords(min_keyword_matches: min_keyword_matches, limit: limit)
+
+    puts "\n" + "="*80
+    puts "JOSS PROJECT CANDIDATES FOR OST"
+    puts "="*80
+    puts "Showing top #{[candidates.size, limit].min} unreviewed JOSS projects"
+    puts "="*80 + "\n"
+
+    candidates.take(limit).each_with_index do |candidate, index|
+      puts "\n#{(index + 1).to_s.rjust(3)}. #{candidate[:name]}"
+      puts "     URL: #{candidate[:url]}"
+      puts "     JOSS: #{candidate[:joss_title]} (#{candidate[:joss_year]})" if candidate[:joss_year]
+      puts "     Matching Keywords (#{candidate[:match_count]}): #{candidate[:matching_keywords].join(', ')}"
+      puts "     Description: #{candidate[:description]&.truncate(100)}" if candidate[:description]
+    end
+
+    puts "\n" + "="*80
+    puts "To review a candidate, run: Project.find(ID).update(reviewed: true)"
+    puts "="*80 + "\n"
+
+    candidates
+  end
+
   def self.import_education
     url = 'https://raw.githubusercontent.com/protontypes/open-sustainable-technology/refs/heads/main/education.md'
 
