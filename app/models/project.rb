@@ -300,6 +300,14 @@ class Project < ApplicationRecord
     sample.joss_metadata&.keys
   end
 
+  def self.generic_tech_keywords
+    # Reuse existing ignore_words plus some additional space-separated variants
+    ignore_words + [
+      'machine learning', 'deep learning', 'data science', 'data analysis',
+      'open source', 'high performance', 'time series'
+    ]
+  end
+
   def self.find_joss_candidates_by_keywords(min_keyword_matches: 2, limit: 100)
     # Get reviewed JOSS projects and extract keywords from available fields
     ost_joss = reviewed.with_joss
@@ -310,6 +318,7 @@ class Project < ApplicationRecord
     # Collect keywords from multiple JOSS metadata fields
     all_keywords = []
     projects_with_keywords = 0
+    generic_filter = generic_tech_keywords
 
     ost_joss.find_each do |project|
       metadata = project.joss_metadata
@@ -333,6 +342,9 @@ class Project < ApplicationRecord
       if project.keywords.present?
         keywords.concat(project.keywords)
       end
+
+      # Filter out generic terms
+      keywords = keywords.reject { |k| generic_filter.include?(k.to_s.downcase.strip) }
 
       if keywords.any?
         projects_with_keywords += 1
