@@ -301,10 +301,10 @@ class Project < ApplicationRecord
   end
 
   def self.generic_tech_keywords
-    # Reuse existing ignore_words plus some additional space-separated variants
+    # Reuse existing ignore_words plus space-separated variants that appear in JOSS tags
     ignore_words + [
       'machine learning', 'deep learning', 'data science', 'data analysis',
-      'open source', 'high performance', 'time series'
+      'open source', 'high performance', 'time series', 'data processing'
     ]
   end
 
@@ -685,6 +685,10 @@ class Project < ApplicationRecord
       # Non-Environmental Scientific Domains
       'astronomy', 'astrophysics', 'biochemistry', 'biomedical', 'chemistry', 'clinical', 'complex-systems', 'cosmology',
       'genetics', 'healthcare', 'medical', 'medicine', 'mesh-generation', 'molecular-biology', 'particle-physics',
+      'physics', 'optics', 'photonics', 'photonic', 'photonic-crystals', 'laser', 'beam', 'spectroscopy',
+      'multidimensional spectroscopy', 'terahertz', 'holographic', 'quantum', 'quantum mechanics', 'quantum computing',
+      'quantum-key-distribution', 'stellar', 'lattice', 'hydrodynamics', 'particles', 'particle-system', 'particle-based',
+      'geoscience', 'geosciences', 'earth science',
 
       # Geographic/Mapping (generic tools, not domain-specific)
       'cartocss', 'gdal-python', 'geographic-information-systems', 'geospatial', 'gis', 'google-earth-engine', 'gtfs',
