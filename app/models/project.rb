@@ -264,48 +264,92 @@ class Project < ApplicationRecord
     analysis
   end
 
+  def self.joss_stats
+    total_joss = with_joss.count
+    reviewed_joss = reviewed.with_joss.count
+    unreviewed_joss = unreviewed.with_joss.count
+    unreviewed_with_keywords = unreviewed.with_joss.where.not(keywords: []).count
+    unreviewed_without_keywords = unreviewed.with_joss.where(keywords: []).count
+
+    puts "\n" + "="*80
+    puts "JOSS PROJECT STATISTICS"
+    puts "="*80
+    puts "Total JOSS projects:                  #{total_joss}"
+    puts "Reviewed JOSS projects:               #{reviewed_joss}"
+    puts "Unreviewed JOSS projects:             #{unreviewed_joss}"
+    puts "  - With keywords:                    #{unreviewed_with_keywords}"
+    puts "  - Without keywords:                 #{unreviewed_without_keywords}"
+    puts "="*80 + "\n"
+
+    {
+      total: total_joss,
+      reviewed: reviewed_joss,
+      unreviewed: unreviewed_joss,
+      unreviewed_with_keywords: unreviewed_with_keywords,
+      unreviewed_without_keywords: unreviewed_without_keywords
+    }
+  end
+
   def self.find_joss_candidates_by_keywords(min_keyword_matches: 2, limit: 100)
-    # Get reviewed JOSS projects and their keywords
-    reviewed_joss = reviewed.with_joss
-    reviewed_joss_count = reviewed_joss.count
+    # Get reviewed JOSS projects and their JOSS tags
+    ost_joss = reviewed.with_joss
+    ost_joss_count = ost_joss.count
 
-    puts "Analyzing #{reviewed_joss_count} reviewed JOSS projects..."
+    puts "Analyzing #{ost_joss_count} reviewed JOSS projects..."
 
-    # Collect all keywords from reviewed JOSS projects
-    all_keywords = reviewed_joss
-      .where.not(keywords: [])
-      .pluck(:keywords)
-      .flatten
-      .compact
-      .map(&:downcase)
+    # Collect all tags from JOSS metadata
+    all_tags = []
+    projects_with_tags = 0
+    ost_joss.find_each do |project|
+      tags = project.joss_metadata&.dig('tags')
+      if tags.present? && tags.is_a?(Array)
+        projects_with_tags += 1
+        all_tags.concat(tags.map { |t| t.to_s.downcase.strip })
+      end
+    end
+
+    puts "Found tags in #{projects_with_tags} out of #{ost_joss_count} projects"
+
+    if all_tags.empty?
+      puts "No tags found in JOSS metadata. Cannot find candidates."
+      return []
+    end
+
+    tag_counts = all_tags
       .group_by(&:itself)
       .transform_values(&:count)
       .sort_by { |k, v| -v }
 
-    # Get top keywords (appearing in at least 2 projects)
-    top_keywords = all_keywords.select { |k, v| v >= 2 }.map(&:first)
+    # Get common tags (appearing in at least 2 projects)
+    common_tags = tag_counts.select { |k, v| v >= 2 }.map(&:first)
 
-    puts "Found #{top_keywords.size} common keywords across reviewed JOSS projects"
-    puts "Top 20 keywords: #{top_keywords.take(20).join(', ')}"
+    puts "Found #{common_tags.size} common JOSS tags across reviewed OST projects"
+    puts "Top 20 tags: #{tag_counts.take(20).map(&:first).join(', ')}"
 
-    # Find unreviewed JOSS projects with matching keywords
-    unreviewed_joss = with_joss.unreviewed
+    # Find unreviewed JOSS projects with matching tags
+    other_joss = unreviewed.with_joss
+    other_joss_total = other_joss.count
+
+    puts "Checking #{other_joss_total} unreviewed JOSS projects..."
 
     candidates = []
-    unreviewed_joss.find_each do |project|
-      next if project.keywords.blank?
+    checked = 0
+    other_joss.find_each do |project|
+      tags = project.joss_metadata&.dig('tags')
+      next unless tags.present? && tags.is_a?(Array)
 
-      project_keywords = project.keywords.map(&:downcase)
-      matching_keywords = project_keywords & top_keywords
+      checked += 1
+      project_tags = tags.map { |t| t.to_s.downcase.strip }
+      matching_tags = project_tags & common_tags
 
-      if matching_keywords.size >= min_keyword_matches
+      if matching_tags.size >= min_keyword_matches
         candidates << {
           id: project.id,
           name: project.name,
           url: project.url,
-          keywords: project.keywords,
-          matching_keywords: matching_keywords,
-          match_count: matching_keywords.size,
+          joss_tags: tags,
+          matching_tags: matching_tags,
+          match_count: matching_tags.size,
           description: project.description,
           joss_year: project.joss_metadata&.dig('year'),
           joss_title: project.joss_metadata&.dig('title')
@@ -313,10 +357,12 @@ class Project < ApplicationRecord
       end
     end
 
+    puts "Checked #{checked} projects with tags"
+
     # Sort by match count
     candidates.sort_by! { |c| -c[:match_count] }
 
-    puts "\nFound #{candidates.size} unreviewed JOSS projects with #{min_keyword_matches}+ matching keywords"
+    puts "Found #{candidates.size} JOSS projects with #{min_keyword_matches}+ matching tags"
 
     candidates.take(limit)
   end
