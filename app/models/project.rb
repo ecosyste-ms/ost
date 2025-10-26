@@ -159,6 +159,111 @@ class Project < ApplicationRecord
     end
   end
 
+  def self.science_score_analysis(scope = reviewed)
+    projects = scope.where.not(science_score: nil)
+    total_projects = projects.count
+
+    return { error: "No projects with science scores found" } if total_projects.zero?
+
+    # Calculate score statistics
+    scores = projects.pluck(:science_score).compact
+    avg_score = scores.sum / scores.size.to_f
+
+    # Breakdown by indicator
+    breakdowns = projects.pluck(:science_score_breakdown).compact
+
+    indicator_stats = {
+      has_citation_file: { count: 0, description: "CITATION.cff file" },
+      has_codemeta: { count: 0, description: "codemeta.json file" },
+      has_zenodo: { count: 0, description: ".zenodo.json file" },
+      has_doi_in_readme: { count: 0, description: "DOI references" },
+      has_academic_links: { count: 0, description: "Academic publication links" },
+      has_academic_committers: { count: 0, description: "Academic email committers" },
+      has_institutional_owner: { count: 0, description: "Institutional organization owner" },
+      has_joss_paper: { count: 0, description: "JOSS paper" }
+    }
+
+    breakdowns.each do |breakdown|
+      next unless breakdown.is_a?(Hash)
+      breakdown = breakdown.with_indifferent_access
+      breakdown_data = breakdown[:breakdown] || breakdown
+
+      indicator_stats.each_key do |indicator|
+        if breakdown_data[indicator] && breakdown_data[indicator][:present]
+          indicator_stats[indicator][:count] += 1
+        end
+      end
+    end
+
+    # Calculate percentages
+    indicator_stats.each do |key, value|
+      value[:percentage] = ((value[:count].to_f / total_projects) * 100).round(1)
+    end
+
+    # Score distribution
+    score_ranges = {
+      "0-20 (Low)" => projects.where("science_score < ?", 20).count,
+      "20-40 (Medium-Low)" => projects.where("science_score >= ? AND science_score < ?", 20, 40).count,
+      "40-60 (Medium)" => projects.where("science_score >= ? AND science_score < ?", 40, 60).count,
+      "60-80 (Medium-High)" => projects.where("science_score >= ? AND science_score < ?", 60, 80).count,
+      "80-100 (High)" => projects.where("science_score >= ?", 80).count
+    }
+
+    {
+      total_projects: total_projects,
+      average_score: avg_score.round(2),
+      median_score: scores.sort[scores.size / 2]&.round(2),
+      min_score: scores.min&.round(2),
+      max_score: scores.max&.round(2),
+      score_distribution: score_ranges,
+      indicators: indicator_stats.map do |key, value|
+        {
+          name: key,
+          description: value[:description],
+          count: value[:count],
+          percentage: value[:percentage]
+        }
+      end.sort_by { |i| -i[:percentage] }
+    }
+  end
+
+  def self.print_science_score_analysis(scope = reviewed)
+    analysis = science_score_analysis(scope)
+
+    return puts analysis[:error] if analysis[:error]
+
+    puts "\n" + "="*80
+    puts "SCIENCE SCORE™ ANALYSIS"
+    puts "="*80
+    puts "\nOVERALL STATISTICS"
+    puts "-"*80
+    puts "Total Projects:     #{analysis[:total_projects]}"
+    puts "Average Score:      #{analysis[:average_score]}"
+    puts "Median Score:       #{analysis[:median_score]}"
+    puts "Min Score:          #{analysis[:min_score]}"
+    puts "Max Score:          #{analysis[:max_score]}"
+
+    puts "\nSCORE DISTRIBUTION"
+    puts "-"*80
+    analysis[:score_distribution].each do |range, count|
+      percentage = ((count.to_f / analysis[:total_projects]) * 100).round(1)
+      bar = "█" * (percentage / 2).to_i
+      puts "#{range.ljust(20)} #{count.to_s.rjust(4)} (#{percentage.to_s.rjust(5)}%) #{bar}"
+    end
+
+    puts "\nINDICATOR BREAKDOWN"
+    puts "-"*80
+    puts "#{"Indicator".ljust(40)} Count   %"
+    puts "-"*80
+    analysis[:indicators].each do |indicator|
+      bar = "█" * (indicator[:percentage] / 2).to_i
+      puts "#{indicator[:description].ljust(40)} #{indicator[:count].to_s.rjust(4)} #{indicator[:percentage].to_s.rjust(5)}% #{bar}"
+    end
+    puts "="*80 + "\n"
+
+    analysis
+  end
+
   def self.import_education
     url = 'https://raw.githubusercontent.com/protontypes/open-sustainable-technology/refs/heads/main/education.md'
 
