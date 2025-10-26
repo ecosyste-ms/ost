@@ -618,7 +618,24 @@ class Project < ApplicationRecord
     'mqtt-client', 'julia-language', 'linter', 'mesh-generation', 'rlang', 'hardware', 'conda-forge', 'static-site-generator', 'spec', 'specification', 'cartocss', 'solver', 'evaluation', 'opengl',
     'navigation', 'iot-application', 'aframe', 'web-api', 'django-rest-framework', 'transmission', 'data-visualisation', 'streamlit', 'linear-algebra', 'streamlit-webapp', 'tutorials',
     'connector', 'oop', 'development', 'random-forest', 'machinelearning', 'heroku', 'france', 'photography', 'complex-systems', 'docusaurus', 'r-stats', 'shapefile', 'optuna', 'webxr',
-    'berlin', 'pathways', 'list', 'tiles', 'hafas', 'arduino-library', 'audio-processing', 'leafletjs'
+    'berlin', 'pathways', 'list', 'tiles', 'hafas', 'arduino-library', 'audio-processing', 'leafletjs',
+    # Software Development & Tools
+    'ci/cd', 'continuous-integration', 'unit-test', 'unit-testing', 'test-coverage', 'docker-compose', 'dockerfile', 'makefile', 'devcontainer', 'vscode-extension',
+    'ci', 'cd', 'build-tool', 'linting', 'code-quality',
+    # Academic/Publishing (too generic)
+    'preprint', 'arxiv', 'publication', 'paper', 'article', 'thesis', 'dissertation', 'coursework', 'teaching', 'learning',
+    # More Programming Languages/Frameworks
+    'go-lang', 'c-sharp', 'shiny', 'streamlit-app', 'flask-app', 'django-app', 'fastapi-app',
+    # Generic Scientific Methods
+    'bayesian-inference', 'monte-carlo', 'stochastic', 'deterministic', 'sensitivity-analysis', 'uncertainty-quantification', 'parameter-estimation',
+    'experimental', 'theoretical', 'empirical', 'quantitative', 'qualitative',
+    # Non-OST Scientific Domains
+    'healthcare', 'medicine', 'biomedical', 'clinical', 'medical', 'astronomy', 'astrophysics', 'cosmology', 'particle-physics',
+    'chemistry', 'biochemistry', 'molecular-biology', 'genetics',
+    # More Cloud/Infrastructure
+    'aws-lambda', 'gcp', 'azure-functions', 'cloud-functions', 'serverless-framework', 'heroku-app', 'digitalocean', 'netlify', 'vercel',
+    # Generic Data/Formats
+    'csv', 'json-parser', 'xml-parser', 'toml', 'hdf5', 'binary', 'ascii', 'encoding', 'decoding'
   ]
   end
 
