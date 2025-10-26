@@ -433,23 +433,21 @@ class Project < ApplicationRecord
   def self.print_joss_candidates(min_keyword_matches: 2, limit: 50)
     candidates = find_joss_candidates_by_keywords(min_keyword_matches: min_keyword_matches, limit: limit)
 
-    puts "\n" + "="*80
-    puts "JOSS PROJECT CANDIDATES FOR OST"
-    puts "="*80
-    puts "Showing top #{[candidates.size, limit].min} unreviewed JOSS projects"
-    puts "="*80 + "\n"
+    puts "\n# JOSS Project Candidates for OST\n"
+    puts "Showing top #{[candidates.size, limit].min} unreviewed JOSS projects\n\n"
 
     candidates.take(limit).each_with_index do |candidate, index|
-      puts "\n#{(index + 1).to_s.rjust(3)}. #{candidate[:name]}"
-      puts "     URL: #{candidate[:url]}"
-      puts "     JOSS: #{candidate[:joss_title]} (#{candidate[:joss_year]})" if candidate[:joss_year]
-      puts "     Matching Keywords (#{candidate[:match_count]}): #{candidate[:matching_keywords].join(', ')}"
-      puts "     Description: #{candidate[:description]&.truncate(100)}" if candidate[:description]
+      puts "## #{index + 1}. #{candidate[:name]}\n"
+      puts "- **URL**: #{candidate[:url]}"
+      puts "- **JOSS Paper**: #{candidate[:joss_title]} (#{candidate[:joss_year]})" if candidate[:joss_year]
+      puts "- **Matching Keywords** (#{candidate[:match_count]}): #{candidate[:matching_keywords].join(', ')}"
+      puts "- **Description**: #{candidate[:description]}" if candidate[:description]
+      puts "- **ID**: `#{candidate[:id]}`"
+      puts ""
     end
 
-    puts "\n" + "="*80
-    puts "To review a candidate, run: Project.find(ID).update(reviewed: true)"
-    puts "="*80 + "\n"
+    puts "---\n"
+    puts "*To review a candidate, run:* `Project.find(ID).update(reviewed: true)`\n"
 
     candidates
   end
