@@ -574,69 +574,144 @@ class Project < ApplicationRecord
   end
 
   def self.ignore_words
-    ['0x0lobersyko', '3d', 'tag1', 'tag2', 'accessibility', 'acertea', 'addon', 'ai', 'ajax', 'algorithms', 'amazon', 'anakjalanan', 'analysis', 'analytics', 'android', 'angular', 'animation', 
-    'apache-spark', 'api', 'api-client', 'api-rest', 'api-wrapper', 'app', 'arduino', 'array', 'artificial-intelligence', 'ast', 'async', 'atmosphere', 'australia', 'auth', 'authentication', 
-    'automation', 'awesome', 'awesome-list', 'aws', 'azure', 'babel', 'backend', 'bash', 'bash-script', 'bdd', 'benchmark', 'big-data', 'bitcoin', 'blockchain', 'boilerplate', 'bootstrap', 
-    'bot', 'browser', 'bsd3', 'building', 'c', 'c-plus-plus', 'cache', 'canvas', 'chatgpt', 'check', 'chrome', 'citation', 'classification', 'cli', 'client', 'cloud', 'clustering', 'cmake', 
-    'cms', 'cnc', 'cnn', 'code', 'collaboration', 'collection', 'color', 'colors', 'command', 'command-line', 'command-line-tool', 'compiler', 'component', 'components', 'computer-vision', 
-    'computing', 'concurrency', 'config', 'configuration', 'console', 'containers', 'core', 'couchdb', 'course', 'cpp', 'cpu', 'cran', 'credit', 'cross-platform', 'crypto', 'csharp', 'css', 
-    'cuda', 'cuda-fortran', 'd3', 'd3js', 'dashboard', 'dashboards', 'dask', 'data', 'data-analysis', 'data-analysis-python', 'data-science', 'data-visualization', 'database', 'datacube', 
-    'dataset', 'datasets', 'date', 'debug', 'deep-learning', 'definition', 'deploy', 'design', 'design-system', 'devops', 'diff', 'digital-public-goods', 'directory', 'distributed-systems', 
-    'django', 'docker', 'documentation', 'dom', 'dotnet', 'download', 'downloader', 'dts', 'earth-engine', 'editor', 'education', 'elasticsearch', 'electricity', 'electron', 'email', 'emoji', 
-    'encryption', 'energy', 'energy-monitor', 'engineering', 'env', 'environment', 'epanet-python-toolkit', 'erp', 'error', 'es2015', 'es6', 'eslint', 'eslint-plugin', 'eslintconfig', 
-    'eslintplugin', 'esp8266', 'ethereum', 'events', 'express', 'expressjs', 'extension', 'fabric', 'facebook', 'farm', 'fast', 'fastapi', 'fetch', 'file', 'filter', 'finance', 'firebase', 
-    'first-good-issue', 'flask', 'flat-file-db', 'fleet-management', 'fluentui', 'flutter', 'font', 'food', 'forecast', 'forecasting', 'form', 'format', 'forms', 'fortran', 'framework', 
-    'front-end', 'frontend', 'fs', 'function', 'functional', 'functional-programming', 'functions', 'game', 'gdal-python', 'generator', 'geographic-information-systems', 'geopython', 
-    'geospatial', 'ggplot2', 'gis', 'git', 'github', 'github-action', 'github-actions', 'go', 'golang', 'google', 'google-cloud', 'google-earth-engine', 'gpt', 'gpu', 'gpu-acceleration', 
-    'gpu-computing', 'grafana', 'graph', 'graphql', 'gtfs', 'gui', 'hacktoberfest', 'hacktoberfest2020', 'hacktoberfest2021', 'hash', 'helm', 'helpers', 'herojoker', 'hfc', 
-    'high-performance-computing', 'home-assistant', 'home-automation', 'homeassistant', 'hooks', 'hpc', 'html', 'html5', 'http', 'https', 'hyper-function-component', 'i18n', 'icon', 'image', 
-    'image-classification', 'image-database', 'image-processing', 'image-segmentation', 'immutable', 'import', 'indoxcapital', 'influxdb', 'infrastructure', 'input', 'integration-tests', 'io', 
-    'iobroker', 'ios', 'iot', 'iot-platform', 'ipython-notebook', 'java', 'javascript', 'jest', 'jokiml', 'joss', 'jquery', 'js', 'json', 'jsx', 'julia', 'jupyter', 'jupyter-lab', 
-    'jupyter-notebook', 'jupyter-notebooks', 'jupyterhub', 'jwt', 'k8s', 'kotlin', 'kubernetes', 'landsat', 'language', 'laravel', 'leaflet', 'leaflet-plugins', 'library', 'lidar', 
-    'linear-programming', 'lint', 'linux', 'linux-foundation', 'llm', 'log', 'logger', 'logging', 'machine-learning', 'machine-learning-algorithms', 'machine-translation', 'macos', 
-    'management', 'manuscript', 'map', 'mapbox', 'mapping', 'maps', 'markdown', 'material', 'math', 'matlab', 'matlab-python-interface', 'matplotlib', 'mechanical-engineering', 'mejarobot', 
-    'metadata', 'metrics', 'mhkit-python', 'microservice', 'microservices', 'microsoft', 'middleware', 'ml', 'mobile', 'mocha', 'modbus', 'model', 'modeling', 'modelling', 'models', 'module', 
-    'modules', 'mongodb', 'monitoring', 'monorepo', 'monte-carlo-simulation', 'mqtt', 'mypy', 'mysql', 'nasa', 'nasa-data', 'native', 'natural-language-processing', 'netcdf', 'network', 
-    'neural-network', 'neural-networks', 'news', 'nextjs', 'nlp', 'nlp-library', 'node', 'node-js', 'nodejs', 'npm', 'npm-package', 'numba', 'number', 'numpy', 'nutrition', 'nuxt', 
-    'nuxt-module', 'nuxtjs', 'object', 'object-detection', 'odoo', 'open-data', 'open-source', 'openai', 'openai-gym', 'openapi', 'openfoodfacts', 'opensource', 'openstreetmap', 
-    'optimization', 'orm', 'osm', 'overview', 'package', 'package-manager', 'pandas', 'parse', 'parser', 'path', 'pdf', 'peer-reviewed', 'performance', 'php', 'pi0', 'pipeline', 'platform', 
-    'plotting', 'plotting-in-python', 'plugin', 'pluto-notebooks', 'poetry', 'polyfill', 'postcss', 'postgis', 'postgres', 'postgresql', 'programming', 'prometheus', 'prometheus-exporter', 
-    'promise', 'protobuf', 'proxy', 'public-good', 'public-goods', 'push', 'pwa', 'pyam', 'pypi-package', 'pyqt5', 'pyspark', 'python', 'python-3', 'python-awips', 'python-client', 
-    'python-library', 'python-module', 'python-package', 'python-toolkit', 'python-wrapper', 'python-wrappers', 'python3', 'python3-package', 'pytorch', 'query', 'queue', 'r', 'r-package', 
-    'rails', 'random', 'random-walk', 'raspberry-pi', 'raster', 'react', 'react-component', 'react-hooks', 'react-native', 'reactive', 'reactjs', 'real-time', 'redis', 'redux', 'regex', 
-    'regression', 'remote-sensing', 'reproducible-research', 'request', 'rest', 'rest-api', 'risk', 'robotics', 'router', 'rpc', 'rstats', 'rstudio', 'ruby', 'ruby-on-rails', 'runtime', 
-    'rust', 'rust-lang', 's3', 'sample', 'sample-code', 'sass', 'satellite', 'satellite-data', 'satellite-imagery', 'satellite-images', 'scala', 'scenario', 'schema', 'science', 
-    'scientific', 'scientific-computations', 'scientific-computing', 'scientific-machine-learning', 'scientific-names', 'scientific-research', 'scientific-visualization', 
-    'scientific-workflows', 'scikit-learn', 'scipy', 'script', 'scss', 'sdk', 'search', 'security', 'segmentation', 'self-driving-car', 'sentinel', 'sentinel-1', 'serialization', 
-    'server', 'serverless', 'shell', 'simulation', 'smart-meter', 'smarthome', 'snakemake', 'sort', 'space', 'spark', 'spatial', 'spring', 'spring-boot', 'sql', 'sqlite', 'standard', 
-    'state', 'static-analyzer', 'statistics', 'storage', 'stream', 'string', 'style', 'styled-components', 'styleguide', 'svelte', 'svg', 'swagger', 'swift', 'table', 'tailwindcss', 'task', 
-    'tea', 'teanager', 'template', 'tensorflow', 'terminal', 'test', 'testing', 'text', 'text-mining', 'theme', 'threejs', 'time', 'time-series', 'time-series-analysis', 'time-series-forecasting', 
-    'timeseries', 'tool', 'toolkit', 'tools', 'torch', 'transit', 'transport', 'tree', 'trends', 'ts', 'tuning', 'tutorial', 'type', 'types', 'typescript', 'typescript-definitions', 'typings', 
-    'ui', 'uk', 'unicode', 'url', 'util', 'utilities', 'utility', 'utils', 'validate', 'validation', 'validator', 'vector', 'video', 'view', 'visualization', 'vue', 'vue-component', 'vue3', 
-    'vuejs', 'web', 'web-components', 'web-framework', 'web3', 'webapp', 'webgl', 'webgl2', 'webpack', 'webservice', 'website', 'websocket', 'windows', 'workflow', 'wrapper', 'xarray', 'xml', 
-    'yaml', 'yeoman-generator', 'yii2', 'zigbee', 'zsh','linter','bayesian','sonarqube', 'sonarqube-plugin', 'social', 'terraform', 'nginx', 'detection','tauri','repository', 'boost','privacy',
-    'mqtt-client', 'julia-language', 'linter', 'mesh-generation', 'rlang', 'hardware', 'conda-forge', 'static-site-generator', 'spec', 'specification', 'cartocss', 'solver', 'evaluation', 'opengl',
-    'navigation', 'iot-application', 'aframe', 'web-api', 'django-rest-framework', 'transmission', 'data-visualisation', 'streamlit', 'linear-algebra', 'streamlit-webapp', 'tutorials',
-    'connector', 'oop', 'development', 'random-forest', 'machinelearning', 'heroku', 'france', 'photography', 'complex-systems', 'docusaurus', 'r-stats', 'shapefile', 'optuna', 'webxr',
-    'berlin', 'pathways', 'list', 'tiles', 'hafas', 'arduino-library', 'audio-processing', 'leafletjs',
-    # Software Development & Tools
-    'ci/cd', 'continuous-integration', 'unit-test', 'unit-testing', 'test-coverage', 'docker-compose', 'dockerfile', 'makefile', 'devcontainer', 'vscode-extension',
-    'ci', 'cd', 'build-tool', 'linting', 'code-quality',
-    # Academic/Publishing (too generic)
-    'preprint', 'arxiv', 'publication', 'paper', 'article', 'thesis', 'dissertation', 'coursework', 'teaching', 'learning',
-    # More Programming Languages/Frameworks
-    'go-lang', 'c-sharp', 'shiny', 'streamlit-app', 'flask-app', 'django-app', 'fastapi-app',
-    # Generic Scientific Methods
-    'bayesian-inference', 'monte-carlo', 'stochastic', 'deterministic', 'sensitivity-analysis', 'uncertainty-quantification', 'parameter-estimation',
-    'experimental', 'theoretical', 'empirical', 'quantitative', 'qualitative',
-    # Non-OST Scientific Domains
-    'healthcare', 'medicine', 'biomedical', 'clinical', 'medical', 'astronomy', 'astrophysics', 'cosmology', 'particle-physics',
-    'chemistry', 'biochemistry', 'molecular-biology', 'genetics',
-    # More Cloud/Infrastructure
-    'aws-lambda', 'gcp', 'azure-functions', 'cloud-functions', 'serverless-framework', 'heroku-app', 'digitalocean', 'netlify', 'vercel',
-    # Generic Data/Formats
-    'csv', 'json-parser', 'xml-parser', 'toml', 'hdf5', 'binary', 'ascii', 'encoding', 'decoding'
-  ]
+    [
+      # Programming Languages
+      'c', 'c-plus-plus', 'cpp', 'c-sharp', 'csharp', 'fortran', 'go', 'golang', 'go-lang', 'java', 'javascript', 'js', 'jsx',
+      'julia', 'julia-language', 'kotlin', 'matlab', 'php', 'python', 'python-3', 'python3', 'r', 'rlang', 'ruby', 'rust', 'rust-lang',
+      'scala', 'swift', 'typescript', 'typescript-definitions', 'typings',
+
+      # Web Frameworks & Frontend
+      'angular', 'bootstrap', 'django', 'django-rest-framework', 'express', 'expressjs', 'fastapi', 'flask', 'laravel', 'nextjs',
+      'nuxt', 'nuxt-module', 'nuxtjs', 'rails', 'react', 'react-component', 'react-hooks', 'react-native', 'reactive', 'reactjs',
+      'ruby-on-rails', 'spring', 'spring-boot', 'svelte', 'vue', 'vue-component', 'vue3', 'vuejs',
+      'shiny', 'streamlit', 'streamlit-app', 'streamlit-webapp', 'flask-app', 'django-app', 'fastapi-app',
+
+      # JavaScript/Frontend Tools
+      'ajax', 'babel', 'canvas', 'd3', 'd3js', 'dom', 'electron', 'graphql', 'jquery', 'node', 'node-js', 'nodejs', 'polyfill',
+      'webpack', 'aframe', 'threejs', 'webgl', 'webgl2', 'webxr',
+
+      # CSS/Styling
+      'css', 'sass', 'scss', 'material', 'styled-components', 'styleguide', 'tailwindcss', 'postcss',
+
+      # Python Packages/Libraries
+      'dask', 'flask', 'matplotlib', 'numba', 'numpy', 'pandas', 'pyqt5', 'pyspark', 'pytorch', 'scikit-learn', 'scipy', 'tensorflow', 'torch',
+      'python-client', 'python-library', 'python-module', 'python-package', 'python-toolkit', 'python-wrapper', 'python-wrappers',
+      'python3-package', 'pypi-package', 'python-awips', 'gdal-python', 'geopython',
+
+      # R Packages
+      'r-package', 'ggplot2', 'rstats', 'rstudio', 'cran', 'r-stats',
+
+      # Data Science/ML/AI
+      'ai', 'artificial-intelligence', 'big-data', 'chatgpt', 'cnn', 'computer-vision', 'data-science', 'deep-learning',
+      'machine-learning', 'machine-learning-algorithms', 'machine-translation', 'machinelearning', 'ml', 'neural-network',
+      'neural-networks', 'nlp', 'nlp-library', 'openai', 'openai-gym', 'gpt', 'llm', 'self-driving-car',
+
+      # Databases
+      'couchdb', 'database', 'elasticsearch', 'influxdb', 'mongodb', 'mysql', 'orm', 'postgres', 'postgresql', 'postgis',
+      'redis', 'sql', 'sqlite', 'flat-file-db',
+
+      # Cloud/Infrastructure
+      'aws', 'aws-lambda', 'azure', 'azure-functions', 'cloud', 'cloud-functions', 'digitalocean', 'docker', 'docker-compose',
+      'dockerfile', 'gcp', 'google-cloud', 'heroku', 'heroku-app', 'k8s', 'kubernetes', 'netlify', 'serverless', 'serverless-framework',
+      'terraform', 'vercel', 's3',
+
+      # DevOps/CI-CD/Testing
+      'bdd', 'benchmark', 'ci', 'cd', 'ci/cd', 'continuous-integration', 'devops', 'integration-tests', 'jest', 'mocha',
+      'test', 'testing', 'unit-test', 'unit-testing', 'test-coverage', 'build-tool', 'linting', 'code-quality',
+
+      # Version Control/Git
+      'git', 'github', 'github-action', 'github-actions',
+
+      # Package Managers/Build Tools
+      'cmake', 'conda-forge', 'helm', 'npm', 'npm-package', 'package-manager', 'poetry', 'yarn',
+
+      # Development Tools/IDEs
+      'debug', 'devcontainer', 'editor', 'eslint', 'eslint-plugin', 'eslintconfig', 'eslintplugin', 'lint', 'linter',
+      'makefile', 'mypy', 'shell', 'terminal', 'vscode-extension', 'bash', 'bash-script', 'zsh',
+
+      # Web/API/Backend
+      'api', 'api-client', 'api-rest', 'api-wrapper', 'backend', 'browser', 'chrome', 'client', 'cors', 'fetch', 'frontend',
+      'front-end', 'http', 'https', 'middleware', 'proxy', 'request', 'rest', 'rest-api', 'router', 'rpc', 'server',
+      'web', 'web-api', 'web-components', 'web-framework', 'web3', 'webapp', 'webservice', 'website', 'websocket',
+
+      # Mobile/IoT/Hardware
+      'android', 'arduino', 'arduino-library', 'esp8266', 'flutter', 'home-assistant', 'home-automation', 'homeassistant',
+      'ios', 'iot', 'iot-platform', 'iot-application', 'mobile', 'mqtt', 'mqtt-client', 'raspberry-pi', 'smart-meter',
+      'smarthome', 'hardware',
+
+      # Data/File Formats
+      'ascii', 'binary', 'csv', 'encoding', 'decoding', 'hdf5', 'json', 'json-parser', 'netcdf', 'pdf', 'protobuf',
+      'serialization', 'toml', 'xml', 'xml-parser', 'yaml',
+
+      # Notebooks/Interactive
+      'ipython-notebook', 'jupyter', 'jupyter-lab', 'jupyter-notebook', 'jupyter-notebooks', 'jupyterhub', 'notebook',
+      'pluto-notebooks',
+
+      # Monitoring/Logging
+      'grafana', 'log', 'logger', 'logging', 'metrics', 'monitoring', 'prometheus', 'prometheus-exporter',
+
+      # Generic Software Terms
+      'addon', 'algorithm', 'algorithms', 'analysis', 'analytics', 'animation', 'app', 'application', 'array', 'async',
+      'auth', 'authentication', 'automation', 'boilerplate', 'bot', 'cache', 'cli', 'client', 'code', 'collaboration',
+      'collection', 'command', 'command-line', 'command-line-tool', 'compiler', 'component', 'components', 'computation',
+      'computational', 'computing', 'concurrency', 'config', 'configuration', 'connector', 'console', 'containers', 'core',
+      'cross-platform', 'date', 'definition', 'deploy', 'design', 'design-system', 'development', 'diff', 'directory',
+      'distributed-systems', 'documentation', 'download', 'downloader', 'encryption', 'engine', 'engineering', 'env',
+      'error', 'events', 'extension', 'file', 'filter', 'form', 'format', 'forms', 'framework', 'fs', 'function',
+      'functional', 'functional-programming', 'functions', 'generator', 'gui', 'hash', 'helpers', 'hooks', 'icon', 'image',
+      'immutable', 'import', 'infrastructure', 'input', 'io', 'language', 'library', 'list', 'management', 'metadata',
+      'microservice', 'microservices', 'module', 'modules', 'monorepo', 'native', 'navigation', 'network', 'number',
+      'object', 'oop', 'opensource', 'open-source', 'optimization', 'overview', 'package', 'parse', 'parser', 'path',
+      'performance', 'pipeline', 'platform', 'plugin', 'programming', 'promise', 'proxy', 'push', 'pwa', 'query', 'queue',
+      'random', 'real-time', 'regex', 'repository', 'runtime', 'sample', 'sample-code', 'schema', 'script', 'sdk', 'search',
+      'security', 'sort', 'standard', 'state', 'static-analyzer', 'static-site-generator', 'storage', 'stream', 'string',
+      'style', 'swagger', 'table', 'task', 'template', 'theme', 'tiles', 'tool', 'toolkit', 'tools', 'tree', 'ts', 'tuning',
+      'type', 'types', 'ui', 'unicode', 'url', 'util', 'utilities', 'utility', 'utils', 'validate', 'validation', 'validator',
+      'vector', 'video', 'view', 'workflow', 'wrapper',
+
+      # Generic Scientific/Academic
+      'algorithm', 'analysis', 'arxiv', 'article', 'bayesian', 'bayesian-inference', 'citation', 'classification', 'clustering',
+      'coursework', 'data', 'data-analysis', 'data-analysis-python', 'data-visualisation', 'data-visualization', 'dataset',
+      'datasets', 'deterministic', 'dissertation', 'education', 'empirical', 'experimental', 'learning', 'linear-algebra',
+      'linear-programming', 'manuscript', 'math', 'model', 'modeling', 'modelling', 'models', 'monte-carlo', 'monte-carlo-simulation',
+      'object-detection', 'optimization', 'paper', 'parameter-estimation', 'peer-reviewed', 'plotting', 'plotting-in-python',
+      'preprint', 'publication', 'qualitative', 'quantitative', 'random-forest', 'random-walk', 'regression', 'reproducible',
+      'reproducible-research', 'research', 'science', 'scientific', 'scientific-computations', 'scientific-computing',
+      'scientific-machine-learning', 'scientific-names', 'scientific-research', 'scientific-visualization', 'scientific-workflows',
+      'segmentation', 'sensitivity-analysis', 'simulation', 'solver', 'spatial', 'statistics', 'statistical', 'stochastic',
+      'teaching', 'text-mining', 'theoretical', 'thesis', 'time', 'time-series', 'time-series-analysis', 'time-series-forecasting',
+      'timeseries', 'trends', 'tutorial', 'tutorials', 'uncertainty-quantification', 'visualization',
+
+      # Non-Environmental Scientific Domains
+      'astronomy', 'astrophysics', 'biochemistry', 'biomedical', 'chemistry', 'clinical', 'complex-systems', 'cosmology',
+      'genetics', 'healthcare', 'medical', 'medicine', 'mesh-generation', 'molecular-biology', 'particle-physics',
+
+      # Geographic/Mapping (generic tools, not domain-specific)
+      'cartocss', 'gdal-python', 'geographic-information-systems', 'geospatial', 'gis', 'google-earth-engine', 'gtfs',
+      'hafas', 'landsat', 'leaflet', 'leaflet-plugins', 'leafletjs', 'map', 'mapbox', 'mapping', 'maps', 'opengl',
+      'openstreetmap', 'osm', 'raster', 'remote-sensing', 'satellite', 'satellite-data', 'satellite-imagery',
+      'satellite-images', 'sentinel', 'sentinel-1', 'shapefile', 'transit', 'transport',
+
+      # Business/Enterprise
+      'amazon', 'blockchain', 'bitcoin', 'cms', 'credit', 'crm', 'crypto', 'ethereum', 'erp', 'facebook', 'finance',
+      'google', 'microsoft', 'odoo', 'social',
+
+      # Other/Misc
+      '0x0lobersyko', '3d', 'acertea', 'accessibility', 'anakjalanan', 'ast', 'atmosphere', 'audio-processing', 'australia',
+      'awesome', 'awesome-list', 'berlin', 'boost', 'bsd3', 'building', 'check', 'cnc', 'color', 'colors', 'course',
+      'cpu', 'cuda', 'cuda-fortran', 'dashboard', 'dashboards', 'datacube', 'detection', 'digital-public-goods', 'docusaurus',
+      'dom', 'dotnet', 'dts', 'earth-engine', 'electricity', 'email', 'emoji', 'energy', 'energy-monitor', 'environment',
+      'epanet-python-toolkit', 'es2015', 'es6', 'fabric', 'farm', 'fast', 'firebase', 'first-good-issue', 'fleet-management',
+      'fluentui', 'font', 'food', 'forecast', 'forecasting', 'france', 'game', 'gpu', 'gpu-acceleration', 'gpu-computing',
+      'graph', 'hacktoberfest', 'hacktoberfest2020', 'hacktoberfest2021', 'herojoker', 'hfc', 'high-performance-computing',
+      'hpc', 'html', 'html5', 'hyper-function-component', 'i18n', 'image-classification', 'image-database', 'image-processing',
+      'image-segmentation', 'indoxcapital', 'jokiml', 'joss', 'jwt', 'linux', 'linux-foundation', 'macos', 'markdown',
+      'matlab-python-interface', 'mechanical-engineering', 'mejarobot', 'mhkit-python', 'modbus', 'nasa', 'nasa-data', 'news',
+      'nginx', 'nutrition', 'open-data', 'openapi', 'openfoodfacts', 'optuna', 'pathways', 'photography', 'pi0', 'privacy',
+      'public-good', 'public-goods', 'pyam', 'risk', 'robotics', 'scenario', 'snakemake', 'sonarqube', 'sonarqube-plugin',
+      'space', 'spark', 'apache-spark', 'spec', 'specification', 'svg', 'tag1', 'tag2', 'tauri', 'tea', 'teanager',
+      'transmission', 'uk', 'windows', 'xarray', 'yeoman-generator', 'yii2', 'zigbee', 'evaluation'
+    ]
   end
 
   def self.stop_words
