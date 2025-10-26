@@ -687,6 +687,10 @@ class Project < ApplicationRecord
       'multidimensional spectroscopy', 'terahertz', 'holographic', 'quantum', 'quantum mechanics', 'quantum computing',
       'quantum-key-distribution', 'stellar', 'lattice', 'hydrodynamics', 'particles', 'particle-system', 'particle-based',
       'geoscience', 'geosciences', 'earth science',
+      'reinforcement learning', 'reinforcement-learning', 'pomdp', 'mdp',
+      'semiconductors', 'materials science', 'materials-science', 'defect', 'supercell', 'doping',
+      'thermodynamics', 'fluid dynamics', 'fluid-dynamics',
+      'fuzzy', 'fuzzy-logic', 'c-means',
 
       # Geographic/Mapping (generic tools, not domain-specific)
       'cartocss', 'gdal-python', 'geographic-information-systems', 'geospatial', 'gis', 'google-earth-engine', 'gtfs',
