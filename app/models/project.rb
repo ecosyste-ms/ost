@@ -434,9 +434,9 @@ class Project < ApplicationRecord
     candidates = find_joss_candidates_by_keywords(min_keyword_matches: min_keyword_matches, limit: limit)
 
     puts "\n# JOSS Project Candidates for OST\n"
-    puts "Showing top #{[candidates.size, limit].min} unreviewed JOSS projects\n\n"
+    puts "Showing top #{candidates.size} unreviewed JOSS projects\n\n"
 
-    candidates.take(limit).each_with_index do |candidate, index|
+    candidates.each_with_index do |candidate, index|
       puts "## #{index + 1}. #{candidate[:name]}\n"
       puts "- **URL**: #{candidate[:url]}"
       puts "- **JOSS Paper**: #{candidate[:joss_title]} (#{candidate[:joss_year]})" if candidate[:joss_year]
