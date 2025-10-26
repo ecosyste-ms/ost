@@ -751,6 +751,61 @@ class Project < ApplicationRecord
     packages.map{|p| p["dependent_packages_count"] || 0 }.sum
   end
 
+  def dependent_repos_urls
+    return [] unless packages.present?
+    
+    repo_urls = Set.new
+
+    packages.each do |p| 
+      page = 0
+      loop do
+        page += 1
+        break if page > 250
+        break if p['ecosystem'].blank? || p['name'].blank?
+
+        url = "https://repos.ecosyste.ms/api/v1/usage/#{p['ecosystem']}/#{p['name']}/dependencies?per_page=50&page=#{page}"  
+        conn = ecosystem_http_client(url)
+        response = conn.get
+        break unless response.success?
+        data = JSON.parse(response.body)
+        break if data.blank?
+        data.each do |dep|
+          next unless dep['repository'].present?
+          repo_urls << dep['repository']['html_url']
+        end 
+      end
+    end
+      
+    repo_urls.to_a
+  end
+
+  def dependent_packages_urls
+    return [] unless packages.present?
+    
+    package_urls = Set.new
+
+    packages.each do |p| 
+      page = 0
+      loop do
+        page += 1
+        break if page > 250
+        break if p['ecosystem'].blank? || p['name'].blank?
+
+        url = "https://packages.ecosyste.ms/api/v1/registries/#{p['registry']['name']}/packages/#{p['name']}/dependent_packages?per_page=50&page=#{page}"
+        conn = ecosystem_http_client(url)
+        response = conn.get
+        break unless response.success?
+        data = JSON.parse(response.body)
+        break if data.blank?
+        data.each do |dep|
+          package_urls << dep['repository_url']
+        end 
+      end
+    end
+      
+    package_urls.to_a
+  end
+
   def issue_associations
     return [] unless issues_stats.present?
     (issues_stats['issue_author_associations_count'].keys + issues_stats['pull_request_author_associations_count'].keys).uniq
