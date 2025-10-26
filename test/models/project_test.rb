@@ -197,4 +197,28 @@ class ProjectTest < ActiveSupport::TestCase
     project = Project.new(readme: readme)
     assert_nil project.zenodo_url
   end
+
+  test "reviewed scope includes only reviewed projects" do
+    reviewed_project = Project.create!(url: 'https://github.com/test/reviewed', reviewed: true)
+    unreviewed_false = Project.create!(url: 'https://github.com/test/unreviewed-false', reviewed: false)
+    unreviewed_nil = Project.create!(url: 'https://github.com/test/unreviewed-nil', reviewed: nil)
+
+    reviewed_ids = Project.reviewed.pluck(:id)
+
+    assert_includes reviewed_ids, reviewed_project.id
+    refute_includes reviewed_ids, unreviewed_false.id
+    refute_includes reviewed_ids, unreviewed_nil.id
+  end
+
+  test "unreviewed scope includes projects with reviewed false or nil" do
+    reviewed_project = Project.create!(url: 'https://github.com/test/reviewed', reviewed: true)
+    unreviewed_false = Project.create!(url: 'https://github.com/test/unreviewed-false', reviewed: false)
+    unreviewed_nil = Project.create!(url: 'https://github.com/test/unreviewed-nil', reviewed: nil)
+
+    unreviewed_ids = Project.unreviewed.pluck(:id)
+
+    refute_includes unreviewed_ids, reviewed_project.id
+    assert_includes unreviewed_ids, unreviewed_false.id
+    assert_includes unreviewed_ids, unreviewed_nil.id
+  end
 end
