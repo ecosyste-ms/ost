@@ -290,43 +290,76 @@ class Project < ApplicationRecord
     }
   end
 
+  def self.inspect_joss_metadata_fields
+    # Helper to see what fields are available in JOSS metadata
+    sample = with_joss.first
+    return "No JOSS projects found" unless sample
+
+    puts "\nSample JOSS metadata fields:"
+    puts JSON.pretty_generate(sample.joss_metadata)
+    sample.joss_metadata&.keys
+  end
+
   def self.find_joss_candidates_by_keywords(min_keyword_matches: 2, limit: 100)
-    # Get reviewed JOSS projects and their JOSS tags
+    # Get reviewed JOSS projects and extract keywords from available fields
     ost_joss = reviewed.with_joss
     ost_joss_count = ost_joss.count
 
     puts "Analyzing #{ost_joss_count} reviewed JOSS projects..."
 
-    # Collect all tags from JOSS metadata
-    all_tags = []
-    projects_with_tags = 0
+    # Collect keywords from multiple JOSS metadata fields
+    all_keywords = []
+    projects_with_keywords = 0
+
     ost_joss.find_each do |project|
-      tags = project.joss_metadata&.dig('tags')
-      if tags.present? && tags.is_a?(Array)
-        projects_with_tags += 1
-        all_tags.concat(tags.map { |t| t.to_s.downcase.strip })
+      metadata = project.joss_metadata
+      next unless metadata.present?
+
+      keywords = []
+
+      # JOSS tags are a comma-separated string
+      if metadata['tags'].present?
+        tags = metadata['tags'].is_a?(String) ? metadata['tags'].split(',') : metadata['tags']
+        keywords.concat(tags)
+      end
+
+      # Also check for other possible fields
+      if metadata['subjects'].present?
+        subjects = metadata['subjects'].is_a?(String) ? metadata['subjects'].split(',') : metadata['subjects']
+        keywords.concat(subjects)
+      end
+
+      # Also use repository keywords if available
+      if project.keywords.present?
+        keywords.concat(project.keywords)
+      end
+
+      if keywords.any?
+        projects_with_keywords += 1
+        all_keywords.concat(keywords.map { |k| k.to_s.downcase.strip })
       end
     end
 
-    puts "Found tags in #{projects_with_tags} out of #{ost_joss_count} projects"
+    puts "Found keywords in #{projects_with_keywords} out of #{ost_joss_count} projects"
 
-    if all_tags.empty?
-      puts "No tags found in JOSS metadata. Cannot find candidates."
+    if all_keywords.empty?
+      puts "\nNo keywords found. Inspecting a sample JOSS metadata structure..."
+      inspect_joss_metadata_fields
       return []
     end
 
-    tag_counts = all_tags
+    keyword_counts = all_keywords
       .group_by(&:itself)
       .transform_values(&:count)
       .sort_by { |k, v| -v }
 
-    # Get common tags (appearing in at least 2 projects)
-    common_tags = tag_counts.select { |k, v| v >= 2 }.map(&:first)
+    # Get common keywords (appearing in at least 2 projects)
+    common_keywords = keyword_counts.select { |k, v| v >= 2 }.map(&:first)
 
-    puts "Found #{common_tags.size} common JOSS tags across reviewed OST projects"
-    puts "Top 20 tags: #{tag_counts.take(20).map(&:first).join(', ')}"
+    puts "Found #{common_keywords.size} common keywords across reviewed OST projects"
+    puts "Top 20 keywords: #{keyword_counts.take(20).map(&:first).join(', ')}"
 
-    # Find unreviewed JOSS projects with matching tags
+    # Find unreviewed JOSS projects with matching keywords
     other_joss = unreviewed.with_joss
     other_joss_total = other_joss.count
 
@@ -334,22 +367,40 @@ class Project < ApplicationRecord
 
     candidates = []
     checked = 0
+
     other_joss.find_each do |project|
-      tags = project.joss_metadata&.dig('tags')
-      next unless tags.present? && tags.is_a?(Array)
+      metadata = project.joss_metadata
+      next unless metadata.present?
+
+      keywords = []
+
+      # Parse tags as comma-separated string
+      if metadata['tags'].present?
+        tags = metadata['tags'].is_a?(String) ? metadata['tags'].split(',') : metadata['tags']
+        keywords.concat(tags)
+      end
+
+      if metadata['subjects'].present?
+        subjects = metadata['subjects'].is_a?(String) ? metadata['subjects'].split(',') : metadata['subjects']
+        keywords.concat(subjects)
+      end
+
+      keywords.concat(project.keywords) if project.keywords.present?
+
+      next if keywords.empty?
 
       checked += 1
-      project_tags = tags.map { |t| t.to_s.downcase.strip }
-      matching_tags = project_tags & common_tags
+      project_keywords = keywords.map { |k| k.to_s.downcase.strip }
+      matching_keywords = project_keywords & common_keywords
 
-      if matching_tags.size >= min_keyword_matches
+      if matching_keywords.size >= min_keyword_matches
         candidates << {
           id: project.id,
           name: project.name,
           url: project.url,
-          joss_tags: tags,
-          matching_tags: matching_tags,
-          match_count: matching_tags.size,
+          keywords: keywords.map(&:strip).uniq,
+          matching_keywords: matching_keywords,
+          match_count: matching_keywords.size,
           description: project.description,
           joss_year: project.joss_metadata&.dig('year'),
           joss_title: project.joss_metadata&.dig('title')
@@ -357,12 +408,12 @@ class Project < ApplicationRecord
       end
     end
 
-    puts "Checked #{checked} projects with tags"
+    puts "Checked #{checked} projects with keywords"
 
     # Sort by match count
     candidates.sort_by! { |c| -c[:match_count] }
 
-    puts "Found #{candidates.size} JOSS projects with #{min_keyword_matches}+ matching tags"
+    puts "Found #{candidates.size} JOSS projects with #{min_keyword_matches}+ matching keywords"
 
     candidates.take(limit)
   end
