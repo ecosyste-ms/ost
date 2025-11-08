@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_26_161954) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_08_163920) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -37,6 +37,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_26_161954) do
     t.integer "reviewed_project_ids", default: [], array: true
     t.integer "reviewed_projects_count"
     t.json "profile", default: {}
+    t.index ["email"], name: "index_contributors_on_email"
   end
 
   create_table "dependencies", force: :cascade do |t|
@@ -113,8 +114,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_26_161954) do
     t.json "joss_metadata"
     t.float "science_score"
     t.json "science_score_breakdown", default: {}
+    t.index ["category", "score"], name: "index_projects_on_category_and_score"
     t.index ["category", "sub_category"], name: "index_projects_on_category_and_sub_category", where: "((category IS NOT NULL) AND (sub_category IS NOT NULL))"
     t.index ["collection_id"], name: "index_projects_on_collection_id"
+    t.index ["reviewed", "score"], name: "index_projects_on_reviewed_and_score"
     t.index ["reviewed"], name: "index_projects_on_reviewed"
     t.index ["url"], name: "index_projects_on_url", unique: true
   end
