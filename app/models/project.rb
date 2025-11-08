@@ -568,7 +568,9 @@ class Project < ApplicationRecord
   end
 
   def self.keywords
-    @keywords ||= Project.reviewed.pluck(:keywords).flatten.group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse
+    Rails.cache.fetch('project_keywords', expires_in: 24.hours) do
+      Project.reviewed.pluck(:keywords).flatten.group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse
+    end
   end
 
   def self.ignore_words
@@ -741,7 +743,9 @@ class Project < ApplicationRecord
   end
 
   def self.relevant_keywords
-    keywords.select{|k,v| v > 1}.map(&:first) - ignore_words
+    Rails.cache.fetch('project_relevant_keywords', expires_in: 24.hours) do
+      keywords.select{|k,v| v > 1}.map(&:first) - ignore_words
+    end
   end
 
   def self.rubric_keywords(rubric)
@@ -1838,56 +1842,64 @@ class Project < ApplicationRecord
   end
 
   def self.unique_keywords_for_category(category)
-    # Get all keywords from all categories
-    all_keywords = Project.where.not(category: category).pluck(:keywords).flatten
+    Rails.cache.fetch("project_unique_keywords_category_#{category}", expires_in: 24.hours) do
+      # Get all keywords from all categories
+      all_keywords = Project.where.not(category: category).pluck(:keywords).flatten
 
-    # Get keywords from the specific category
-    category_keywords = Project.where(category: category).pluck(:keywords).flatten
+      # Get keywords from the specific category
+      category_keywords = Project.where(category: category).pluck(:keywords).flatten
 
-    # Get keywords that only appear in the specific category
-    unique_keywords = category_keywords - all_keywords
+      # Get keywords that only appear in the specific category
+      unique_keywords = category_keywords - all_keywords
 
-    # remove stop words
-    unique_keywords = unique_keywords - ignore_words
+      # remove stop words
+      unique_keywords = unique_keywords - ignore_words
 
-    # Group the unique keywords by their values and sort them by the size of each group
-    sorted_keywords = unique_keywords.group_by { |keyword| keyword }.sort_by { |keyword, occurrences| -occurrences.size }.map(&:first)
-    sorted_keywords
+      # Group the unique keywords by their values and sort them by the size of each group
+      sorted_keywords = unique_keywords.group_by { |keyword| keyword }.sort_by { |keyword, occurrences| -occurrences.size }.map(&:first)
+      sorted_keywords
+    end
   end
 
   def self.unique_keywords_for_sub_category(subcategory)
-    # Get all keywords from all subcategory
-    all_keywords = Project.where.not(sub_category: subcategory).pluck(:keywords).flatten
+    Rails.cache.fetch("project_unique_keywords_subcategory_#{subcategory}", expires_in: 24.hours) do
+      # Get all keywords from all subcategory
+      all_keywords = Project.where.not(sub_category: subcategory).pluck(:keywords).flatten
 
-    # Get keywords from the specific subcategory
-    subcategory_keywords = Project.where(sub_category: subcategory).pluck(:keywords).flatten
+      # Get keywords from the specific subcategory
+      subcategory_keywords = Project.where(sub_category: subcategory).pluck(:keywords).flatten
 
-    # Get keywords that only appear in the specific subcategory
-    unique_keywords = subcategory_keywords - all_keywords
+      # Get keywords that only appear in the specific subcategory
+      unique_keywords = subcategory_keywords - all_keywords
 
-    # remove stop words
-    unique_keywords = unique_keywords - ignore_words
+      # remove stop words
+      unique_keywords = unique_keywords - ignore_words
 
-    # Group the unique keywords by their values and sort them by the size of each group
-    sorted_keywords = unique_keywords.group_by { |keyword| keyword }.sort_by { |keyword, occurrences| -occurrences.size }.map(&:first)
-    sorted_keywords
+      # Group the unique keywords by their values and sort them by the size of each group
+      sorted_keywords = unique_keywords.group_by { |keyword| keyword }.sort_by { |keyword, occurrences| -occurrences.size }.map(&:first)
+      sorted_keywords
+    end
   end
 
   def self.all_category_keywords
-    @all_category_keywords ||= Project.where.not(category: nil).pluck(:category).uniq.map do |category|
-      {
-        category: category,
-        keywords: unique_keywords_for_category(category)
-      }
+    Rails.cache.fetch('project_all_category_keywords', expires_in: 24.hours) do
+      Project.where.not(category: nil).pluck(:category).uniq.map do |category|
+        {
+          category: category,
+          keywords: unique_keywords_for_category(category)
+        }
+      end
     end
   end
 
   def self.all_sub_category_keywords
-    @all_sub_category_keywords ||= Project.where.not(sub_category: nil).pluck(:sub_category).uniq.map do |subcategory|
-      {
-        sub_category: subcategory,
-        keywords: unique_keywords_for_sub_category(subcategory)
-      }
+    Rails.cache.fetch('project_all_sub_category_keywords', expires_in: 24.hours) do
+      Project.where.not(sub_category: nil).pluck(:sub_category).uniq.map do |subcategory|
+        {
+          sub_category: subcategory,
+          keywords: unique_keywords_for_sub_category(subcategory)
+        }
+      end
     end
   end
 
@@ -1918,26 +1930,28 @@ class Project < ApplicationRecord
   end
 
   def self.category_tree
-    sql = <<-SQL
-      SELECT category, sub_category, COUNT(*)
-      FROM projects
-      WHERE projects.reviewed = true 
-      GROUP BY category, sub_category
-    SQL
+    Rails.cache.fetch('project_category_tree', expires_in: 24.hours) do
+      sql = <<-SQL
+        SELECT category, sub_category, COUNT(*)
+        FROM projects
+        WHERE projects.reviewed = true
+        GROUP BY category, sub_category
+      SQL
 
-    results = ActiveRecord::Base.connection.execute(sql)
+      results = ActiveRecord::Base.connection.execute(sql)
 
-    results.group_by { |row| row['category'] }.map do |category, rows|
-      {
-        category: category,
-        count: rows.sum { |row| row['count'] },
-        sub_categories: rows.map do |row|
-          {
-            sub_category: row['sub_category'],
-            count: row['count']
-          }
-        end
-      }
+      results.group_by { |row| row['category'] }.map do |category, rows|
+        {
+          category: category,
+          count: rows.sum { |row| row['count'] },
+          sub_categories: rows.map do |row|
+            {
+              sub_category: row['sub_category'],
+              count: row['count']
+            }
+          end
+        }
+      end
     end
   end
 
