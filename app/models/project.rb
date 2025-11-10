@@ -1838,7 +1838,9 @@ class Project < ApplicationRecord
 
   def update_keywords_from_contributors
     ct = contributor_topics(limit: 10, minimum: 3)
-    update(keywords_from_contributors: ct.keys) if ct.present?
+    # Filter out any keywords containing null bytes to prevent PostgreSQL errors
+    sanitized_keywords = ct.keys.reject { |k| k.include?("\0") }
+    update(keywords_from_contributors: sanitized_keywords) if sanitized_keywords.present?
   end
 
   def self.unique_keywords_for_category(category)
