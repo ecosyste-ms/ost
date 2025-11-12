@@ -37,10 +37,10 @@ class Api::V1::ProjectsController < Api::V1::ApplicationController
 
   def packages
     # Use database query instead of loading all projects
+    # Note: API needs all columns for the JSON view, so we don't use select()
     @projects = Project.reviewed
                        .active
                        .where.not(packages: [nil, []])
-                       .select(:id, :name, :url, :packages, :score, :repository)
                        .limit(500)
                        .to_a
                        .select { |p| p.packages.present? }

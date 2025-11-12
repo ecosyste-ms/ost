@@ -134,7 +134,8 @@ class ProjectsController < ApplicationController
     # Select only needed columns to reduce memory usage
     @projects = Project.reviewed
                        .where.not(packages: [nil, []])
-                       .select(:id, :name, :url, :packages, :score, :repository)
+                       .select(:id, :name, :url, :packages, :score, :repository, :description,
+                               :keywords, :category, :sub_category, :last_synced_at)
                        .limit(500)
                        .to_a
                        .select { |p| p.packages.present? }
