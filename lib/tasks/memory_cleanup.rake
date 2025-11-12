@@ -12,7 +12,6 @@ namespace :memory do
     bot_contributors = Contributor.where(
       "email ILIKE '%[bot]%' OR
        email ILIKE '%bot@%' OR
-       email ~ '^[0-9]+\\+.*@users\\.noreply\\.github\\.com$' OR
        email IN (?)",
       Contributor::IGNORED_EMAILS
     )
@@ -165,7 +164,6 @@ namespace :memory do
     bot_contributors = Contributor.where(
       "email ILIKE '%[bot]%' OR
        email ILIKE '%bot@%' OR
-       email ~ '^[0-9]+\\+.*@users\\.noreply\\.github\\.com$' OR
        email IN (?)",
       Contributor::IGNORED_EMAILS
     )
