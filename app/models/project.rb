@@ -845,7 +845,8 @@ class Project < ApplicationRecord
     all_keywords = []
     all_keywords += repository["topics"] if repository.present?
     all_keywords += packages.map{|p| p["keywords"]}.flatten if packages.present?
-    self.keywords = all_keywords.reject(&:blank?).uniq { |keyword| keyword.downcase }.dup
+    # Reject blank keywords and those with null bytes (from external data sources)
+    self.keywords = all_keywords.reject { |k| k.blank? || k.include?("\0") }.uniq { |keyword| keyword.downcase }.dup
     self.save
   rescue FrozenError
     puts "Error combining keywords for #{repository_url}"
@@ -1809,13 +1810,16 @@ class Project < ApplicationRecord
       next if c.bot?
 
       # Limit topic accumulation to prevent unbounded growth
+      # Sanitize keywords to remove null bytes before adding
       if keywords.present? && c.topics.size < 100
-        new_topics = (c.topics + keywords).uniq.first(100)
+        clean_keywords = keywords.reject { |k| k.blank? || k.include?("\0") }
+        new_topics = (c.topics + clean_keywords).uniq.first(100)
         c.topics = new_topics
       end
 
-      c.categories = (c.categories + [category]).uniq.first(20) if category
-      c.sub_categories = (c.sub_categories + [sub_category]).uniq.first(20) if sub_category
+      # Sanitize categories before adding
+      c.categories = (c.categories + [category]).uniq.reject { |cat| cat.blank? || cat.include?("\0") }.first(20) if category
+      c.sub_categories = (c.sub_categories + [sub_category]).uniq.reject { |sub| sub.blank? || sub.include?("\0") }.first(20) if sub_category
       c.reviewed_project_ids = (c.reviewed_project_ids + [id]).uniq.first(200)
       c.reviewed_projects_count = c.reviewed_project_ids.length
       c.update(committer.except('count'))
@@ -1854,8 +1858,10 @@ class Project < ApplicationRecord
 
     ignored_keywords = (keywords + Project.ignore_words).uniq
 
-    all_topics = contributors.flat_map { |c| c.topics }.reject{|t| ignored_keywords.include?(t) }
-    
+    # Filter out null bytes and blank topics before processing
+    all_topics = contributors.flat_map { |c| c.topics }
+                             .reject { |t| t.blank? || t.include?("\0") || ignored_keywords.include?(t) }
+
     # Group by the stemmed version of the topic
     grouped_topics = all_topics.group_by { |topic| topic.stem }
 
