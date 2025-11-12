@@ -25,11 +25,31 @@ class Contributor < ApplicationRecord
   'dependabot[bot]@users.noreply.github.com', 'renovate[bot]@app.renovatebot.com', 'dependabot-preview[bot]@users.noreply.github.com',
   'myrmecocystus+ropenscibot@gmail.com', 'support@dependabot.com', 'action@github.com', 'support@stickler-ci.com',
   'github-bot@pyup.io', 'iron@waffle.io', 'ImgBotHelp@gmail.com', 'compathelper_noreply@julialang.org','bot@deepsource.io',
-  'badges@fossa.io', 'github-actions@github.com', 'bot@stepsecurity.io'
+  'badges@fossa.io', 'github-actions@github.com', 'bot@stepsecurity.io',
+  '49699333+dependabot[bot]@users.noreply.github.com',
+  '41898282+github-actions[bot]@users.noreply.github.com',
+  '66853113+pre-commit-ci[bot]@users.noreply.github.com',
+  '46447321+allcontributors[bot]@users.noreply.github.com'
 ].freeze
 
   def to_s
     name.presence || login.presence || email
+  end
+
+  def self.bot_email?(email)
+    return false if email.blank?
+    email_lower = email.to_s.downcase
+
+    return true if IGNORED_EMAILS.include?(email_lower)
+    return true if email_lower.include?('[bot]')
+    return true if email_lower.include?('bot@')
+    return true if email_lower =~ /^\d+\+.+\[bot\]@users\.noreply\.github\.com$/
+
+    false
+  end
+
+  def bot?
+    self.class.bot_email?(email)
   end
 
   def topics_without_ignored

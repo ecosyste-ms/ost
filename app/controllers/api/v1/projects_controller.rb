@@ -36,11 +36,25 @@ class Api::V1::ProjectsController < Api::V1::ApplicationController
   end
 
   def packages
-    @projects = Project.reviewed.active.select{|p| p.packages.present? }.sort_by{|p| p.packages.sum{|p| p['downloads'] || 0 } }.reverse
+    # Use database query instead of loading all projects
+    @projects = Project.reviewed
+                       .active
+                       .where.not(packages: [nil, []])
+                       .select(:id, :name, :url, :packages, :score, :repository)
+                       .limit(500)
+                       .to_a
+                       .select { |p| p.packages.present? }
+                       .sort_by { |p| p.packages.sum { |pkg| pkg['downloads'] || 0 } }
+                       .reverse
   end
 
   def images
-    @projects = Project.reviewed.with_readme.select{|p| p.readme_image_urls.present? }
+    # Use SQL pattern matching instead of loading all readmes
+    @projects = Project.reviewed
+                       .with_readme
+                       .where("readme ~ ?", '!\\[.*?\\]\\(')
+                       .includes(:climatetriage_issues)
+                       .limit(500)
   end
 
   def esd
@@ -71,23 +85,42 @@ class Api::V1::ProjectsController < Api::V1::ApplicationController
   end
 
   def dependencies
-    all_dependencies = Project.reviewed.map(&:dependency_packages).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse
+    # Use existing Dependency table or calculate with find_each
     dependency_records = Dependency.where('count > 1').includes(:project)
 
-    # Filter out python and r packages (matching HTML behavior)
-    filtered_dependencies = all_dependencies.reject { |dep, count| ['python', 'r'].include?(dep[0]) }
+    if dependency_records.any?
+      # Use cached dependency data, filter out python and r
+      all_dependencies = dependency_records.reject { |dep| ['python', 'r'].include?(dep.ecosystem) }
 
-    # Convert to array format for pagination
-    @dependencies = filtered_dependencies.map do |dep, count|
-      package = dependency_records.find { |p| p['ecosystem'] == dep[0] && p['name'] == dep[1] }
-      in_ost = package&.project&.reviewed? || false
+      @dependencies = all_dependencies.map do |dep|
+        {
+          ecosystem: dep.ecosystem,
+          package_name: dep.name,
+          count: dep.count,
+          in_ost: dep.project&.reviewed? || false
+        }
+      end.sort_by { |d| -d[:count] }
+    else
+      # Calculate with find_each to avoid loading all projects
+      dependency_counts = Hash.new(0)
+      Project.reviewed.find_each(batch_size: 100) do |project|
+        project.dependency_packages.each do |dep|
+          dependency_counts[dep] += 1
+        end
+      end
 
-      {
-        ecosystem: dep[0],
-        package_name: dep[1],
-        count: count,
-        in_ost: in_ost
-      }
+      # Filter out python and r packages
+      filtered_dependencies = dependency_counts.reject { |dep, count| ['python', 'r'].include?(dep[0]) }
+
+      @dependencies = filtered_dependencies.sort_by { |k,v| -v }.map do |dep, count|
+        package = dependency_records.find { |p| p.ecosystem == dep[0] && p.name == dep[1] }
+        {
+          ecosystem: dep[0],
+          package_name: dep[1],
+          count: count,
+          in_ost: package&.project&.reviewed? || false
+        }
+      end
     end
 
     # Paginate with pagy_array

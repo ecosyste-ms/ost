@@ -110,21 +110,56 @@ class ProjectsController < ApplicationController
   end
 
   def dependencies
-    @dependencies = Project.reviewed.map(&:dependency_packages).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse
-    @dependency_records = Dependency.where('count > 1').includes(:project)
+    # Use existing Dependency table instead of loading all projects
+    @dependency_records = Dependency.where('count > 1').includes(:project).order('count DESC')
+
+    # If we need fresh calculation, use find_each to avoid loading all at once
+    if @dependency_records.empty?
+      dependency_counts = Hash.new(0)
+      Project.reviewed.find_each(batch_size: 100) do |project|
+        project.dependency_packages.each do |dep|
+          dependency_counts[dep] += 1
+        end
+      end
+      @dependencies = dependency_counts.sort_by { |k,v| -v }.first(500)
+    else
+      @dependencies = []
+    end
+
     @packages = []
   end
 
   def packages
-    @projects = Project.reviewed.select{|p| p.packages.present? }.sort_by{|p| p.packages.sum{|p| p['downloads'] || 0 } }.reverse
+    # Use database query instead of loading all projects into memory
+    # Select only needed columns to reduce memory usage
+    @projects = Project.reviewed
+                       .where.not(packages: [nil, []])
+                       .select(:id, :name, :url, :packages, :score, :repository)
+                       .limit(500)
+                       .to_a
+                       .select { |p| p.packages.present? }
+                       .sort_by { |p| p.packages.sum { |pkg| pkg['downloads'] || 0 } }
+                       .reverse
   end
 
   def images
-    @projects = Project.reviewed.with_readme.select{|p| p.readme_image_urls.present? }
+    # Use SQL pattern matching instead of loading all readmes
+    @projects = Project.reviewed
+                       .with_readme
+                       .where("readme ~ ?", '!\\[.*?\\]\\(')
+                       .select(:id, :name, :url, :readme, :repository)
+                       .limit(500)
   end
 
   def zenodo
-    projects = Project.reviewed.with_readme.select{|p| p.zenodo_url.present? }
+    # Use SQL pattern matching for zenodo
+    projects = Project.reviewed
+                      .with_readme
+                      .where("readme ILIKE ?", '%zenodo%')
+                      .select(:id, :name, :url, :readme, :repository)
+                      .limit(500)
+                      .to_a
+                      .select { |p| p.zenodo_url.present? }
     @pagy, @projects = pagy_array(projects)
   end
 end

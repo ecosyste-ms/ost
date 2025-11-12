@@ -1796,19 +1796,50 @@ class Project < ApplicationRecord
   def update_committers
     return unless commits.present?
     return unless commits['committers'].present?
-    commits['committers'].each do |committer|
+    return unless reviewed?
+
+    # Filter out bots and limit to top committers
+    human_committers = commits['committers'].reject { |c| bot_committer?(c) }
+    top_committers = human_committers.sort_by { |c| -(c['count'] || 0) }.first(50)
+
+    top_committers.each do |committer|
       c = Contributor.find_or_create_by(email: committer['email'])
-      if keywords.present?
-        c.topics = (c.topics + keywords).uniq
+
+      # Skip if somehow a bot got through
+      next if c.bot?
+
+      # Limit topic accumulation to prevent unbounded growth
+      if keywords.present? && c.topics.size < 100
+        new_topics = (c.topics + keywords).uniq.first(100)
+        c.topics = new_topics
       end
-      
-      c.categories = (c.categories + [category]).uniq if category
-      c.sub_categories = (c.sub_categories + [sub_category]).uniq if sub_category
-      c.reviewed_project_ids = (c.reviewed_project_ids + [id]).uniq if reviewed?
-      c.reviewed_projects_count = c.reviewed_project_ids.length if reviewed?
+
+      c.categories = (c.categories + [category]).uniq.first(20) if category
+      c.sub_categories = (c.sub_categories + [sub_category]).uniq.first(20) if sub_category
+      c.reviewed_project_ids = (c.reviewed_project_ids + [id]).uniq.first(200)
+      c.reviewed_projects_count = c.reviewed_project_ids.length
       c.update(committer.except('count'))
     end
   end
+
+  private
+
+  def bot_committer?(committer)
+    email = committer['email'].to_s.downcase
+    name = committer['name'].to_s.downcase
+
+    return true if Contributor.bot_email?(email)
+    return true if name.include?('[bot]')
+    return true if name.end_with?('bot') && !name.include?(' ')
+    return true if name == 'github actions'
+    return true if name == 'dependabot'
+    return true if name == 'pre-commit-ci'
+    return true if name == 'allcontributors'
+
+    false
+  end
+
+  public
 
   def contributors
     return unless commits.present?
