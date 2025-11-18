@@ -155,7 +155,7 @@ GEM
       meilisearch (~> 0.32.0)
       mutex_m (~> 0.2)
     mini_mime (1.1.5)
-    minitest (5.26.1)
+    minitest (5.26.2)
     mocha (2.8.2)
       ruby2_keywords (>= 0.0.5)
     msgpack (1.8.0)
@@ -448,7 +448,7 @@ CHECKSUMS
   meilisearch (0.32.0) sha256=ef6c37f3e53da6c429d0bd81a8d8794a6c50d1bd7d07cbca813618c203576dc4
   meilisearch-rails (0.16.0) sha256=6f1f06075c7043c59ba0a30d4cf76c3d7374da270d73f5660ea4fe9491a1ad9c
   mini_mime (1.1.5) sha256=8681b7e2e4215f2a159f9400b5816d85e9d8c6c6b491e96a12797e798f8bccef
-  minitest (5.26.1) sha256=f16a63d4278e230bba342c3bda3006a69c5216d46461b77dd57f7c7c529b5a96
+  minitest (5.26.2) sha256=f021118a6185b9ba9f5af71f2ba103ad770c75afde9f2ab8da512677c550cde3
   mocha (2.8.2) sha256=1f77e729db47e72b4ef776461ce20caeec2572ffdf23365b0a03608fee8f4eee
   msgpack (1.8.0) sha256=e64ce0212000d016809f5048b48eb3a65ffb169db22238fb4b72472fecb2d732
   multi_xml (0.7.2) sha256=307a96dc48613badb7b2fc174fd4e62d7c7b619bc36ea33bfd0c49f64f5787ce
