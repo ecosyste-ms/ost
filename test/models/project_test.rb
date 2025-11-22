@@ -222,7 +222,7 @@ class ProjectTest < ActiveSupport::TestCase
     assert_includes unreviewed_ids, unreviewed_nil.id
   end
 
-  test "update_keywords_from_contributors filters out keywords with null bytes" do
+  test "update_keywords_from_contributors removes null bytes from keywords" do
     project = Project.create!(url: 'https://github.com/test/nullbyte')
 
     # Mock contributor_topics to return a hash with null bytes in keys
@@ -230,22 +230,24 @@ class ProjectTest < ActiveSupport::TestCase
     project.update_keywords_from_contributors
     project.reload
 
-    # Should only save the valid keywords, filtering out the one with null byte
-    assert_equal 2, project.keywords_from_contributors.length
+    # Should save all keywords with null bytes removed
+    assert_equal 3, project.keywords_from_contributors.length
     assert_includes project.keywords_from_contributors, "valid_keyword"
     assert_includes project.keywords_from_contributors, "another_valid"
+    assert_includes project.keywords_from_contributors, "invalidkeyword"
     refute_includes project.keywords_from_contributors, "invalid\0keyword"
   end
 
-  test "update_keywords_from_contributors handles all null byte keywords" do
+  test "update_keywords_from_contributors handles keywords that become blank after null byte removal" do
     project = Project.create!(url: 'https://github.com/test/allnullbytes')
 
-    # Mock contributor_topics to return a hash with only null byte keywords
-    project.stubs(:contributor_topics).returns({ "invalid\0keyword" => 3, "another\0bad" => 4 })
+    # Mock contributor_topics to return a hash with keywords that are only null bytes
+    project.stubs(:contributor_topics).returns({ "\0" => 3, "\0\0" => 4, "valid" => 5 })
     project.update_keywords_from_contributors
     project.reload
 
-    # Should result in empty array, not update the field
-    assert_equal [], project.keywords_from_contributors
+    # Should only include the valid keyword, blank ones are filtered out
+    assert_equal 1, project.keywords_from_contributors.length
+    assert_includes project.keywords_from_contributors, "valid"
   end
 end
