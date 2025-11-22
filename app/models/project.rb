@@ -1875,8 +1875,8 @@ class Project < ApplicationRecord
 
   def update_keywords_from_contributors
     ct = contributor_topics(limit: 10, minimum: 3)
-    # Filter out any keywords containing null bytes to prevent PostgreSQL errors
-    sanitized_keywords = ct.keys.reject { |k| k.include?("\0") }
+    # Remove null bytes from keywords to prevent PostgreSQL errors
+    sanitized_keywords = ct.keys.map { |k| k.delete("\0") }.reject(&:blank?)
     update(keywords_from_contributors: sanitized_keywords) if sanitized_keywords.present?
   end
 
