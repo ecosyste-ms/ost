@@ -1171,6 +1171,16 @@ class Project < ApplicationRecord
     0
   end
 
+  def keywords
+    # Sanitize null bytes from keywords array on read
+    super&.map { |k| k.gsub(/\u0000/, '') }&.reject(&:blank?) || []
+  end
+
+  def keywords_from_contributors
+    # Sanitize null bytes from keywords_from_contributors array on read
+    super&.map { |k| k.gsub(/\u0000/, '') }&.reject(&:blank?) || []
+  end
+
   def language
     return unless repository.present?
     repository['language']

@@ -250,4 +250,31 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal 1, project.keywords_from_contributors.length
     assert_includes project.keywords_from_contributors, "valid"
   end
+
+  test "keywords getter returns empty array when nil" do
+    project = Project.create!(url: 'https://github.com/test/nil-keywords')
+    keywords = project.keywords
+    assert_equal [], keywords
+  end
+
+  test "keywords getter works with normal keywords" do
+    project = Project.create!(url: 'https://github.com/test/normal-keywords')
+    project.update_columns(keywords: ['python', 'ruby', 'javascript'])
+
+    keywords = project.keywords
+    assert_equal 3, keywords.length
+    assert_includes keywords, "python"
+    assert_includes keywords, "ruby"
+    assert_includes keywords, "javascript"
+  end
+
+  test "matching_topics does not raise error with clean keywords" do
+    project = Project.create!(url: 'https://github.com/test/clean-keywords')
+    project.update_columns(keywords: ['python', 'ruby', 'javascript'])
+
+    # This should not raise an ArgumentError about null bytes
+    assert_nothing_raised do
+      project.matching_topics
+    end
+  end
 end

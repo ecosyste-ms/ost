@@ -32,6 +32,11 @@ class Contributor < ApplicationRecord
   '46447321+allcontributors[bot]@users.noreply.github.com'
 ].freeze
 
+  def topics
+    # Sanitize null bytes from topics array on read
+    super&.map { |t| t.gsub(/\u0000/, '') }&.reject(&:blank?) || []
+  end
+
   def to_s
     name.presence || login.presence || email
   end
