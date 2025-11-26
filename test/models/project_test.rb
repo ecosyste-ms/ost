@@ -277,4 +277,32 @@ class ProjectTest < ActiveSupport::TestCase
       project.matching_topics
     end
   end
+
+  test "fetch_readme sanitizes null bytes from content" do
+    project = Project.create!(url: 'https://github.com/test/readme-nullbytes')
+    project.stubs(:readme_file_name).returns(nil)
+    project.stubs(:download_url).returns(nil)
+
+    # Mock the fallback HTTP response with null bytes
+    mock_response = stub(success?: true, body: "Hello\u0000World")
+    mock_conn = stub(get: mock_response)
+    Faraday.stubs(:new).returns(mock_conn)
+
+    project.fetch_readme
+    assert_equal "HelloWorld", project.readme
+  end
+
+  test "fetch_citation_file sanitizes null bytes from content" do
+    project = Project.create!(url: 'https://github.com/test/citation-nullbytes')
+    project.stubs(:citation_file_name).returns('CITATION.cff')
+    project.stubs(:download_url).returns('https://example.com/download.zip')
+
+    # Mock the HTTP response with null bytes in JSON
+    mock_response = stub(success?: true, body: { 'contents' => "Title:\u0000Test" }.to_json)
+    mock_conn = stub(get: mock_response)
+    project.stubs(:ecosystem_http_client).returns(mock_conn)
+
+    project.fetch_citation_file
+    assert_equal "Title:Test", project.citation_file
+  end
 end
