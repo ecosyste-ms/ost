@@ -1476,7 +1476,7 @@ class Project < ApplicationRecord
     return unless response.success?
     json = JSON.parse(response.body)
 
-    self.citation_file = json['contents']
+    self.citation_file = json['contents']&.gsub(/\u0000/, '')
     self.save
   rescue
     puts "Error fetching citation file for #{repository_url}"
@@ -1504,7 +1504,7 @@ class Project < ApplicationRecord
       return unless response.success?
       json = JSON.parse(response.body)
 
-      self.readme = json['contents']
+      self.readme = json['contents']&.gsub(/\u0000/, '')
       self.save
     end
   rescue
@@ -1521,7 +1521,7 @@ class Project < ApplicationRecord
 
     response = conn.get
     return unless response.success?
-    self.readme = response.body
+    self.readme = response.body&.gsub(/\u0000/, '')
     self.save
   rescue
     puts "Error fetching readme for #{repository_url}"
