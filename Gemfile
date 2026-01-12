@@ -44,7 +44,6 @@ gem 'appsignal'
 gem 'commonmarker'
 gem 'ostruct'
 gem 'dalli'
-gem "connection_pool", "<3"
 
 group :development, :test do
   gem 'dotenv-rails'
@@ -60,7 +59,6 @@ group :test do
   gem "webmock"
   gem "mocha"
   gem "rails-controller-testing"
-  gem "minitest", "~> 5"
 end
 
 gem "meilisearch-rails", "~> 0.16.0"
