@@ -56,12 +56,11 @@ GEM
       language_list (~> 1.2.1)
     chronic_duration (0.10.6)
       numerizer (~> 0.1.1)
-    commonmarker (2.6.2-aarch64-linux)
-    commonmarker (2.6.2-aarch64-linux-musl)
-    commonmarker (2.6.2-arm64-darwin)
-    commonmarker (2.6.2-x86_64-darwin)
-    commonmarker (2.6.2-x86_64-linux)
-    commonmarker (2.6.2-x86_64-linux-musl)
+    commonmarker (2.6.3-aarch64-linux)
+    commonmarker (2.6.3-arm64-darwin)
+    commonmarker (2.6.3-x86_64-darwin)
+    commonmarker (2.6.3-x86_64-linux)
+    commonmarker (2.6.3-x86_64-linux-musl)
     concurrent-ruby (1.3.6)
     connection_pool (3.0.2)
     counter_culture (3.12.1)
@@ -72,7 +71,7 @@ GEM
       rexml
     crass (1.0.6)
     csv (3.3.5)
-    dalli (4.0.0)
+    dalli (4.1.0)
       logger
     date (3.5.1)
     dotenv (3.2.0)
@@ -221,7 +220,7 @@ GEM
       tsort
     redis (5.4.1)
       redis-client (>= 0.22.0)
-    redis-client (0.26.3)
+    redis-client (0.26.4)
       connection_pool
     reline (0.6.3)
       io-console (~> 0.5)
@@ -373,19 +372,18 @@ CHECKSUMS
   builder (3.3.0) sha256=497918d2f9dca528fdca4b88d84e4ef4387256d984b8154e9d5d3fe5a9c8835f
   cff (1.3.0) sha256=d2b65d57160040ad244087d65b89769558a40aafb34b13d048e0ea72bc521316
   chronic_duration (0.10.6) sha256=fac58d4147d3183a40811400380cafcef049f2bb02421d2fd1c6e685fbe8facc
-  commonmarker (2.6.2-aarch64-linux) sha256=48debd05c75ce6d7d67beec5ce05e685b11c2b7c00c14bc548d17952f8f78112
-  commonmarker (2.6.2-aarch64-linux-musl) sha256=c0a7836320a7f108cada493d0f342323daaf17a3f7cbf0a8d54b9a78eabcc325
-  commonmarker (2.6.2-arm64-darwin) sha256=a19eba0c774dcee372b7b65f9efa5ef4ad0d4abfceb15ddd768ecc7b406fe6e3
-  commonmarker (2.6.2-x86_64-darwin) sha256=1214c90fe846905bbaa6ee0f3f48fc25730f15a2b0dd5932183bdabfe43d7bcb
-  commonmarker (2.6.2-x86_64-linux) sha256=6cd76cae97221f1dc38c44bc1d2f1e5edd760fce0a2a60d937cc710615f9eaa8
-  commonmarker (2.6.2-x86_64-linux-musl) sha256=2330a19ad6301a1921f6599f5d8b2e0f59a2c03a33746ed2e179f22eb9917dd6
+  commonmarker (2.6.3-aarch64-linux) sha256=73795e80ab5ef1e4b5b83ada6f082bccb0ed7eae0b910232e13af1b2d71b14d6
+  commonmarker (2.6.3-arm64-darwin) sha256=d6c1e4955619da3f68fed22de99dec49a24925611770c039bf870823846c8b21
+  commonmarker (2.6.3-x86_64-darwin) sha256=cd8ab974bb24f675a250ea91a811b3ff70405be1c219f0052446995db6ca90c6
+  commonmarker (2.6.3-x86_64-linux) sha256=e861ba1812721113725ebd8e46e4fee20dc732842f5555db2cfb8dcd74056583
+  commonmarker (2.6.3-x86_64-linux-musl) sha256=2c62d2dc0d5c4efc6dde39bc5c5fac292169206601a3daf75e562d70b795d49e
   concurrent-ruby (1.3.6) sha256=6b56837e1e7e5292f9864f34b69c5a2cbc75c0cf5338f1ce9903d10fa762d5ab
   connection_pool (3.0.2) sha256=33fff5ba71a12d2aa26cb72b1db8bba2a1a01823559fb01d29eb74c286e62e0a
   counter_culture (3.12.1) sha256=8a880092321941732bfa639c449a133ff08c5197c29e853371cc03c486e43980
   crack (1.0.1) sha256=ff4a10390cd31d66440b7524eb1841874db86201d5b70032028553130b6d4c7e
   crass (1.0.6) sha256=dc516022a56e7b3b156099abc81b6d2b08ea1ed12676ac7a5657617f012bd45d
   csv (3.3.5) sha256=6e5134ac3383ef728b7f02725d9872934f523cb40b961479f69cf3afa6c8e73f
-  dalli (4.0.0) sha256=a545569d3403277cac67be08116157f8e48466adfd7e592fb9167143b6529ab9
+  dalli (4.1.0) sha256=67e2098e67e6e7cf4f5f4c8d8c1e37a6f493890164131d6efb5bb989a7223736
   date (3.5.1) sha256=750d06384d7b9c15d562c76291407d89e368dda4d4fff957eb94962d325a0dc0
   dotenv (3.2.0) sha256=e375b83121ea7ca4ce20f214740076129ab8514cd81378161f11c03853fe619d
   dotenv-rails (3.2.0) sha256=657e25554ba622ffc95d8c4f1670286510f47f2edda9f68293c3f661b303beab
@@ -463,7 +461,7 @@ CHECKSUMS
   rake (13.3.1) sha256=8c9e89d09f66a26a01264e7e3480ec0607f0c497a861ef16063604b1b08eb19c
   rdoc (7.1.0) sha256=494899df0706c178596ca6e1d50f1b7eb285a9b2aae715be5abd742734f17363
   redis (5.4.1) sha256=b5e675b57ad22b15c9bcc765d5ac26f60b675408af916d31527af9bd5a81faae
-  redis-client (0.26.3) sha256=37a95ca193b7a79f350c09fe5e696dc15d1701195d559d031a107ab725effc49
+  redis-client (0.26.4) sha256=3ad70beff5da2653e02dfeae996e7d8d7147a558da12b16b2282ad345e4c7120
   reline (0.6.3) sha256=1198b04973565b36ec0f11542ab3f5cfeeec34823f4e54cebde90968092b1835
   rexml (3.4.4) sha256=19e0a2c3425dfbf2d4fc1189747bdb2f849b6c5e74180401b15734bc97b5d142
   rswag-api (2.17.0) sha256=728b336b65168ab8ab6024b0e5d267b485c22ccdeb9dfbfb6ec3bac423545a13
