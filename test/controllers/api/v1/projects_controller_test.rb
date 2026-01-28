@@ -362,6 +362,41 @@ class Api::V1::ProjectsControllerTest < ActionDispatch::IntegrationTest
     assert actual_response.length <= 50
   end
 
+  # SEARCH TESTS
+  test 'search should return matching projects' do
+    get search_api_v1_projects_path(q: 'climate')
+    assert_response :success
+
+    actual_response = JSON.parse(@response.body)
+    assert actual_response.is_a?(Array)
+    names = actual_response.map { |p| p['name'] }
+    assert_includes names, 'Climate Project'
+  end
+
+  test 'search with blank query returns results' do
+    get search_api_v1_projects_path(q: '')
+    assert_response :success
+
+    actual_response = JSON.parse(@response.body)
+    assert actual_response.is_a?(Array)
+  end
+
+  test 'search with keyword filter' do
+    get search_api_v1_projects_path(q: 'climate', keywords: 'sustainability')
+    assert_response :success
+
+    actual_response = JSON.parse(@response.body)
+    assert actual_response.is_a?(Array)
+  end
+
+  test 'search with language filter' do
+    get search_api_v1_projects_path(q: '', language: 'Python')
+    assert_response :success
+
+    actual_response = JSON.parse(@response.body)
+    assert actual_response.is_a?(Array)
+  end
+
   test 'dependencies should default to 100 items per page' do
     get dependencies_api_v1_projects_path
     assert_response :success

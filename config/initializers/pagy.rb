@@ -4,7 +4,7 @@ require 'pagy/extras/bootstrap'
 require 'pagy/extras/countless'
 require 'pagy/extras/array'
 require 'pagy/extras/overflow'
-require 'pagy/extras/meilisearch'
+
 
 Pagy::DEFAULT[:limit] = 100
 Pagy::DEFAULT[:limit_param] = :per_page

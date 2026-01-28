@@ -292,6 +292,68 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal "HelloWorld", project.readme
   end
 
+  test "search scope returns matching projects by name" do
+    project = Project.create!(url: 'https://github.com/test/solar-panel', name: 'Solar Panel Tracker', reviewed: true)
+    Project.create!(url: 'https://github.com/test/wind-turbine', name: 'Wind Turbine', reviewed: true)
+
+    results = Project.search('solar')
+    assert_includes results, project
+    assert_equal 1, results.count
+  end
+
+  test "search scope returns matching projects by description" do
+    project = Project.create!(url: 'https://github.com/test/energy-tool', name: 'Energy Tool', description: 'Monitors photovoltaic output', reviewed: true)
+
+    results = Project.search('photovoltaic')
+    assert_includes results, project
+  end
+
+  test "search scope returns matching projects by keywords" do
+    project = Project.create!(url: 'https://github.com/test/climate-lib', name: 'Climate Lib', keywords: ['carbon', 'emissions'], reviewed: true)
+
+    results = Project.search('carbon')
+    assert_includes results, project
+  end
+
+  test "search scope only returns reviewed projects" do
+    Project.create!(url: 'https://github.com/test/reviewed-proj', name: 'Solar Reviewed', reviewed: true)
+    Project.create!(url: 'https://github.com/test/unreviewed-proj', name: 'Solar Unreviewed', reviewed: false)
+
+    results = Project.search('solar')
+    assert results.all?(&:reviewed?)
+  end
+
+  test "search scope returns all reviewed when query is blank" do
+    Project.create!(url: 'https://github.com/test/proj-a', name: 'Project A', reviewed: true)
+    Project.create!(url: 'https://github.com/test/proj-b', name: 'Project B', reviewed: true)
+
+    results = Project.search('')
+    assert_equal Project.reviewed.count, results.count
+  end
+
+  test "search scope returns all reviewed when query is nil" do
+    results = Project.search(nil)
+    assert_equal Project.reviewed.count, results.count
+  end
+
+  test "facets returns keyword and language counts for a scope" do
+    Project.create!(
+      url: 'https://github.com/test/facet-proj',
+      name: 'Facet Project',
+      keywords: ['solar', 'energy'],
+      repository: { 'language' => 'Python' },
+      reviewed: true
+    )
+
+    scope = Project.search('facet')
+    facets = Project.facets(scope)
+
+    assert facets.key?("keywords")
+    assert facets.key?("language")
+    assert facets["keywords"]["solar"] >= 1
+    assert facets["language"]["Python"] >= 1
+  end
+
   test "fetch_citation_file sanitizes null bytes from content" do
     project = Project.create!(url: 'https://github.com/test/citation-nullbytes')
     project.stubs(:citation_file_name).returns('CITATION.cff')

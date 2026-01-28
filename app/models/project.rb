@@ -3,20 +3,38 @@ require 'csv'
 class Project < ApplicationRecord
   include EcosystemApiClient
 
-  include Meilisearch::Rails
-  extend Pagy::Meilisearch
-  ActiveRecord_Relation.include Pagy::Meilisearch
+  SEARCH_TSVECTOR = <<~SQL.squish
+    to_tsvector('english',
+      coalesce(projects.name, '') || ' ' ||
+      coalesce(projects.description, '') || ' ' ||
+      coalesce(projects.url, '') || ' ' ||
+      coalesce(array_to_string(projects.keywords, ' '), '') || ' ' ||
+      coalesce(projects.category, '') || ' ' ||
+      coalesce(projects.sub_category, '') || ' ' ||
+      coalesce(projects.rubric, '') || ' ' ||
+      coalesce(projects.repository ->> 'owner', '')
+    )
+  SQL
 
-  meilisearch if: :reviewed? do
-    add_attribute :language
-    searchable_attributes [:name, :description, :url, :keywords, :owner, :category, :sub_category, :rubric, :readme, :works, :citation_file]
-    displayed_attributes [:id, :name, :description, :url, :keywords,  :owner, :category, :sub_category, :rubric, :readme, :works, :citation_file]
-    filterable_attributes [:language, :keywords]
+  scope :search, ->(query) {
+    next reviewed if query.blank?
+    terms = query.gsub(/[^\w\s]/, ' ').strip.split
+    next reviewed if terms.empty?
+    tsquery = terms.map { |t| "#{sanitize_sql_like(t)}:*" }.join(' & ')
+    reviewed.where("#{SEARCH_TSVECTOR} @@ to_tsquery('english', ?)", tsquery)
+  }
 
-    sortable_attributes [:name, :score]
+  def self.facets(scope)
+    subquery = scope.where.not(keywords: []).select("unnest(keywords) AS kw").to_sql
+    keyword_counts = connection
+      .select_rows("SELECT kw, count(*) FROM (#{subquery}) AS t GROUP BY kw ORDER BY count(*) DESC")
+      .to_h { |kw, count| [kw, count.to_i] }
 
-    faceting "sortFacetValuesBy": {'*'=> 'count'}
-  end 
+    language_counts = scope.where("repository ->> 'language' IS NOT NULL")
+      .group("repository ->> 'language'").order(Arel.sql("count(*) DESC")).count
+
+    { "keywords" => keyword_counts, "language" => language_counts }
+  end
 
   validates :url, presence: true, uniqueness: { case_sensitive: false }
 

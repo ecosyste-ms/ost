@@ -61,6 +61,4 @@ group :test do
   gem "rails-controller-testing"
 end
 
-gem "meilisearch-rails", "~> 0.16.0"
-
 gem "bootstrap-icons", require: "bootstrap_icons"

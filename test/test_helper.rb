@@ -9,8 +9,6 @@ require 'sidekiq_unique_jobs/testing'
 require 'sidekiq/testing'
 Sidekiq::Testing.fake!
 
-# Deactivate Meilisearch for the entire test suite
-Meilisearch::Rails.deactivate!
 
 class ActiveSupport::TestCase
   # Make sure Shoulda Matchers are configured correctly
