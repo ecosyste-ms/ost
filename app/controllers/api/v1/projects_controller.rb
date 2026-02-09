@@ -1,4 +1,7 @@
 class Api::V1::ProjectsController < Api::V1::ApplicationController
+  skip_before_action :set_cache_headers, only: [:lookup, :ping]
+  skip_before_action :set_api_cache_headers, only: [:lookup, :ping]
+
   def index
     @projects = Project.all.where.not(last_synced_at: nil)
 

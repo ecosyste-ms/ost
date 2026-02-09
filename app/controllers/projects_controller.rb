@@ -1,4 +1,6 @@
 class ProjectsController < ApplicationController
+  skip_before_action :set_cache_headers, only: [:lookup, :new, :create]
+
   def show
     @project = Project.find(params[:id])
   end
