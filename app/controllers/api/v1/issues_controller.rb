@@ -10,21 +10,12 @@ class Api::V1::IssuesController < Api::V1::ApplicationController
 
     scope = scope.where('issues.created_at > ?', 1.day.ago) if params[:recent].present?
 
-    # Define allowed sort fields with database expressions
-    allowed_sort_fields = {
-      'created_at' => 'issues.created_at',
-      'updated_at' => 'issues.updated_at',
-      'stars' => "CAST(projects.repository->>'stargazers_count' AS INTEGER)"
-    }
-
     if params[:sort].present? || params[:order].present?
-      sort_key = params[:sort].presence || 'created_at'
-      sort_field = allowed_sort_fields[sort_key] || 'issues.created_at'
-      
+      sort = sanitize_sort(Issue.sortable_columns, default: 'created_at')
       if params[:order] == 'asc'
-        scope = scope.order(Arel.sql(sort_field).asc.nulls_last)
+        scope = scope.order(sort.asc.nulls_last)
       else
-        scope = scope.order(Arel.sql(sort_field).desc.nulls_last)
+        scope = scope.order(sort.desc.nulls_last)
       end
     else
       scope = scope.order('issues.created_at DESC')
@@ -39,11 +30,11 @@ class Api::V1::IssuesController < Api::V1::ApplicationController
     scope = Project.where(id: project_ids).active.reviewed.includes(:climatetriage_issues)
 
     if params[:sort].present? || params[:order].present?
-      sort = params[:sort].presence || 'projects.updated_at'
+      sort = sanitize_sort(Project.sortable_columns, default: 'projects.updated_at')
       if params[:order] == 'asc'
-        scope = scope.order(Arel.sql(sort).asc.nulls_last)
+        scope = scope.order(sort.asc.nulls_last)
       else
-        scope = scope.order(Arel.sql(sort).desc.nulls_last)
+        scope = scope.order(sort.desc.nulls_last)
       end
     else
       scope = scope.order('projects.updated_at DESC')

@@ -1,4 +1,12 @@
 class Issue < ApplicationRecord
+  def self.sortable_columns
+    {
+      'created_at' => 'issues.created_at',
+      'updated_at' => 'issues.updated_at',
+      'stars' => "CAST(projects.repository->>'stargazers_count' AS INTEGER)",
+    }
+  end
+
   belongs_to :project
 
   scope :past_year, -> { where('created_at > ?', 1.year.ago) }

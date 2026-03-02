@@ -3,6 +3,18 @@ require 'csv'
 class Project < ApplicationRecord
   include EcosystemApiClient
 
+  def self.sortable_columns
+    {
+      'projects.updated_at' => 'projects.updated_at',
+      'projects.created_at' => 'projects.created_at',
+      'updated_at' => 'updated_at',
+      'created_at' => 'created_at',
+      'last_synced_at' => 'last_synced_at',
+      'score' => 'score',
+      'name' => 'name',
+    }
+  end
+
   SEARCH_TSVECTOR = <<~SQL.squish
     to_tsvector('english',
       coalesce(projects.name, '') || ' ' ||

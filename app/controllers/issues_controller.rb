@@ -7,21 +7,12 @@ class IssuesController < ApplicationController
     scope = scope.joins(:project).merge(Project.language(params[:language])) if params[:language].present?
     scope = scope.joins(:project).merge(Project.keyword(params[:keyword])) if params[:keyword].present?
 
-    # Define allowed sort fields with database expressions
-    allowed_sort_fields = {
-      'created_at' => 'issues.created_at',
-      'updated_at' => 'issues.updated_at',
-      'stars' => "CAST(projects.repository->>'stargazers_count' AS INTEGER)"
-    }
-
     if params[:sort].present? || params[:order].present?
-      sort_key = params[:sort].presence || 'created_at'
-      sort_field = allowed_sort_fields[sort_key] || 'issues.created_at'
-      
+      sort = sanitize_sort(Issue.sortable_columns, default: 'created_at')
       if params[:order] == 'asc'
-        scope = scope.order(Arel.sql(sort_field).asc.nulls_last)
+        scope = scope.order(sort.asc.nulls_last)
       else
-        scope = scope.order(Arel.sql(sort_field).desc.nulls_last)
+        scope = scope.order(sort.desc.nulls_last)
       end
     else
       scope = scope.order('issues.created_at DESC')
