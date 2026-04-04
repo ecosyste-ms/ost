@@ -37,15 +37,18 @@ class Project < ApplicationRecord
   }
 
   def self.facets(scope)
-    subquery = scope.where.not(keywords: []).select("unnest(keywords) AS kw").to_sql
-    keyword_counts = connection
-      .select_rows("SELECT kw, count(*) FROM (#{subquery}) AS t GROUP BY kw ORDER BY count(*) DESC")
-      .to_h { |kw, count| [kw, count.to_i] }
+    cache_key = "project_facets_#{Digest::MD5.hexdigest(scope.to_sql)}"
+    Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+      subquery = scope.where.not(keywords: []).select("unnest(keywords) AS kw").to_sql
+      keyword_counts = connection
+        .select_rows("SELECT kw, count(*) FROM (#{subquery}) AS t GROUP BY kw ORDER BY count(*) DESC LIMIT 100")
+        .to_h { |kw, count| [kw, count.to_i] }
 
-    language_counts = scope.where("repository ->> 'language' IS NOT NULL")
-      .group("repository ->> 'language'").order(Arel.sql("count(*) DESC")).count
+      language_counts = scope.where("repository ->> 'language' IS NOT NULL")
+        .group("repository ->> 'language'").order(Arel.sql("count(*) DESC")).count
 
-    { "keywords" => keyword_counts, "language" => language_counts }
+      { "keywords" => keyword_counts, "language" => language_counts }
+    end
   end
 
   validates :url, presence: true, uniqueness: { case_sensitive: false }
@@ -1923,41 +1926,39 @@ class Project < ApplicationRecord
 
   def self.unique_keywords_for_category(category)
     Rails.cache.fetch("project_unique_keywords_category_#{category}", expires_in: 24.hours) do
-      # Get all keywords from all categories
-      all_keywords = Project.where.not(category: category).pluck(:keywords).flatten
-
-      # Get keywords from the specific category
-      category_keywords = Project.where(category: category).pluck(:keywords).flatten
-
-      # Get keywords that only appear in the specific category
-      unique_keywords = category_keywords - all_keywords
-
-      # remove stop words
-      unique_keywords = unique_keywords - ignore_words
-
-      # Group the unique keywords by their values and sort them by the size of each group
-      sorted_keywords = unique_keywords.group_by { |keyword| keyword }.sort_by { |keyword, occurrences| -occurrences.size }.map(&:first)
-      sorted_keywords
+      sql = <<~SQL
+        SELECT kw, COUNT(*) AS cnt
+        FROM projects, unnest(keywords) AS kw
+        WHERE category = :category
+          AND kw NOT IN (
+            SELECT DISTINCT unnest(keywords)
+            FROM projects
+            WHERE category != :category
+          )
+        GROUP BY kw
+        ORDER BY cnt DESC
+      SQL
+      rows = connection.select_rows(sanitize_sql_array([sql, { category: category }]))
+      rows.map(&:first) - ignore_words
     end
   end
 
   def self.unique_keywords_for_sub_category(subcategory)
     Rails.cache.fetch("project_unique_keywords_subcategory_#{subcategory}", expires_in: 24.hours) do
-      # Get all keywords from all subcategory
-      all_keywords = Project.where.not(sub_category: subcategory).pluck(:keywords).flatten
-
-      # Get keywords from the specific subcategory
-      subcategory_keywords = Project.where(sub_category: subcategory).pluck(:keywords).flatten
-
-      # Get keywords that only appear in the specific subcategory
-      unique_keywords = subcategory_keywords - all_keywords
-
-      # remove stop words
-      unique_keywords = unique_keywords - ignore_words
-
-      # Group the unique keywords by their values and sort them by the size of each group
-      sorted_keywords = unique_keywords.group_by { |keyword| keyword }.sort_by { |keyword, occurrences| -occurrences.size }.map(&:first)
-      sorted_keywords
+      sql = <<~SQL
+        SELECT kw, COUNT(*) AS cnt
+        FROM projects, unnest(keywords) AS kw
+        WHERE sub_category = :subcategory
+          AND kw NOT IN (
+            SELECT DISTINCT unnest(keywords)
+            FROM projects
+            WHERE sub_category != :subcategory
+          )
+        GROUP BY kw
+        ORDER BY cnt DESC
+      SQL
+      rows = connection.select_rows(sanitize_sql_array([sql, { subcategory: subcategory }]))
+      rows.map(&:first) - ignore_words
     end
   end
 
@@ -2036,7 +2037,11 @@ class Project < ApplicationRecord
   end
 
   def self.sync_dependencies(min_count: 10)
-    dependencies = Project.reviewed.map(&:dependency_packages).flatten(1).group_by(&:itself).transform_values(&:count).sort_by{|k,v| v}.reverse
+    dependency_counts = Hash.new(0)
+    Project.reviewed.select(:id, :dependencies).find_each(batch_size: 500) do |project|
+      project.dependency_packages.each { |dep| dependency_counts[dep] += 1 }
+    end
+    dependencies = dependency_counts.sort_by { |_k, v| -v }
 
     dependencies.each do |(ecosystem, package_name), count|
       puts "Checking #{ecosystem} #{package_name}"

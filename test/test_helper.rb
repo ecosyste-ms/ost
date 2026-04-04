@@ -19,8 +19,7 @@ class ActiveSupport::TestCase
     end
   end
 
-  # If you need transactional fixtures (common for DB tests, less so for controller tests)
-  # self.use_transactional_fixtures = true
+  self.use_transactional_tests = true
 
   # If you need instatiated fixtures
   # fixtures :all
