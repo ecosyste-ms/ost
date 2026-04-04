@@ -1,0 +1,29 @@
+test/controllers/projects_controller_test.rb
+  562b6a31a5067a25 57-71
+test/models/project_test.rb
+  562b6a31a5067a25 357-446
+app/controllers/projects_controller.rb
+  562b6a31a5067a25 134,137-140
+app/models/project.rb
+  562b6a31a5067a25 40-45,47-48,50-51,1929-1943,1949-1963,2042-2046
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "c6c2f602c751b4f4b18005e5d7c2a57c4d20b749",
+  "prompts": {
+    "562b6a31a5067a25": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3cf643ee-0e0e-404c-b155-4dbd4c8f002d",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Andrew Nesbitt",
+      "messages": [],
+      "total_additions": 221,
+      "total_deletions": 111,
+      "accepted_lines": 156,
+      "overriden_lines": 0
+    }
+  }
+}
