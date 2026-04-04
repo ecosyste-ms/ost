@@ -354,6 +354,96 @@ class ProjectTest < ActiveSupport::TestCase
     assert facets["language"]["Python"] >= 1
   end
 
+  test "facets results are cached" do
+    Project.create!(
+      url: 'https://github.com/test/facet-cache',
+      name: 'Facet Cache',
+      keywords: ['cached'],
+      repository: { 'language' => 'Ruby' },
+      reviewed: true
+    )
+
+    scope = Project.search('facet cache')
+    first_result = Project.facets(scope)
+    second_result = Project.facets(scope)
+
+    assert_equal first_result, second_result
+  end
+
+  test "unique_keywords_for_category returns keywords exclusive to category" do
+    Project.create!(
+      url: 'https://github.com/test/unique-kw-cat-a',
+      category: 'energy',
+      keywords: ['solar', 'photovoltaic'],
+      reviewed: true
+    )
+    Project.create!(
+      url: 'https://github.com/test/unique-kw-cat-b',
+      category: 'transport',
+      keywords: ['solar', 'electric-vehicle'],
+      reviewed: true
+    )
+
+    Rails.cache.clear
+    unique = Project.unique_keywords_for_category('energy')
+
+    assert_includes unique, 'photovoltaic'
+    refute_includes unique, 'solar'
+  end
+
+  test "unique_keywords_for_sub_category returns keywords exclusive to sub_category" do
+    Project.create!(
+      url: 'https://github.com/test/unique-kw-sub-a',
+      sub_category: 'wind',
+      keywords: ['turbine', 'offshore'],
+      reviewed: true
+    )
+    Project.create!(
+      url: 'https://github.com/test/unique-kw-sub-b',
+      sub_category: 'solar',
+      keywords: ['turbine', 'panel'],
+      reviewed: true
+    )
+
+    Rails.cache.clear
+    unique = Project.unique_keywords_for_sub_category('wind')
+
+    assert_includes unique, 'offshore'
+    refute_includes unique, 'turbine'
+  end
+
+  test "sync_dependencies counts dependency packages across projects" do
+    project_a = Project.create!(
+      url: 'https://github.com/test/sync-dep-a',
+      reviewed: true,
+      dependencies: [
+        { 'filepath' => 'requirements.txt', 'ecosystem' => 'pypi', 'dependencies' => [
+          { 'package_name' => 'numpy', 'ecosystem' => 'pypi', 'direct' => true },
+          { 'package_name' => 'pandas', 'ecosystem' => 'pypi', 'direct' => true }
+        ] }
+      ]
+    )
+    project_b = Project.create!(
+      url: 'https://github.com/test/sync-dep-b',
+      reviewed: true,
+      dependencies: [
+        { 'filepath' => 'requirements.txt', 'ecosystem' => 'pypi', 'dependencies' => [
+          { 'package_name' => 'numpy', 'ecosystem' => 'pypi', 'direct' => true }
+        ] }
+      ]
+    )
+
+    Project.sync_dependencies(min_count: 999)
+
+    numpy_dep = Dependency.find_by(ecosystem: 'pypi', name: 'numpy')
+    assert_not_nil numpy_dep
+    assert_equal 2, numpy_dep.count
+
+    pandas_dep = Dependency.find_by(ecosystem: 'pypi', name: 'pandas')
+    assert_not_nil pandas_dep
+    assert_equal 1, pandas_dep.count
+  end
+
   test "fetch_citation_file sanitizes null bytes from content" do
     project = Project.create!(url: 'https://github.com/test/citation-nullbytes')
     project.stubs(:citation_file_name).returns('CITATION.cff')

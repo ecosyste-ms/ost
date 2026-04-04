@@ -130,17 +130,15 @@ class ProjectsController < ApplicationController
   end
 
   def packages
-    # Use database query instead of loading all projects into memory
-    # Select only needed columns to reduce memory usage
     @projects = Project.reviewed
-                       .where.not(packages: [nil, []])
+                       .where("packages IS NOT NULL AND jsonb_array_length(packages::jsonb) > 0")
                        .select(:id, :name, :url, :packages, :score, :repository, :description,
                                :keywords, :category, :sub_category, :last_synced_at)
+                       .order(Arel.sql(<<~SQL.squish))
+                         (SELECT COALESCE(SUM((elem->>'downloads')::bigint), 0)
+                          FROM jsonb_array_elements(packages::jsonb) AS elem) DESC
+                       SQL
                        .limit(500)
-                       .to_a
-                       .select { |p| p.packages.present? }
-                       .sort_by { |p| p.packages.sum { |pkg| pkg['downloads'] || 0 } }
-                       .reverse
   end
 
   def images

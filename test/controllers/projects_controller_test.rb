@@ -54,4 +54,19 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_not_nil assigns(:pagy)
   end
+
+  test "packages renders successfully" do
+    pkg_data = [{ 'name' => 'test-pkg', 'ecosystem' => 'pypi', 'downloads' => 1000,
+                  'downloads_period' => 'last-month', 'dependent_packages_count' => 5,
+                  'dependent_repos_count' => 10, 'versions_count' => 3,
+                  'rankings' => { 'average' => 50 }, 'registry' => { 'name' => 'PyPI', 'url' => 'https://pypi.org' },
+                  'registry_url' => 'https://pypi.org/project/test-pkg',
+                  'maintainers' => [], 'advisories' => [] }]
+    Project.connection.execute(
+      "UPDATE projects SET packages = '#{pkg_data.to_json}'::json WHERE id = #{@project.id}"
+    )
+
+    get packages_projects_path
+    assert_response :success
+  end
 end
