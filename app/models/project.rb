@@ -1939,8 +1939,7 @@ class Project < ApplicationRecord
         ORDER BY cnt DESC
       SQL
       rows = connection.select_rows(sanitize_sql_array([sql, { category: category }]))
-      keywords = rows.map(&:first) - ignore_words
-      keywords
+      rows.map(&:first) - ignore_words
     end
   end
 
@@ -1959,8 +1958,7 @@ class Project < ApplicationRecord
         ORDER BY cnt DESC
       SQL
       rows = connection.select_rows(sanitize_sql_array([sql, { subcategory: subcategory }]))
-      keywords = rows.map(&:first) - ignore_words
-      keywords
+      rows.map(&:first) - ignore_words
     end
   end
 

@@ -62,9 +62,7 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
                   'rankings' => { 'average' => 50 }, 'registry' => { 'name' => 'PyPI', 'url' => 'https://pypi.org' },
                   'registry_url' => 'https://pypi.org/project/test-pkg',
                   'maintainers' => [], 'advisories' => [] }]
-    Project.connection.execute(
-      "UPDATE projects SET packages = '#{pkg_data.to_json}'::json WHERE id = #{@project.id}"
-    )
+    @project.update_column(:packages, pkg_data)
 
     get packages_projects_path
     assert_response :success
