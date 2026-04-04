@@ -1,0 +1,27 @@
+test/test_helper.rb
+  06489b16d37758dd 22
+test/controllers/projects_controller_test.rb
+  06489b16d37758dd 65
+app/models/project.rb
+  06489b16d37758dd 1942,1961
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "44333057c8520d42660ab7cc9aa1ea9feecf06f7",
+  "prompts": {
+    "06489b16d37758dd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bf8c47a0-eaaf-447f-8b2f-fb645a7fa5d3",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Andrew Nesbitt",
+      "messages": [],
+      "total_additions": 4,
+      "total_deletions": 9,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}
