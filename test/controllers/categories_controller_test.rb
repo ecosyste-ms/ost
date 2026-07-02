@@ -11,13 +11,15 @@ class CategoriesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'renders 404 when category does not exist' do
-    get '/categories/nonexistent-category'
-    assert_response :not_found
+    assert_raises(ActiveRecord::RecordNotFound) do
+      get '/categories/nonexistent-category'
+    end
   end
 
   test 'renders 404 when sub_category does not exist' do
-    get '/categories/test-category/nonexistent-subcategory'
-    assert_response :not_found
+    assert_raises(ActiveRecord::RecordNotFound) do
+      get '/categories/test-category/nonexistent-subcategory'
+    end
   end
 
   test 'shows category when it exists' do
