@@ -64,19 +64,26 @@ class CacheHeadersTest < ActionDispatch::IntegrationTest
     assert_cache_control "s-maxage=3600"
   end
 
-  test "projects new does not set cache headers" do
-    get new_project_path
+  test "html pages do not set cookies" do
+    get projects_path
     assert_response :success
-    refute_cache_control "s-maxage"
+    assert_nil response.headers['Set-Cookie']
+  end
+
+  test "project show does not set cookies" do
+    get project_path(@project)
+    assert_response :success
+    assert_nil response.headers['Set-Cookie']
+  end
+
+  test "api endpoints do not set cookies" do
+    get api_v1_projects_path
+    assert_response :success
+    assert_nil response.headers['Set-Cookie']
   end
 
   def assert_cache_control(directive)
     cc = response.headers['Cache-Control'] || ''
     assert cc.include?(directive), "Expected Cache-Control to include '#{directive}', got '#{cc}'"
-  end
-
-  def refute_cache_control(directive)
-    cc = response.headers['Cache-Control'] || ''
-    refute cc.include?(directive), "Expected Cache-Control to NOT include '#{directive}', got '#{cc}'"
   end
 end

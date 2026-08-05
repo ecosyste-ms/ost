@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   skip_forgery_protection
+  before_action { request.session_options[:skip] = true }
   include Pagy::Backend
 
   rescue_from Pagy::OverflowError do
