@@ -457,4 +457,28 @@ class ProjectTest < ActiveSupport::TestCase
     project.fetch_citation_file
     assert_equal "Title:Test", project.citation_file
   end
+
+  test "sync_releases ignores unknown and locally managed attributes" do
+    project = Project.create!(
+      url: 'https://github.com/test/release-sync',
+      repository: { 'releases_url' => 'https://example.com/releases' }
+    )
+    other_project = Project.create!(url: 'https://github.com/test/other-project')
+    response = stub(
+      success?: true,
+      body: [{
+        'uuid' => 'release-1',
+        'name' => 'Version 1',
+        'immutable' => true,
+        'project_id' => other_project.id
+      }].to_json
+    )
+    project.stubs(:ecosystem_http_client).returns(stub(get: response))
+
+    assert_nothing_raised { project.sync_releases }
+
+    release = project.releases.find_by!(uuid: 'release-1')
+    assert_equal 'Version 1', release.name
+    assert_equal project.id, release.project_id
+  end
 end
