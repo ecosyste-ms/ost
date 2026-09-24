@@ -121,6 +121,27 @@ class Api::V1::ProjectsControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes project_names, 'Unsynced Project'
   end
 
+  test 'index includes funding links when some packages have no metadata' do
+    @climate_project.update!(packages: [
+      { 'name' => 'missing-metadata' },
+      { 'name' => 'null-metadata', 'metadata' => nil },
+      { 'name' => 'empty-metadata', 'metadata' => {} },
+      { 'name' => 'string-funding', 'metadata' => { 'funding' => 'https://example.com/sponsor' } },
+      { 'name' => 'object-funding', 'metadata' => { 'funding' => { 'url' => 'https://example.com/donate' } } },
+      { 'name' => 'array-funding', 'metadata' => { 'funding' => ['https://example.com/support'] } }
+    ])
+
+    get api_v1_projects_path
+
+    assert_response :success
+    project = response.parsed_body.find { |entry| entry['id'] == @climate_project.id }
+    assert_equal [
+      'https://example.com/sponsor',
+      'https://example.com/donate',
+      'https://example.com/support'
+    ], project['funding_links']
+  end
+
   test 'should filter index by reviewed status' do
     get api_v1_projects_path(reviewed: 'true')
     assert_response :success
