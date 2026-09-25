@@ -55,6 +55,28 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
     assert_not_nil assigns(:pagy)
   end
 
+  test "index ignores sort values not in the allowlist" do
+    get projects_path(sort: '(CASE WHEN (SELECT 1 FROM secrets) THEN 1 ELSE 2 END)', order: 'asc')
+    assert_response :success
+    sql = assigns(:scope).to_sql
+    refute_includes sql, 'secrets'
+    assert_includes sql, 'ORDER BY score ASC'
+  end
+
+  test "index sorts by an allowed column" do
+    get projects_path(sort: 'last_synced_at', order: 'asc')
+    assert_response :success
+    assert_includes assigns(:scope).to_sql, 'ORDER BY last_synced_at ASC'
+  end
+
+  test "review ignores sort values not in the allowlist" do
+    get review_projects_path(sort: '(SELECT 1)', order: 'desc')
+    assert_response :success
+    sql = assigns(:scope).to_sql
+    refute_includes sql, 'SELECT 1'
+    assert_includes sql, 'ORDER BY vote_count DESC'
+  end
+
   test "packages renders successfully" do
     pkg_data = [{ 'name' => 'test-pkg', 'ecosystem' => 'pypi', 'downloads' => 1000,
                   'downloads_period' => 'last-month', 'dependent_packages_count' => 5,

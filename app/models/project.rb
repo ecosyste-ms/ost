@@ -12,6 +12,8 @@ class Project < ApplicationRecord
       'last_synced_at' => 'last_synced_at',
       'score' => 'score',
       'name' => 'name',
+      'vote_count' => 'vote_count',
+      'vote_score' => 'vote_score',
     }
   end
 

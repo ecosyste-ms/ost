@@ -21,10 +21,11 @@ class ProjectsController < ApplicationController
     end
 
     if params[:sort]
+      sort = sanitize_sort(Project.sortable_columns, default: 'score')
       if params[:order] == 'asc'
-        @scope = @scope.order(Arel.sql(params[:sort]).asc.nulls_last)
+        @scope = @scope.order(sort.asc.nulls_last)
       else
-        @scope = @scope.order(Arel.sql(params[:sort]).desc.nulls_last)
+        @scope = @scope.order(sort.desc.nulls_last)
       end
     else
       @scope = @scope.order(Arel.sql('score').desc.nulls_last)
@@ -67,10 +68,11 @@ class ProjectsController < ApplicationController
     end
 
     if params[:sort]
+      sort = sanitize_sort(Project.sortable_columns, default: 'vote_count')
       if params[:order] == 'asc'
-        @scope = @scope.order(Arel.sql(params[:sort]).asc.nulls_last)
+        @scope = @scope.order(sort.asc.nulls_last)
       else
-        @scope = @scope.order(Arel.sql(params[:sort]).desc.nulls_last)
+        @scope = @scope.order(sort.desc.nulls_last)
       end
     else
       @scope = @scope.order('vote_count asc, vote_score desc, created_at DESC')
