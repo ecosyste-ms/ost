@@ -889,7 +889,16 @@ class Project < ApplicationRecord
 
   def ping
     ping_urls.each do |url|
-      Faraday.get(url, nil, {'User-Agent' => 'ost.ecosyste.ms'}) rescue nil
+      response = if url == repos_ping_url
+        ecosystem_http_client(url).post do |request|
+          request.params['force'] = true if repository_refresh_due?
+        end
+      else
+        Faraday.get(url, nil, {'User-Agent' => 'ost.ecosyste.ms'})
+      end
+      Rails.logger.warn("Ping failed for #{url}: HTTP #{response.status}") unless response.success?
+    rescue StandardError => e
+      Rails.logger.warn("Ping failed for #{url}: #{e.class}")
     end
   end
 
@@ -942,7 +951,9 @@ class Project < ApplicationRecord
   def fetch_repository
     conn = ecosystem_http_client(repos_api_url)
 
-    response = conn.get
+    response = conn.get do |request|
+      request.params['_refresh'] = Time.current.beginning_of_hour.to_i if repository_refresh_due?
+    end
     return unless response.success?
     self.repository = JSON.parse(response.body)
     self.save
@@ -950,6 +961,14 @@ class Project < ApplicationRecord
     puts "Error fetching repository for #{repository_url}"
     puts e.message
     puts e.backtrace
+  end
+
+  def repository_refresh_due?
+    return true if repository.blank? || repository['last_synced_at'].blank?
+
+    Time.iso8601(repository['last_synced_at']) <= 1.day.ago
+  rescue ArgumentError
+    true
   end
 
   def owner_api_url
