@@ -954,6 +954,7 @@ class Project < ApplicationRecord
     response = conn.get do |request|
       request.params['_refresh'] = Time.current.beginning_of_hour.to_i if repository_refresh_due?
     end
+    return update(repository: nil) if response.status == 404
     return unless response.success?
     self.repository = JSON.parse(response.body)
     self.save
@@ -1441,7 +1442,7 @@ class Project < ApplicationRecord
   end
 
   def active?
-    return false if archived?
+    return false if repository.blank? || archived?
     commits_this_year? || issues_this_year? || pull_requests_this_year?
   end
 
