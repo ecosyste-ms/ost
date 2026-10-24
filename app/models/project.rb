@@ -1651,13 +1651,13 @@ class Project < ApplicationRecord
   def sync_issues
     conn = ecosystem_http_client(issues_api_url)
     response = conn.get
-    return unless response.success?
+    return unless response.status == 200
     issues_list_url = JSON.parse(response.body)['issues_url'] + '?per_page=1000&pull_request=false'
     # issues_list_url = issues_list_url + '&updated_after=' + last_synced_at.to_fs(:iso8601) if last_synced_at.present?
 
     conn = ecosystem_http_client(issues_list_url)
     response = conn.get
-    return unless response.success?
+    return unless response.status == 200
     
     issues_json = JSON.parse(response.body)
 
