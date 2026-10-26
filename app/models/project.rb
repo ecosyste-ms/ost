@@ -889,12 +889,15 @@ class Project < ApplicationRecord
 
   def ping
     ping_urls.each do |url|
-      response = if url == repos_ping_url
-        ecosystem_http_client(url).post do |request|
-          request.params['force'] = true if repository_refresh_due?
+      if url == repos_ping_url
+        force = repository_refresh_due?
+        response = ecosystem_http_client(url).post do |request|
+          request.params['force'] = true if force
         end
+        # repos refreshes asynchronously, so poll for the result rather than waiting for the next sync
+        RefreshRepositoryWorker.perform_in(1.hour, id) if force && response.success?
       else
-        Faraday.get(url, nil, {'User-Agent' => 'ost.ecosyste.ms'})
+        response = Faraday.get(url, nil, {'User-Agent' => 'ost.ecosyste.ms'})
       end
       Rails.logger.warn("Ping failed for #{url}: HTTP #{response.status}") unless response.success?
     rescue StandardError => e
@@ -967,7 +970,8 @@ class Project < ApplicationRecord
   def repository_refresh_due?
     return true if repository.blank? || repository['last_synced_at'].blank?
 
-    Time.iso8601(repository['last_synced_at']) <= 1.day.ago
+    # under the daily sync interval, so snapshots fetched by RefreshRepositoryWorker still get refreshed next sync
+    Time.iso8601(repository['last_synced_at']) <= 12.hours.ago
   rescue ArgumentError
     true
   end

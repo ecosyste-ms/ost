@@ -3,6 +3,7 @@ require 'test_helper'
 class ProjectRepositoryRefreshTest < ActiveSupport::TestCase
   setup do
     travel_to Time.current.change(usec: 0)
+    Sidekiq::Worker.clear_all
     Rails.logger.stubs(:warn)
     @old_api_key = ENV['ECOSYSTEMS_API_KEY']
     ENV['ECOSYSTEMS_API_KEY'] = 'test-refresh-key'
@@ -51,6 +52,99 @@ class ProjectRepositoryRefreshTest < ActiveSupport::TestCase
     assert_requested normal_ping, times: 1
     assert queries.all? { |query| query['_refresh'].present? }
     assert_equal 2, queries.map { |query| query['_refresh'] }.uniq.length
+  end
+
+  test 'forced refresh is read back an hour later without waiting for the next sync' do
+    queries = []
+    fresh = @repository.merge('last_synced_at' => 10.minutes.from_now.iso8601, 'pushed_at' => 1.hour.ago.iso8601)
+    stub_request(:get, @lookup_url).with(query: hash_including('url' => @project.url))
+      .to_return do |request|
+        queries << request.uri.query_values
+        { status: 200, body: (queries.length == 1 ? @repository : fresh).to_json }
+      end
+    stub_request(:post, @ping_url).with(query: { 'force' => 'true' }).to_return(status: 200)
+
+    SyncProjectWorker.new.perform(@project.id)
+    job = RefreshRepositoryWorker.jobs.sole
+    assert_equal [@project.id], job['args']
+    assert_in_delta 1.hour.from_now.to_f, job['at'], 1
+
+    travel 1.hour
+    RefreshRepositoryWorker.drain
+    assert_equal fresh['pushed_at'], @project.reload.repository['pushed_at']
+    assert_equal 2, queries.map { |query| query['_refresh'] }.uniq.length
+  end
+
+  test 'read-back retries hourly until repos has refreshed' do
+    queries = []
+    fresh = @repository.merge('last_synced_at' => (3.hours.from_now - 10.minutes).iso8601, 'pushed_at' => 1.hour.ago.iso8601)
+    stub_request(:get, @lookup_url).with(query: hash_including('url' => @project.url))
+      .to_return do |request|
+        queries << request.uri.query_values
+        { status: 200, body: (queries.length < 4 ? @repository : fresh).to_json }
+      end
+    stub_request(:post, @ping_url).with(query: { 'force' => 'true' }).to_return(status: 200)
+
+    SyncProjectWorker.new.perform(@project.id)
+    2.times do |i|
+      travel 1.hour
+      RefreshRepositoryWorker.perform_one
+      assert_equal [@project.id, i + 2], RefreshRepositoryWorker.jobs.sole['args']
+    end
+
+    travel 1.hour
+    RefreshRepositoryWorker.perform_one
+    assert_empty RefreshRepositoryWorker.jobs
+    assert_equal fresh['pushed_at'], @project.reload.repository['pushed_at']
+    assert_equal 4, queries.map { |query| query['_refresh'] }.uniq.length
+  end
+
+  test 'read-back stops retrying after the last attempt' do
+    stub_request(:get, @lookup_url).with(query: hash_including('url' => @project.url))
+      .to_return(status: 200, body: @repository.to_json)
+
+    RefreshRepositoryWorker.new.perform(@project.id, RefreshRepositoryWorker::MAX_ATTEMPTS - 1)
+    assert_equal [@project.id, RefreshRepositoryWorker::MAX_ATTEMPTS], RefreshRepositoryWorker.jobs.sole['args']
+
+    RefreshRepositoryWorker.clear
+    RefreshRepositoryWorker.new.perform(@project.id, RefreshRepositoryWorker::MAX_ATTEMPTS)
+    assert_empty RefreshRepositoryWorker.jobs
+  end
+
+  test 'read-back does not retry a repository repos no longer has' do
+    stub_request(:get, @lookup_url).with(query: hash_including('url' => @project.url)).to_return(status: 404)
+
+    RefreshRepositoryWorker.new.perform(@project.id)
+
+    assert_nil @project.reload.repository
+    assert_empty RefreshRepositoryWorker.jobs
+  end
+
+  test 'a read-back snapshot is still force refreshed at the next daily sync' do
+    @repository['last_synced_at'] = 23.hours.ago.iso8601
+    @project.update!(repository: @repository)
+    stub_request(:get, @lookup_url).with(query: hash_including('url' => @project.url))
+      .to_return(status: 200, body: @repository.to_json)
+    forced_ping = stub_request(:post, @ping_url).with(query: { 'force' => 'true' }).to_return(status: 200)
+
+    SyncProjectWorker.new.perform(@project.id)
+
+    assert_requested forced_ping
+  end
+
+  test 'unforced and failed pings do not schedule a read-back' do
+    stub_request(:get, @lookup_url).with(query: hash_including('url' => @project.url))
+      .to_return(status: 200, body: @repository.to_json)
+    stub_request(:post, @ping_url).with(query: { 'force' => 'true' }).to_return(status: 503)
+
+    SyncProjectWorker.new.perform(@project.id)
+
+    @repository['last_synced_at'] = 1.hour.ago.iso8601
+    @project.update!(repository: @repository)
+    stub_request(:post, @ping_url).to_return(status: 200)
+    SyncProjectWorker.new.perform(@project.id)
+
+    assert_empty RefreshRepositoryWorker.jobs
   end
 
   test 'sync of a recent snapshot keeps the cached lookup and does not force refresh' do
