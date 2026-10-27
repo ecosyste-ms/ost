@@ -958,7 +958,10 @@ class Project < ApplicationRecord
       request.params['_refresh'] = Time.current.beginning_of_hour.to_i if repository_refresh_due?
     end
     return update(repository: nil) if response.status == 404
-    return unless response.success?
+    unless response.success?
+      Rails.logger.warn("Repository lookup failed for #{response.env.url}: HTTP #{response.status}")
+      return
+    end
     self.repository = JSON.parse(response.body)
     self.save
   rescue => e

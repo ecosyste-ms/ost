@@ -173,6 +173,16 @@ class ProjectRepositoryRefreshTest < ActiveSupport::TestCase
     assert_requested ping
   end
 
+  test 'failed repository lookup is logged and keeps the stored snapshot' do
+    stub_request(:get, @lookup_url).with(query: hash_including('url' => @project.url)).to_return(status: 503)
+    stub_request(:post, @ping_url).with(query: { 'force' => 'true' }).to_return(status: 200)
+    Rails.logger.expects(:warn).with(regexp_matches(%r{\ARepository lookup failed for https://repos\.ecosyste\.ms/api/v1/repositories/lookup\?.*: HTTP 503\z})).once
+
+    SyncProjectWorker.new.perform(@project.id)
+
+    assert_equal @repository['last_synced_at'], @project.reload.repository['last_synced_at']
+  end
+
   test 'failed refresh acknowledgement is logged' do
     stub_request(:get, @lookup_url).with(query: hash_including('url' => @project.url))
       .to_return(status: 200, body: @repository.to_json)
